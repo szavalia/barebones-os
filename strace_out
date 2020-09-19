@@ -1,0 +1,159 @@
+165   execve("/usr/bin/make", ["make"], ["HOSTNAME=f1240c7da856", "SHLVL=1", "HOME=/root", "OLDPWD=/", "_=/usr/bin/pvs-studio-analyzer", "TERM=xterm", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root"]) = 0
+165   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fd1db5909d0) = 166
+166   execve("/bin/sh", ["/bin/sh", "-c", "cd Bootloader; make all"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/", "MAKEFLAGS=", "MFLAGS=", "TERM=xterm", "MAKELEVEL=1"]) = 0
+166   chdir("/root/Bootloader")         = 0
+166   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7ff3c2a309d0) = 167
+167   execve("/usr/bin/make", ["make", "all"], ["HOSTNAME=f1240c7da856", "SHLVL=1", "HOME=/root", "OLDPWD=/root", "MAKEFLAGS=", "_=/usr/bin/pvs-studio-analyzer", "TERM=xterm", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "MAKELEVEL=1", "PWD=/root/Bootloader", "MFLAGS="]) = 0
+167   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f2d5ae9c9d0) = 168
+168   execve("/bin/sh", ["/bin/sh", "-c", "cd BMFS; make all"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Bootloader", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=2"]) = 0
+168   chdir("/root/Bootloader/BMFS")    = 0
+168   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fcc46e759d0) = 169
+169   execve("/usr/bin/make", ["make", "all"], ["HOSTNAME=f1240c7da856", "SHLVL=1", "HOME=/root", "OLDPWD=/root/Bootloader", "MAKEFLAGS=w", "_=/usr/bin/pvs-studio-analyzer", "TERM=xterm", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "MAKELEVEL=2", "PWD=/root/Bootloader/BMFS", "MFLAGS=-w"]) = 0
+169   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f9b856cd9d0) = 170
+170   execve("/usr/local/sbin/gcc", ["gcc", "-ansi", "-std=c99", "-Wall", "-pedantic", "-o", "bmfs.bin", "bmfs.c"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Bootloader/BMFS", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root/Bootloader", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=3"]) = -1 ENOENT (No such file or directory)
+170   execve("/usr/local/bin/gcc", ["gcc", "-ansi", "-std=c99", "-Wall", "-pedantic", "-o", "bmfs.bin", "bmfs.c"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Bootloader/BMFS", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root/Bootloader", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=3"]) = -1 ENOENT (No such file or directory)
+170   execve("/usr/sbin/gcc", ["gcc", "-ansi", "-std=c99", "-Wall", "-pedantic", "-o", "bmfs.bin", "bmfs.c"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Bootloader/BMFS", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root/Bootloader", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=3"]) = -1 ENOENT (No such file or directory)
+170   execve("/usr/bin/gcc", ["gcc", "-ansi", "-std=c99", "-Wall", "-pedantic", "-o", "bmfs.bin", "bmfs.c"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Bootloader/BMFS", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root/Bootloader", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=3"]) = 0
+170   vfork( <unfinished ...>
+171   execve("/usr/lib/gcc/x86_64-linux-gnu/4.9/cc1", ["/usr/lib/gcc/x86_64-linux-gnu/4.9/cc1", "-quiet", "-imultiarch", "x86_64-linux-gnu", "bmfs.c", "-quiet", "-dumpbase", "bmfs.c", "-mtune=generic", "-march=x86-64", "-auxbase", "bmfs", "-Wall", "-Wpedantic", "-ansi", "-std=c99", "-o", "/tmp/cc6Qhaac.s"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Bootloader/BMFS", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root/Bootloader", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=3", "COLLECT_GCC=gcc", "COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper", "COLLECT_GCC_OPTIONS='-ansi' '-std=c99' '-Wall' '-Wpedantic' '-o' 'bmfs.bin' '-mtune=generic' '-march=x86-64'"] <unfinished ...>
+170   <... vfork resumed> )             = 171
+171   <... execve resumed> )            = 0
+171   +++ exited with 0 +++
+170   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=171, si_uid=0, si_status=0, si_utime=6, si_stime=1} ---
+170   vfork( <unfinished ...>
+172   execve("/usr/local/sbin/as", ["as", "--64", "-o", "/tmp/ccCixPZs.o", "/tmp/cc6Qhaac.s"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Bootloader/BMFS", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root/Bootloader", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=3", "COLLECT_GCC=gcc", "COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper", "COLLECT_GCC_OPTIONS='-ansi' '-std=c99' '-Wall' '-Wpedantic' '-o' 'bmfs.bin' '-mtune=generic' '-march=x86-64'"]) = -1 ENOENT (No such file or directory)
+172   execve("/usr/local/bin/as", ["as", "--64", "-o", "/tmp/ccCixPZs.o", "/tmp/cc6Qhaac.s"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Bootloader/BMFS", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root/Bootloader", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=3", "COLLECT_GCC=gcc", "COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper", "COLLECT_GCC_OPTIONS='-ansi' '-std=c99' '-Wall' '-Wpedantic' '-o' 'bmfs.bin' '-mtune=generic' '-march=x86-64'"]) = -1 ENOENT (No such file or directory)
+172   execve("/usr/sbin/as", ["as", "--64", "-o", "/tmp/ccCixPZs.o", "/tmp/cc6Qhaac.s"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Bootloader/BMFS", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root/Bootloader", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=3", "COLLECT_GCC=gcc", "COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper", "COLLECT_GCC_OPTIONS='-ansi' '-std=c99' '-Wall' '-Wpedantic' '-o' 'bmfs.bin' '-mtune=generic' '-march=x86-64'"]) = -1 ENOENT (No such file or directory)
+172   execve("/usr/bin/as", ["as", "--64", "-o", "/tmp/ccCixPZs.o", "/tmp/cc6Qhaac.s"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Bootloader/BMFS", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root/Bootloader", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=3", "COLLECT_GCC=gcc", "COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper", "COLLECT_GCC_OPTIONS='-ansi' '-std=c99' '-Wall' '-Wpedantic' '-o' 'bmfs.bin' '-mtune=generic' '-march=x86-64'"] <unfinished ...>
+170   <... vfork resumed> )             = 172
+172   <... execve resumed> )            = 0
+172   +++ exited with 0 +++
+170   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=172, si_uid=0, si_status=0, si_utime=0, si_stime=1} ---
+170   vfork( <unfinished ...>
+173   execve("/usr/lib/gcc/x86_64-linux-gnu/4.9/collect2", ["/usr/lib/gcc/x86_64-linux-gnu/4.9/collect2", "-plugin", "/usr/lib/gcc/x86_64-linux-gnu/4.9/liblto_plugin.so", "-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper", "-plugin-opt=-fresolution=/tmp/ccDUqx3J.res", "-plugin-opt=-pass-through=-lgcc", "-plugin-opt=-pass-through=-lgcc_s", "-plugin-opt=-pass-through=-lc", "-plugin-opt=-pass-through=-lgcc", "-plugin-opt=-pass-through=-lgcc_s", "--sysroot=/", "--build-id", "--eh-frame-hdr", "-m", "elf_x86_64", "--hash-style=gnu", "-dynamic-linker", "/lib64/ld-linux-x86-64.so.2", "-o", "bmfs.bin", "/usr/lib/gcc/x86_64-linux-gnu/4.9/../../../x86_64-linux-gnu/crt1.o", "/usr/lib/gcc/x86_64-linux-gnu/4.9/../../../x86_64-linux-gnu/crti.o", "/usr/lib/gcc/x86_64-linux-gnu/4.9/crtbegin.o", "-L/usr/lib/gcc/x86_64-linux-gnu/4.9", "-L/usr/lib/gcc/x86_64-linux-gnu/4.9/../../../x86_64-linux-gnu", "-L/usr/lib/gcc/x86_64-linux-gnu/4.9/../../../../lib", "-L/lib/x86_64-linux-gnu", "-L/lib/../lib", "-L/usr/lib/x86_64-linux-gnu", "-L/usr/lib/../lib", "-L/usr/lib/gcc/x86_64-linux-gnu/4.9/../../..", "/tmp/ccCixPZs.o", "-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed", "-lc", "-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed", "/usr/lib/gcc/x86_64-linux-gnu/4.9/crtend.o", "/usr/lib/gcc/x86_64-linux-gnu/4.9/../../../x86_64-linux-gnu/crtn.o"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Bootloader/BMFS", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root/Bootloader", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=3", "COLLECT_GCC=gcc", "COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper", "COLLECT_GCC_OPTIONS='-ansi' '-std=c99' '-Wall' '-Wpedantic' '-o' 'bmfs.bin' '-mtune=generic' '-march=x86-64'", "COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/4.9/:/usr/lib/gcc/x86_64-linux-gnu/4.9/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/4.9/:/usr/lib/gcc/x86_64-linux-gnu/", "LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/4.9/:/usr/lib/gcc/x86_64-linux-gnu/4.9/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/4.9/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/4.9/../../../:/lib/:/usr/lib/"] <unfinished ...>
+170   <... vfork resumed> )             = 173
+173   <... execve resumed> )            = 0
+173   vfork( <unfinished ...>
+174   execve("/usr/bin/ld", ["/usr/bin/ld", "-plugin", "/usr/lib/gcc/x86_64-linux-gnu/4.9/liblto_plugin.so", "-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper", "-plugin-opt=-fresolution=/tmp/ccDUqx3J.res", "-plugin-opt=-pass-through=-lgcc", "-plugin-opt=-pass-through=-lgcc_s", "-plugin-opt=-pass-through=-lc", "-plugin-opt=-pass-through=-lgcc", "-plugin-opt=-pass-through=-lgcc_s", "--sysroot=/", "--build-id", "--eh-frame-hdr", "-m", "elf_x86_64", "--hash-style=gnu", "-dynamic-linker", "/lib64/ld-linux-x86-64.so.2", "-o", "bmfs.bin", "/usr/lib/gcc/x86_64-linux-gnu/4.9/../../../x86_64-linux-gnu/crt1.o", "/usr/lib/gcc/x86_64-linux-gnu/4.9/../../../x86_64-linux-gnu/crti.o", "/usr/lib/gcc/x86_64-linux-gnu/4.9/crtbegin.o", "-L/usr/lib/gcc/x86_64-linux-gnu/4.9", "-L/usr/lib/gcc/x86_64-linux-gnu/4.9/../../../x86_64-linux-gnu", "-L/usr/lib/gcc/x86_64-linux-gnu/4.9/../../../../lib", "-L/lib/x86_64-linux-gnu", "-L/lib/../lib", "-L/usr/lib/x86_64-linux-gnu", "-L/usr/lib/../lib", "-L/usr/lib/gcc/x86_64-linux-gnu/4.9/../../..", "/tmp/ccCixPZs.o", "-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed", "-lc", "-lgcc", "--as-needed", "-lgcc_s", "--no-as-needed", "/usr/lib/gcc/x86_64-linux-gnu/4.9/crtend.o", "/usr/lib/gcc/x86_64-linux-gnu/4.9/../../../x86_64-linux-gnu/crtn.o"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Bootloader/BMFS", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root/Bootloader", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=3", "COLLECT_GCC=gcc", "COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/4.9/lto-wrapper", "COLLECT_GCC_OPTIONS='-ansi' '-std=c99' '-Wall' '-Wpedantic' '-o' 'bmfs.bin' '-mtune=generic' '-march=x86-64'", "COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/4.9/:/usr/lib/gcc/x86_64-linux-gnu/4.9/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/4.9/:/usr/lib/gcc/x86_64-linux-gnu/", "LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/4.9/:/usr/lib/gcc/x86_64-linux-gnu/4.9/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/4.9/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/4.9/../../../:/lib/:/usr/lib/"] <unfinished ...>
+173   <... vfork resumed> )             = 174
+174   <... execve resumed> )            = 0
+174   +++ exited with 0 +++
+173   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=174, si_uid=0, si_status=0, si_utime=2, si_stime=11} ---
+173   +++ exited with 0 +++
+170   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=173, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+170   +++ exited with 0 +++
+169   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=170, si_uid=0, si_status=0, si_utime=0, si_stime=3} ---
+169   chdir("/root/Bootloader/BMFS")    = 0
+169   +++ exited with 0 +++
+168   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=169, si_uid=0, si_status=0, si_utime=0, si_stime=1} ---
+168   +++ exited with 0 +++
+167   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=168, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+167   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f2d5ae9c9d0) = 175
+175   execve("/bin/sh", ["/bin/sh", "-c", "cd Pure64; make all"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Bootloader", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=2"]) = 0
+175   chdir("/root/Bootloader/Pure64")  = 0
+175   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f6434d089d0) = 176
+176   execve("/usr/bin/make", ["make", "all"], ["HOSTNAME=f1240c7da856", "SHLVL=1", "HOME=/root", "OLDPWD=/root/Bootloader", "MAKEFLAGS=w", "_=/usr/bin/pvs-studio-analyzer", "TERM=xterm", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "MAKELEVEL=2", "PWD=/root/Bootloader/Pure64", "MFLAGS=-w"]) = 0
+176   chdir("/root/Bootloader/Pure64")  = 0
+176   +++ exited with 0 +++
+175   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=176, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+175   +++ exited with 0 +++
+167   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=175, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+167   chdir("/root/Bootloader")         = 0
+167   +++ exited with 0 +++
+166   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=167, si_uid=0, si_status=0, si_utime=0, si_stime=1} ---
+166   +++ exited with 0 +++
+165   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=166, si_uid=0, si_status=0, si_utime=0, si_stime=1} ---
+165   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fd1db5909d0) = 177
+177   execve("/bin/sh", ["/bin/sh", "-c", "cd Kernel; make all"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/", "MAKEFLAGS=", "MFLAGS=", "TERM=xterm", "MAKELEVEL=1"]) = 0
+177   chdir("/root/Kernel")             = 0
+177   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fd06388e9d0) = 178
+178   execve("/usr/bin/make", ["make", "all"], ["HOSTNAME=f1240c7da856", "SHLVL=1", "HOME=/root", "OLDPWD=/root", "MAKEFLAGS=", "_=/usr/bin/pvs-studio-analyzer", "TERM=xterm", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "MAKELEVEL=1", "PWD=/root/Kernel", "MFLAGS="]) = 0
+178   chdir("/root/Kernel")             = 0
+178   +++ exited with 0 +++
+177   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=178, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+177   +++ exited with 0 +++
+165   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=177, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+165   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fd1db5909d0) = 179
+179   execve("/bin/sh", ["/bin/sh", "-c", "cd Userland; make all"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/", "MAKEFLAGS=", "MFLAGS=", "TERM=xterm", "MAKELEVEL=1"]) = 0
+179   chdir("/root/Userland")           = 0
+179   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f3be07129d0) = 180
+180   execve("/usr/bin/make", ["make", "all"], ["HOSTNAME=f1240c7da856", "SHLVL=1", "HOME=/root", "OLDPWD=/root", "MAKEFLAGS=", "_=/usr/bin/pvs-studio-analyzer", "TERM=xterm", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "MAKELEVEL=1", "PWD=/root/Userland", "MFLAGS="]) = 0
+180   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f2cd61a69d0) = 181
+181   execve("/bin/sh", ["/bin/sh", "-c", "cd SampleCodeModule; make"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Userland", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=2"]) = 0
+181   chdir("/root/Userland/SampleCodeModule") = 0
+181   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f9028b3a9d0) = 182
+182   execve("/usr/bin/make", ["make"], ["HOSTNAME=f1240c7da856", "SHLVL=1", "HOME=/root", "OLDPWD=/root/Userland", "MAKEFLAGS=w", "_=/usr/bin/pvs-studio-analyzer", "TERM=xterm", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "MAKELEVEL=2", "PWD=/root/Userland/SampleCodeModule", "MFLAGS=-w"]) = 0
+182   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f46de1329d0) = 183
+183   execve("/usr/local/sbin/ld", ["ld", "-T", "sampleCodeModule.ld", "-o", "../0000-sampleCodeModule.bin", "_loader.o", "usr_lib.o", "calculadora.o", "sampleCodeModule.o", "asm/usr_lib.o"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Userland/SampleCodeModule", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root/Userland", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=3"]) = -1 ENOENT (No such file or directory)
+183   execve("/usr/local/bin/ld", ["ld", "-T", "sampleCodeModule.ld", "-o", "../0000-sampleCodeModule.bin", "_loader.o", "usr_lib.o", "calculadora.o", "sampleCodeModule.o", "asm/usr_lib.o"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Userland/SampleCodeModule", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root/Userland", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=3"]) = -1 ENOENT (No such file or directory)
+183   execve("/usr/sbin/ld", ["ld", "-T", "sampleCodeModule.ld", "-o", "../0000-sampleCodeModule.bin", "_loader.o", "usr_lib.o", "calculadora.o", "sampleCodeModule.o", "asm/usr_lib.o"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Userland/SampleCodeModule", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root/Userland", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=3"]) = -1 ENOENT (No such file or directory)
+183   execve("/usr/bin/ld", ["ld", "-T", "sampleCodeModule.ld", "-o", "../0000-sampleCodeModule.bin", "_loader.o", "usr_lib.o", "calculadora.o", "sampleCodeModule.o", "asm/usr_lib.o"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Userland/SampleCodeModule", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root/Userland", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=3"]) = 0
+183   +++ exited with 0 +++
+182   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=183, si_uid=0, si_status=0, si_utime=0, si_stime=2} ---
+182   chdir("/root/Userland/SampleCodeModule") = 0
+182   +++ exited with 0 +++
+181   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=182, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+181   +++ exited with 0 +++
+180   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=181, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+180   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f2cd61a69d0) = 184
+184   execve("/bin/sh", ["/bin/sh", "-c", "cd SampleDataModule; make"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Userland", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=2"]) = 0
+184   chdir("/root/Userland/SampleDataModule") = 0
+184   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f3ee5d7e9d0) = 185
+185   execve("/usr/bin/make", ["make"], ["HOSTNAME=f1240c7da856", "SHLVL=1", "HOME=/root", "OLDPWD=/root/Userland", "MAKEFLAGS=w", "_=/usr/bin/pvs-studio-analyzer", "TERM=xterm", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "MAKELEVEL=2", "PWD=/root/Userland/SampleDataModule", "MFLAGS=-w"]) = 0
+185   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fe9e3b1d9d0) = 186
+186   execve("/usr/local/sbin/ld", ["ld", "-T", "sampleDataModule.ld", "-o", "../0001-sampleDataModule.bin", "_loader.o", "sampleDataModule.o"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Userland/SampleDataModule", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root/Userland", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=3"]) = -1 ENOENT (No such file or directory)
+186   execve("/usr/local/bin/ld", ["ld", "-T", "sampleDataModule.ld", "-o", "../0001-sampleDataModule.bin", "_loader.o", "sampleDataModule.o"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Userland/SampleDataModule", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root/Userland", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=3"]) = -1 ENOENT (No such file or directory)
+186   execve("/usr/sbin/ld", ["ld", "-T", "sampleDataModule.ld", "-o", "../0001-sampleDataModule.bin", "_loader.o", "sampleDataModule.o"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Userland/SampleDataModule", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root/Userland", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=3"]) = -1 ENOENT (No such file or directory)
+186   execve("/usr/bin/ld", ["ld", "-T", "sampleDataModule.ld", "-o", "../0001-sampleDataModule.bin", "_loader.o", "sampleDataModule.o"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Userland/SampleDataModule", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root/Userland", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=3"]) = 0
+186   +++ exited with 0 +++
+185   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=186, si_uid=0, si_status=0, si_utime=0, si_stime=1} ---
+185   chdir("/root/Userland/SampleDataModule") = 0
+185   +++ exited with 0 +++
+184   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=185, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+184   +++ exited with 0 +++
+180   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=184, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+180   chdir("/root/Userland")           = 0
+180   +++ exited with 0 +++
+179   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=180, si_uid=0, si_status=0, si_utime=0, si_stime=1} ---
+179   +++ exited with 0 +++
+165   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=179, si_uid=0, si_status=0, si_utime=0, si_stime=1} ---
+165   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fd1db5909d0) = 187
+187   execve("/bin/sh", ["/bin/sh", "-c", "cd Image; make all"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/", "MAKEFLAGS=", "MFLAGS=", "TERM=xterm", "MAKELEVEL=1"]) = 0
+187   chdir("/root/Image")              = 0
+187   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f7172be79d0) = 188
+188   execve("/usr/bin/make", ["make", "all"], ["HOSTNAME=f1240c7da856", "SHLVL=1", "HOME=/root", "OLDPWD=/root", "MAKEFLAGS=", "_=/usr/bin/pvs-studio-analyzer", "TERM=xterm", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "MAKELEVEL=1", "PWD=/root/Image", "MFLAGS="]) = 0
+188   clone( <unfinished ...>
+189   execve("../Toolchain/ModulePacker/mp.bin", ["../Toolchain/ModulePacker/mp.bin", "../Kernel/kernel.bin", "../Userland/0000-sampleCodeModule.bin", "../Userland/0001-sampleDataModule.bin", "-o", "packedKernel.bin"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Image", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=2"] <unfinished ...>
+188   <... clone resumed> child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f33da3dd9d0) = 189
+189   <... execve resumed> )            = 0
+189   +++ exited with 0 +++
+188   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=189, si_uid=0, si_status=0, si_utime=0, si_stime=0} ---
+188   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f33da3dd9d0) = 190
+190   execve("../Bootloader/BMFS/bmfs.bin", ["../Bootloader/BMFS/bmfs.bin", "x64BareBonesImage.img", "initialize", "6291456", "../Bootloader/Pure64/bmfs_mbr.sys", "../Bootloader/Pure64/pure64.sys", "packedKernel.bin"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Image", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=2"]) = 0
+190   +++ exited with 0 +++
+188   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=190, si_uid=0, si_status=0, si_utime=0, si_stime=3} ---
+188   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f33da3dd9d0) = 191
+191   execve("/usr/local/sbin/qemu-img", ["qemu-img", "convert", "-f", "raw", "-O", "vmdk", "x64BareBonesImage.img", "x64BareBonesImage.vmdk"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Image", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=2"]) = -1 ENOENT (No such file or directory)
+191   execve("/usr/local/bin/qemu-img", ["qemu-img", "convert", "-f", "raw", "-O", "vmdk", "x64BareBonesImage.img", "x64BareBonesImage.vmdk"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Image", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=2"]) = -1 ENOENT (No such file or directory)
+191   execve("/usr/sbin/qemu-img", ["qemu-img", "convert", "-f", "raw", "-O", "vmdk", "x64BareBonesImage.img", "x64BareBonesImage.vmdk"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Image", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=2"]) = -1 ENOENT (No such file or directory)
+191   execve("/usr/bin/qemu-img", ["qemu-img", "convert", "-f", "raw", "-O", "vmdk", "x64BareBonesImage.img", "x64BareBonesImage.vmdk"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Image", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=2"]) = 0
+191   clone(child_stack=0x7fbf61dd2f30, flags=CLONE_VM|CLONE_FS|CLONE_FILES|CLONE_SIGHAND|CLONE_THREAD|CLONE_SYSVSEM|CLONE_SETTLS|CLONE_PARENT_SETTID|CLONE_CHILD_CLEARTID, parent_tidptr=0x7fbf61dd39d0, tls=0x7fbf61dd3700, child_tidptr=0x7fbf61dd39d0) = 192
+192   +++ exited with 0 +++
+191   +++ exited with 0 +++
+188   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=191, si_uid=0, si_status=0, si_utime=1, si_stime=7} ---
+188   clone(child_stack=0, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f33da3dd9d0) = 193
+193   execve("/usr/local/sbin/qemu-img", ["qemu-img", "convert", "-f", "raw", "-O", "qcow2", "x64BareBonesImage.img", "x64BareBonesImage.qcow2"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Image", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=2"]) = -1 ENOENT (No such file or directory)
+193   execve("/usr/local/bin/qemu-img", ["qemu-img", "convert", "-f", "raw", "-O", "qcow2", "x64BareBonesImage.img", "x64BareBonesImage.qcow2"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Image", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=2"]) = -1 ENOENT (No such file or directory)
+193   execve("/usr/sbin/qemu-img", ["qemu-img", "convert", "-f", "raw", "-O", "qcow2", "x64BareBonesImage.img", "x64BareBonesImage.qcow2"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Image", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=2"]) = -1 ENOENT (No such file or directory)
+193   execve("/usr/bin/qemu-img", ["qemu-img", "convert", "-f", "raw", "-O", "qcow2", "x64BareBonesImage.img", "x64BareBonesImage.qcow2"], ["_=/usr/bin/pvs-studio-analyzer", "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", "PWD=/root/Image", "HOME=/root", "HOSTNAME=f1240c7da856", "SHLVL=1", "OLDPWD=/root", "MAKEFLAGS=w", "MFLAGS=-w", "TERM=xterm", "MAKELEVEL=2"]) = 0
+193   clone(child_stack=0x7ff76477bf30, flags=CLONE_VM|CLONE_FS|CLONE_FILES|CLONE_SIGHAND|CLONE_THREAD|CLONE_SYSVSEM|CLONE_SETTLS|CLONE_PARENT_SETTID|CLONE_CHILD_CLEARTID, parent_tidptr=0x7ff76477c9d0, tls=0x7ff76477c700, child_tidptr=0x7ff76477c9d0) = 194
+194   +++ exited with 0 +++
+193   +++ exited with 0 +++
+188   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=193, si_uid=0, si_status=0, si_utime=2, si_stime=12} ---
+188   chdir("/root/Image")              = 0
+188   +++ exited with 0 +++
+187   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=188, si_uid=0, si_status=0, si_utime=0, si_stime=3} ---
+187   +++ exited with 0 +++
+165   --- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_EXITED, si_pid=187, si_uid=0, si_status=0, si_utime=0, si_stime=1} ---
+165   chdir("/root")                    = 0
+165   +++ exited with 0 +++
