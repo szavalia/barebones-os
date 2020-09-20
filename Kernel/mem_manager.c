@@ -11,7 +11,6 @@ typedef struct Node{
     void * address;
     Node * next;
 } Node;
-//la lista va a ser ordenada según el tamaño del nodo
 typedef struct List
 {
     Node * first;
@@ -46,24 +45,25 @@ void * ltmalloc(size_t size ){
     --> si no encuentro uno en el que entre, chequeo que tenga lugar y le agrego uno a medida, marcándolo ocupado
         --> Si no hay lugar, devuelvo NULL
     */
-    if(size <= 0 || size >mem_available){
+    if(size <= 0 || size > mem_available){
         return NULL;
     }
-
+    //TODO: mitosis cuando encuentro un bloque que me sirva, quiero agarrar el tamaño justo y guardar lo que me sobra en free_list
     if(free_initialized){
         Node * previous;
-        Node * actual = free_list.first;
-        while(actual.size < size && actual.next != NULL){
-            previous = actual;
-            actual = actual.next
+        Node * current = free_list.first;
+        while(current->size < size && current->next != NULL){
+            previous = current;
+            current = current->next;
         }
-        if(actual.next != NULL){ //si es == NULL llegue al final y no hay ningun bloque que me sirva, sigo de largo
-            actual->occupied = TRUE;
-            void * ret = actual->address;
-            previous.next = actual.next;
-            return ret;
-        }
+        if(current->size >= size ){ //si es == NULL llegue al final y no hay ningun bloque que me sirva, sigo de largo
+            current->occupied = TRUE;
+            previous->next = current->next;
+            return current->address;
+        }      
+        
     }
+    //sigo por acá si no encontré un bloque liberado que me sirva
 
     if(!mem_initialized){
         init_mem(size);
@@ -74,65 +74,59 @@ void * ltmalloc(size_t size ){
     else{ //lo agrego al final de mi heap(y de la lista)
         Node * myNode;
         myNode->size = size;
-        int newAddress = mem_list.last.address + mem_list.last.size;
+        int newAddress = mem_list.last->address + mem_list.last->size;
         myNode->address = newAddress;
         myNode->occupied = TRUE;
         myNode->next = NULL;
-        mem_list.last.next = myNode;
+        mem_list.last->next = myNode;
         mem_list.last = &myNode;
         return newAddress; 
     }
     return NULL;
 }
 
-void ltmfree1(void * pointer){
-    Node * iterator = mem_list->start;
-    while(iterator.address != pointer){
-        iterator = iterator.next;
-    }
-    if(iterator.next == NULL && iterator.address != pointer){
-        return null;
-    }
-    else{
-        iterator.occupied = FALSE;
-    }
-}
 
-void ltmfree2(void * pointer){
+void ltmfree(void * pointer){
     Node * previous;
-    Node * iterator = mem_list->start;
+    Node * mem_iterator = mem_list.first;
 
-    while(iterator.address != pointer){ //busco el nodo que me sirve
-        previous = iterator;
-        iterator = iterator.next;
+    while(mem_iterator->address != pointer && mem_iterator != NULL){ //busco el nodo que me sirve
+        previous = mem_iterator;
+        mem_iterator = mem_iterator->next;
     }
-    if(iterator.next == NULL && iterator.address != pointer){
-        return null;
+    if(mem_iterator == NULL){
+        return NULL;
     }
-    else{
-        previous.next = iterator.next; //saco el pointer de la lista de memoria, solo quedan los ocupados
-        iterator.occupied = FALSE;
+    else{ //mem_iterator quedó parado en el nodo que quiero liberar
+        mem_iterator->occupied = FALSE;
+
+        Node * block_to_add; //quiero hacer una copia para insertar en free_list 
+        block_to_add->size = mem_iterator->size;
+        block_to_add->occupied = FALSE;
+        block_to_add->address = mem_iterator->address;
+        //lo que me queda por setear es el next
         if(!free_initialized){
-            free_list.first = iterator;
+            free_list.first = block_to_add;
+            block_to_add->next = NULL;
             free_list.last = free_list.first;
             free_initialized = TRUE;
         }
         else{
-            Node * actual;
-            actual = free_list.first; 
+            Node * free_iterator;
+            free_iterator = free_list.first; 
             //para insertar el it y que free_list quede de menor a mayor
-            while(actual.size < iterator.size && actual.next != NULL){ //busco la posicion en free_list
-                previous = actual;
-                actual = actual.next;
+            while(free_iterator->size < block_to_add->size && free_iterator->next != NULL){ //busco la posicion en free_list
+                previous = free_iterator;
+                free_iterator = free_iterator->next;
             }
-            if(actual.next == NULL){
-                actual.next = iterator;
-                iterator.next = null;
-                free_list = NULL;
+            if(free_iterator->next == NULL){
+                free_iterator->next = block_to_add;
+                block_to_add->next = NULL;
+                free_list.last = block_to_add;
             }
             else{
-                iterator.next = actual;
-                previous.next = iterator;
+                block_to_add->next = free_iterator;
+                previous->next = block_to_add;
             }
         }
     }
@@ -156,6 +150,3 @@ static void create_new_node(size_t size, Node * prev){
     }
 }
 
-void ltmfree(void * pointer){
-
-}
