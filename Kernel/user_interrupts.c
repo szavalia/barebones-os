@@ -6,6 +6,7 @@
 #include "video_driver.h"
 #include "keyboard.h"
 #include "time.h"
+#include "mem_manager.h"
 #include "lib.h"
 
 
@@ -38,6 +39,9 @@ void int80_handler(){
             break;
         case 8:
             sys_update_context();
+            break;
+        case 9:
+            sys_malloc();
             break;
     }
 }
@@ -108,6 +112,12 @@ void sys_context(){
 
 void sys_update_context(){
     changeContext();
+}
+
+void sys_malloc(){
+    int size = (int) getR13();
+    void ** location = (void **) getR15();
+    memcpy(*location, ltmalloc(size), sizeof(void *));
 }
 
 

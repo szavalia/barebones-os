@@ -44,6 +44,8 @@
 
    extern void getContext(int * context);
    extern void changeContext();
+
+   void * callMalloc(int size, void ** location);
 #endif
 
 

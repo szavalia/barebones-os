@@ -6,6 +6,7 @@ GLOBAL getCPUInfo
 GLOBAL getMem
 GLOBAL getTemp
 GLOBAL getContext
+GLOBAL callMalloc
 GLOBAL changeContext
 GLOBAL codeERROR
 
@@ -177,6 +178,7 @@ getContext:
     pop rbp
     ret 
 
+
 changeContext:
     push rbp
     mov rbp, rsp
@@ -193,3 +195,26 @@ changeContext:
     mov rsp, rbp
     pop rbp
     ret 
+
+
+callMalloc:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+    push r13 ;primer param, size
+    push r15 ;segundo param, el void *
+
+    mov r12, 9
+    mov r13, rdi
+    mov r15, rsi
+    int 80h
+
+    pop r15
+    pop r13
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret 
+    
