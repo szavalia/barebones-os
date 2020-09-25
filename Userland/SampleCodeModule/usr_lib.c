@@ -182,6 +182,17 @@ void printmem(uint8_t * dir){
 
 }
 
+void * ltmmalloc(int size){
+	/*
+	if(size < 0){
+		return null;
+	}
+	*/
+	void * location;
+	callMalloc(size, &location); //le tengo que pasar un int * asi que lo desreferencio ???
+	return location;
+}
+
 void printCPUInfo(){
 	char vendor[13], brand[49];
 	getCPUInfo(vendor, brand);
