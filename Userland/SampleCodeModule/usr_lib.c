@@ -3,7 +3,7 @@
 #include "usr_lib.h"
 #define BUFFER_SIZE 1024
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
-static char charBuffer[3 * BUFFER_SIZE]; //FIXME: magic numbers raros
+static char charBuffer[3 * BUFFER_SIZE]; 
 static char bufferNum[BUFFER_SIZE] = { '\0' };
 static char usr_command[BUFFER_SIZE] = { 0 }; 
 extern void codeERROR();

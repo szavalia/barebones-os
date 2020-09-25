@@ -90,11 +90,8 @@ SECTION .text
 
 
 %macro exceptionHandler 1
-	push rax 
-	mov  rax ,[rsp+8] ; recupero el RIP
-	mov [ripaux], rax ; guardo el RIP en una var auxiliar
-	pop rax
-
+	
+	mov rsi, [rsp];
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
 
@@ -210,7 +207,7 @@ restoreCpu:
 			ret
 
 saveInitRegs:
-	mov [initRegs], rsp
+	mov [initRegs], rdi
 	mov [initRegs+8], rbp
 	mov [initRegs+16] , rbx
 	mov [initRegs+24] , r12

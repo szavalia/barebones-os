@@ -20,14 +20,14 @@ extern uint8_t endOfKernel;
 
 int side = 0, context=0;
 
-
+static uint64_t stackBase;
 static const uint64_t PageSize = 0x1000;
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
 typedef int (*EntryPoint)();
 
-extern void saveInitRegs();
+extern void saveInitRegs( uint64_t rsp);
 
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
@@ -86,8 +86,8 @@ void * initializeKernelBinary()
 	printHex((uint64_t)&bss);
 	newline();
 	printS("[Done]");
-	
-	return getStackBase();
+	stackBase = getStackBase();
+	return stackBase;
 }
 
 
@@ -100,8 +100,8 @@ int main()
 	printHex((uint64_t)sampleCodeModuleAddress);
 	newline();
 	printS("  Calling the sample code module returned: ");
-	clear();
-	saveInitRegs();
+	//clear();
+	saveInitRegs(stackBase);
 	printHex(((EntryPoint)sampleCodeModuleAddress)());
 	newline();
 	newline();

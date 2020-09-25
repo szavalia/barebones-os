@@ -1,15 +1,17 @@
 #include "mem_manager.h"
 #define FALSE 0
 #define TRUE 1
+#define MAX_AUX_NODES 500
 #define MEM_INIT_ADDRESS 0x600000
-#define MEM_END_ADDRESS 0x9FFFFFFF
+#define MEM_END_ADDRESS  0xFFFFFFF
+#define HEAP_INIT_ADDRESS (MEM_INIT_ADDRESS + sizeof(Node) * MAX_AUX_NODES)
 #define TOTAL_MEM_AVAILABLE (MEM_END_ADDRESS - MEM_INIT_ADDRESS)
 //guardo el tamaño de mi bloque de memoria libre, su dirección y un pointer al siguiente
 typedef struct Node{
     size_t size;
     int occupied;
     void * address;
-    Node * next;
+    struct Node * next;
 } Node;
 typedef struct List
 {
@@ -18,24 +20,34 @@ typedef struct List
 
 } List;
 
+static Node * node_vec = (void *) MEM_INIT_ADDRESS; //vector de nodos auxiliares
+static int node_index = 0; //lugar disponible en node_vec
+
 static int mem_initialized = FALSE;
 static unsigned int mem_available = TOTAL_MEM_AVAILABLE;
 static List mem_list;
 static List free_list;
-static free_initialized = FALSE;
+static int free_initialized = FALSE;
+
+static Node * getAuxNode(){
+    if(node_index == MAX_AUX_NODES){
+        return NULL;
+    }
+    return &node_vec[node_index++];
+}
 
 //inicializo mi lista
 static void init_mem(size_t first_block_size){
-    Node * newFirst;
+    Node * newFirst = getAuxNode();
     newFirst->size=first_block_size;
-    newFirst->address = (void *) MEM_INIT_ADDRESS;
+    newFirst->address = (void *) HEAP_INIT_ADDRESS; //después del espacio que le asigno a las estructuras auxiliares
     newFirst->occupied = TRUE;
     newFirst->next = NULL;
     
     mem_list.first = newFirst;
     mem_list.last = mem_list.first;
-    mem_initialized = TRUE;    
-}
+    mem_initialized = TRUE;  
+    }
 
 //genero un puntero a una zona de memoria con size lugar disponible
 void * ltmalloc(size_t size ){
@@ -72,14 +84,15 @@ void * ltmalloc(size_t size ){
 
 
     else{ //lo agrego al final de mi heap(y de la lista)
-        Node * myNode;
+         
+        Node * myNode= getAuxNode();
         myNode->size = size;
-        int newAddress = mem_list.last->address + mem_list.last->size;
+        void * newAddress = (void *) (mem_list.last->address + mem_list.last->size);
         myNode->address = newAddress;
         myNode->occupied = TRUE;
         myNode->next = NULL;
         mem_list.last->next = myNode;
-        mem_list.last = &myNode;
+        mem_list.last = myNode; //acá estaba &myNode
         return newAddress; 
     }
     return NULL;
@@ -95,12 +108,12 @@ void ltmfree(void * pointer){
         mem_iterator = mem_iterator->next;
     }
     if(mem_iterator == NULL){
-        return NULL;
+        return;
     }
     else{ //mem_iterator quedó parado en el nodo que quiero liberar
         mem_iterator->occupied = FALSE;
-
-        Node * block_to_add; //quiero hacer una copia para insertar en free_list 
+        
+        Node * block_to_add=getAuxNode(); //quiero hacer una copia para insertar en free_list 
         block_to_add->size = mem_iterator->size;
         block_to_add->occupied = FALSE;
         block_to_add->address = mem_iterator->address;
@@ -131,22 +144,3 @@ void ltmfree(void * pointer){
         }
     }
 }
-
-
-//crea un nuevo bloque de memoria en luego de un nodo prev y lo declaro ocupado
-static void create_new_node(size_t size, Node * prev){
-    //creo mi nuevo nodo
-    Node * new;
-    new->size = size;
-    new->occupied = TRUE;
-    new->address = prev->address + prev->size;
-    new->next=prev->next;
-    
-    prev->next = new;
-
-    //caso prev = last
-    if(prev = mem_list.last){
-        mem_list.last = new;
-    }
-}
-
