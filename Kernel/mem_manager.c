@@ -1,7 +1,7 @@
 #include "mem_manager.h"
 #define FALSE 0
 #define TRUE 1
-#define MAX_AUX_NODES 500
+#define MAX_AUX_NODES 32768
 #define MEM_INIT_ADDRESS 0x600000
 #define MEM_END_ADDRESS  0xFFFFFFF
 #define HEAP_INIT_ADDRESS (MEM_INIT_ADDRESS + sizeof(Node) * MAX_AUX_NODES)

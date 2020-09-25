@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <string.h>
 #include "lib.h"
-#include <moduleLoader.h>
+#include "moduleLoader.h"
 #include "idtLoader.h"
 #include "video_driver.h"
 #include "time.h"
@@ -85,8 +85,12 @@ void * initializeKernelBinary()
 	printS("  bss: 0x");
 	printHex((uint64_t)&bss);
 	newline();
-	printS("[Done]");
 	stackBase = getStackBase();
+	printS("  Stack base: 0x");
+	printHex(stackBase);
+	newline();
+	printS("[Done]");
+	newline();
 	return stackBase;
 }
 
@@ -102,10 +106,9 @@ int main()
 	printS("  Calling the sample code module returned: ");
 	//clear();
 	saveInitRegs(stackBase);
-	printHex(((EntryPoint)sampleCodeModuleAddress)());
+	printHex(((EntryPoint)sampleCodeModuleAddress)()); //acá llamo a main de userland
 	newline();
 	newline();
-
 	printS(" Sample data module at 0x");
 	printHex(((EntryPoint)sampleDataModuleAddress)());
 	newline();

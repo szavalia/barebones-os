@@ -207,13 +207,16 @@ restoreCpu:
 			ret
 
 saveInitRegs:
-	mov [initRegs], rdi
-	mov [initRegs+8], rbp
+	mov rax , rdi ; en rdi está en stackBase
+	sub rax , 8
+	mov [initRegs], rax ; rsp
+	mov [initRegs+8], rdi ;rbp
 	mov [initRegs+16] , rbx
 	mov [initRegs+24] , r12
 	mov [initRegs+32], r13
 	mov [initRegs+48], r15
-
+	ret
+;FIXME: no le falta un ret?
 
 SECTION .bss
 	aux resq 1
