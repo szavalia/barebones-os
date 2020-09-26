@@ -3,7 +3,8 @@
 
 typedef struct process_t{
     char * name;
-    uint PID;
-    uint priority;
+    int PID;
+    int priority;
+    uint64_t stack_base;
     reg_t registers;
 }process_t;

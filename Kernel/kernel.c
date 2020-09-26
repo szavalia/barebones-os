@@ -19,7 +19,7 @@ extern uint8_t endOfKernel;
 
 int side = 0, context=0;
 
-static uint64_t stackBase;
+extern uint64_t stackBase;
 static const uint64_t PageSize = 0x1000;
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
