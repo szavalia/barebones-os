@@ -10,6 +10,6 @@
     void show_processed_scanf(char * buffer, int size);
     void scanf_for_calculator(char * buffer, int size);
     void newline();
-
-
+    int strlen(char * string);
+    int strequals(char * s1, char * s2);
 #endif

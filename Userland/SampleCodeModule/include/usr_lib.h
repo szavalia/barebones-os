@@ -28,6 +28,7 @@
    extern void changeContext();
 
    void * ltmalloc(int size);
+   void ltmfree(void * pointer);
    void debug(); //FIXME: sacar esto
 #endif
 

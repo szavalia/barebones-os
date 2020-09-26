@@ -8,6 +8,7 @@ GLOBAL getTemp
 GLOBAL getContext
 GLOBAL callMalloc
 GLOBAL changeContext
+GLOBAL callFree
 GLOBAL codeERROR
 
 ;Acá vamos a poner los llamados al SO para interactuar con el hardware
@@ -218,3 +219,20 @@ callMalloc:
     pop rbp
     ret 
     
+callFree:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+    push r13 
+
+    mov r12, 10
+    mov r13, rdi
+    int 80h
+
+    pop r13
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret 

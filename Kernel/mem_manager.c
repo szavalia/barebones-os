@@ -107,7 +107,7 @@ void ltmfree(void * pointer){
     while(mem_iterator->address != pointer && mem_iterator != NULL){ //busco el nodo que me sirve
         previous = mem_iterator;
         mem_iterator = mem_iterator->next;
-    }
+    } //no lo encontrçé, no está en la líista
     if(mem_iterator == NULL){
         return;
     }

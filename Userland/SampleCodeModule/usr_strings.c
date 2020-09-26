@@ -134,3 +134,24 @@ void putChar(char c){
 void newline(){
 	putChar('\n');
 }
+
+int strlen(char * string){
+	int count = 0;
+	while(string[count++] != 0);
+	return count-1;
+}
+
+int strequals(char * s1, char * s2){
+	int l1 = strlen(s1), l2=strlen(s2);
+	int min = (l1<l2)? l1 : l2;
+	if ( l1 != l2){
+		return 0;
+	}
+	int equals = 1;
+	for(int i=0; i < min && equals; i++){
+		if(s1[i] != s2[i]){
+			return 0;
+		}
+	}
+	return 1;
+}

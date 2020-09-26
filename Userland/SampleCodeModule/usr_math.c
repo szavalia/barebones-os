@@ -1,9 +1,8 @@
 #include "usr_math.h"
+#include "usr_strings.h"
 #define BUFFER_SIZE 1024
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
-static char charBuffer[3 * BUFFER_SIZE]; 
 static char bufferNum[BUFFER_SIZE] = { '\0' };
-static char usr_command[BUFFER_SIZE] = { 0 }; 
 extern void codeERROR();
 
 void printBase(uint64_t value, uint32_t base)

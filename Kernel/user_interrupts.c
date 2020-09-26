@@ -118,8 +118,12 @@ void sys_malloc(){
     int size = (int) getR13();
     void ** location = (void **) getR15();
     void * res = ltmalloc(size);
-
     memcpy(location, &res, sizeof(void *));
+}
+
+void sys_free(){
+    void * pointer = (void *) getR13();
+    ltmfree(pointer);
 }
 
 

@@ -4,9 +4,7 @@
 #include "usr_strings.h"
 #define BUFFER_SIZE 1024
 #define NULL (void *) 0 //FIXME: esto no debería estar incluido de algún lado?
-static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
-static char charBuffer[3 * BUFFER_SIZE]; 
-static char bufferNum[BUFFER_SIZE] = { '\0' };
+//static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
 static char usr_command[BUFFER_SIZE] = { 0 }; 
 extern void codeERROR();
 extern void * callMalloc(int size, void ** location);
@@ -68,6 +66,10 @@ void * ltmalloc(int size){
 	return location;
 }
 
+void ltmfree(void * pointer){
+	callFree(pointer);
+}
+
 void printCPUInfo(){
 	char vendor[13], brand[49];
 	getCPUInfo(vendor, brand);
@@ -107,23 +109,6 @@ void help(){
 	puts("    - diverror: excepcion de division por 0\n");
 	puts("    - invalid opcode: excepcion de operacion invalida\n");
 	return;
-}
-
-
-
-int strequals(char * s1, char * s2){
-	int l1 = strlen(s1), l2=strlen(s2);
-	int min = (l1<l2)? l1 : l2;
-	if ( l1 != l2){
-		return 0;
-	}
-	int equals = 1;
-	for(int i=0; i < min && equals; i++){
-		if(s1[i] != s2[i]){
-			return 0;
-		}
-	}
-	return 1;
 }
 
 char * strcopy(char *destination, char *source)
@@ -188,16 +173,18 @@ void launch_terminal(){
 }
 
 void debug(){
-	char * array = ltmalloc(1024*1024*128);
+	char * array = ltmalloc(1024*1024);
 	puts("Malloc retorna: 0x");
-	printHex(array);
+	printHex((int)array);
 	newline();
-		if(i==499){
-	for(int i=0; i < 505; i++){
-			puts("cum");
-		}
-		array[i]='F';
-	}
-	//puts(array);
+	char msg[] = "Voy a hacer free\n";
+	strcopy(array, msg);
+	puts(array);
+	ltmfree(array);
+	puts("Ya hice free");
+	newline();
+	puts("Dir. mem: 0x");
+	printHex((int)array);
+	newline();
 	newline();
 }
