@@ -1,6 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "usr_lib.h"
+#include "usr_strings.h"
 #define BUFFER_SIZE 1024
 #define NULL (void *) 0 //FIXME: esto no debería estar incluido de algún lado?
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
@@ -10,118 +11,6 @@ static char usr_command[BUFFER_SIZE] = { 0 };
 extern void codeERROR();
 extern void * callMalloc(int size, void ** location);
 
-//FIXME: scanf con código repetido
-void scanf(char * buffer, int size){
-    int  current = 0;
-    *charBuffer = 0;
-    while( *charBuffer != '\n'){
-        scanChar(charBuffer);
-        if(*charBuffer != 0 && current < size){
-            buffer[current++] = *charBuffer;
-        }        
-    }
-	buffer[current]='\0';
-	return;
-}
-
-void show_scanf(char * buffer, int size){
-    int  current = 0, deletes=0;
-	*charBuffer = 0;
-    while( *charBuffer != '\n' ){
-        scanChar(charBuffer);
-        if(*charBuffer != 0 && current < size){
-            buffer[current++] = *charBuffer;
-			if(*charBuffer == '\b'){
-				if(current-(deletes+1)>=0){ //para no borrar cosas anteriores
-					deletes++;
-					putChar(*charBuffer);
-				}
-			}
-        }        
-    }
-	buffer[current]='\0';
-	return;
-}
-
-void show_processed_scanf(char * buffer, int size){
-	int  current = 0;
-	*charBuffer = 0;
-    while( *charBuffer != '\n' ){
-        scanChar(charBuffer);
-        if(*charBuffer != 0 && current < size){
-			
-			if(' ' <= *charBuffer && *charBuffer < 127 ){ //es una letra, número o signo de puntuación, '\b' = 127
-				putChar(*charBuffer);
-				buffer[current++] = *charBuffer;
-			}
-			else if(*charBuffer == '\t'){
-				for(int i=0; i<5;i++){
-					buffer[current++] = ' ';
-				}
-			}
-			else if(*charBuffer == '\b'){
-				if(current>0){ //para no borrar cosas anteriores
-					current--;
-					putChar(*charBuffer);
-				}
-			}
-        }        
-    }
-	buffer[current]='\0';
-	return;
-}
-
-void scanf_for_calculator(char * buffer, int size){
-	int  current = 0;
-	*charBuffer = 0;
-    while( *charBuffer != '=' ){
-        scanChar(charBuffer);
-        if(*charBuffer != 0 && current < size){
-			
-			if(' ' <= *charBuffer && *charBuffer < 127 ){ //es una letra, número o signo de puntuación, '\b' = 127
-				putChar(*charBuffer);
-				buffer[current++] = *charBuffer;
-			}
-			else if(*charBuffer == '\t'){
-				for(int i=0; i<5;i++){
-					buffer[current++] = ' ';
-				}
-			}
-			else if(*charBuffer == '\b'){
-				if(current>0){ //para no borrar cosas anteriores
-					current--;
-					putChar(*charBuffer);
-				}
-			}
-        }        
-    }
-	buffer[current-1]='\0';
-	return;
-}
-
-void show_numeric_scanf(char * buffer, int size){
-	int  current = 0;
-	*charBuffer = 0;
-	
-    while( *charBuffer != '\n' ){
-        scanChar(charBuffer);
-        if(*charBuffer != 0 && current < size){	
-			if('0' <= *charBuffer && *charBuffer <= '9' ){ //es una letra, número o signo de puntuación, '\b' = 127
-				putChar(*charBuffer);
-				buffer[current++] = *charBuffer;
-			}
-			else if(*charBuffer == '\b'){
-				if(current>0){ //para no borrar cosas anteriores
-					current--;
-					putChar(*charBuffer);
-				}
-			}
-        }        
-    }
-	buffer[current]='\0';
-	return;
-}
-
 uint64_t stringToNum(char * string){
 	uint64_t result = 0;
 	int length = strlen(string);
@@ -129,19 +18,6 @@ uint64_t stringToNum(char * string){
 		result = result * 10 + ( string[i] - '0' );
 	}
 	return result;
-}
-
-
-void puts(char * string){
-	int length = strlen(string);
-	put(string, length);
-	return;
-}
-
-void putChar(char c){
-    *charBuffer = c;
-    put(charBuffer , 1);
-	return;
 }
 
 void printTime(){
@@ -154,9 +30,6 @@ void printTime(){
 	printDec(time[2]); //segundos
 	putChar('\n');
 	return;
-}
-void newline(){
-	putChar('\n');
 }
 
 void inforeg(){ 
@@ -236,11 +109,7 @@ void help(){
 	return;
 }
 
-int strlen(char * string){
-	int count = 0;
-	while(string[count++] != 0);
-	return count-1;
-}
+
 
 int strequals(char * s1, char * s2){
 	int l1 = strlen(s1), l2=strlen(s2);
@@ -323,8 +192,8 @@ void debug(){
 	puts("Malloc retorna: 0x");
 	printHex(array);
 	newline();
-	for(int i=0; i < 505; i++){
 		if(i==499){
+	for(int i=0; i < 505; i++){
 			puts("cum");
 		}
 		array[i]='F';
@@ -332,103 +201,3 @@ void debug(){
 	//puts(array);
 	newline();
 }
-
-
-
-
-
-
-
-
-
-
-
-//--------------------------------------------------------------
-
-
-void printBase(uint64_t value, uint32_t base)
-{
-	int digits;
-    digits = uintToBase(value, bufferNum, base);
-	put(bufferNum, digits);
-	return;
-}
-
-void printDec(uint64_t value){
-    printBase(value, 10);
-	return;
-}
-
-void printWithDecimals(double value){
-	long  ent = parteEntera(value);
-	printDec(ent);
-	putChar('.');
-	value-= ent;
-	value *= 10000;
-	long deci = parteEntera(value);
-	printDec(deci);
-}
-
-void printHex(uint64_t value){
-    printBase(value, 16);
-	return;
-}
-
-void printBin(uint64_t value){
-    printBase(value, 2);
-	return;
-}
-
-void printReg(uint64_t value){
-	int  digits = uintToBase(value,bufferNum,16);
-	digits = 16-digits;
-	while((digits--) > 0){
-		putChar('0');
-	}
-	puts(bufferNum);
-}
-
-long parteEntera(uint64_t value){
-	long rta = 0;
-	long mult = 1;
-	do{
-		uint32_t remainder = value%10;
-		rta+=  remainder * mult;
-		mult *= 10;
-	}
-	while(value /= 10);
-	return rta;
-}
-
-static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base){
-	char *p = buffer;
-	char *p1, *p2;
-	uint32_t digits = 0;
-
-	//Calculate characters for each digit
-	do
-	{
-		uint32_t remainder = value % base;
-		*p++ = (remainder < 10) ? remainder + '0' : remainder + 'A' - 10;
-		digits++;
-	}
-	while (value /= base);
-
-	// Terminate string in buffer.
-	*p = 0;
-
-	//Reverse string in buffer.
-	p1 = buffer;
-	p2 = p - 1;
-	while (p1 < p2)
-	{
-		char tmp = *p1;
-		*p1 = *p2;
-		*p2 = tmp;
-		p1++;
-		p2--;
-	}
-
-	return digits;
-}
-
