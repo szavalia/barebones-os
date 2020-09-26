@@ -3,6 +3,7 @@
 #define REG_T_H_
 
 #define REGISTERS 19
+
 typedef struct reg_t{
 	uint64_t r15;
 	uint64_t r14;

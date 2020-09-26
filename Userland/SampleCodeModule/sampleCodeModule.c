@@ -16,8 +16,8 @@ int main()
 	
 		getContext(context);
 		if(*context==0){
-			//launch_terminal();
-			debug();
+			launch_terminal();
+			//debug();
 			scanf(aux,1);
 		}
 		else if(*context == 1){

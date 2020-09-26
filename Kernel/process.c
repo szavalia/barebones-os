@@ -2,22 +2,28 @@
 #include <lib.h>
 #include <moduleLoader.h>
 #include "process.h"
-#include "kernel.c"
 #include "reg_t.h"
+#include "video_driver.h"
 #define MAXPROCESOS 250
 #define BASE_PRIORITY 0
+#define STACK_ALING(number)  number & -32  
 long process_count = 1; 
 
 process_t procesos[MAXPROCESOS];
 
 char kernelName[] = "Kernel";
 
+extern void prepareProcess( int PID , uint64_t stackPointer , int argc , char * argv[] , void * main);
 
 
+void * requestStack(){
+    return ltmalloc( 32 * 1024 + 8 );
+}
 
-uint64_t getBasePointer(){
-    //aca tenemos que crear los stacks de los programas... Juega con el memory manager no?
-    return stackBase;
+uint64_t getBasePointer( void * start){
+    uint64_t stack = STACK_ALING( (int) start); // 32 kb de stack --> alineado mas atras pierdo hasta 7 bytes, lo que lo compenso agregando 1 cuando pido memoria 
+    stack+= 32*1024 + 8; // llevo el pointer al final, la cantidad de stack seguro es de 32kb;
+    return stack;
 }
 
 
@@ -29,7 +35,7 @@ int createPID(){
 
 
 }
-
+/*
 void kernelLaunch(){
     procesos[0].PID = 0;
     procesos[0].registers; //No se que poner aca
@@ -60,7 +66,7 @@ void fillRegisters( process_t *proceso , reg_t *registers ){ //recibe un proceso
     
 }
 
-
+*/
 
 //fork
 int fork( int fatherPID ){
@@ -70,15 +76,22 @@ int fork( int fatherPID ){
         //Error
     }
     procesos[pid].PID = pid;
-    procesos[pid].registers = procesos[fatherPID].registers;
+    //procesos[pid].registers = procesos[fatherPID].registers;
     procesos[pid].priority= BASE_PRIORITY;
 
 }
 
 //execvec
-void launchProcess( void * process , int argc , char * args[]  ){
+void launchProcess( void * process , int argc , char * argv[]  ){
     //Deberia ser como un execve esto, el void* del procesos seria onda (entryPoint);
     //Igual siento que esto tendria que usarse el conjunto el fork en userland, porque pisaria el 
     int pid = createPID();
-
+    procesos[pid].stack_start = requestStack();
+    printS("Este es el stackStart: ");
+    printHex(procesos[pid].stack_start);
+    newline();
+    procesos[pid].base_pointer = getBasePointer(procesos[pid].stack_start);
+    printS("Este es el stackPointer: ");
+    printHex(procesos[pid].base_pointer);
+    prepareProcess(pid , procesos[pid].base_pointer , argc , argv , process);
 }

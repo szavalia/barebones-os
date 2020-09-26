@@ -19,7 +19,8 @@ extern uint8_t endOfKernel;
 
 int side = 0, context=0;
 
-extern uint64_t stackBase;
+uint64_t stackBase;
+
 static const uint64_t PageSize = 0x1000;
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
@@ -105,7 +106,9 @@ int main()
 	printS("  Calling the sample code module returned: ");
 	//clear();
 	saveInitRegs(stackBase);
-	printHex(((EntryPoint)sampleCodeModuleAddress)()); //acá llamo a main de userland
+	printS("New process\n");
+	launchProcess( sampleCodeModuleAddress , 0 , 0 );
+	//printHex(((EntryPoint)sampleCodeModuleAddress)()); //acá llamo a main de userland
 	newline();
 	newline();
 	printS(" Sample data module at 0x");
