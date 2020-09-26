@@ -117,7 +117,9 @@ void sys_update_context(){
 void sys_malloc(){
     int size = (int) getR13();
     void ** location = (void **) getR15();
-    memcpy(*location, ltmalloc(size), sizeof(void *));
+    void * res = ltmalloc(size);
+
+    memcpy(location, &res, sizeof(void *));
 }
 
 

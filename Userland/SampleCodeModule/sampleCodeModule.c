@@ -10,13 +10,15 @@ static int context[1];
 int main() 
 {
 	bootMsg();
-
+	char * aux;
 	
 	do{
 	
 		getContext(context);
 		if(*context==0){
-			launch_terminal();
+			//launch_terminal();
+			debug();
+			scanf(aux,1);
 		}
 		else if(*context == 1){
 			launch_calculator();

@@ -2,11 +2,13 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "usr_lib.h"
 #define BUFFER_SIZE 1024
+#define NULL (void *) 0 //FIXME: esto no debería estar incluido de algún lado?
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
 static char charBuffer[3 * BUFFER_SIZE]; 
 static char bufferNum[BUFFER_SIZE] = { '\0' };
 static char usr_command[BUFFER_SIZE] = { 0 }; 
 extern void codeERROR();
+extern void * callMalloc(int size, void ** location);
 
 //FIXME: scanf con código repetido
 void scanf(char * buffer, int size){
@@ -182,12 +184,12 @@ void printmem(uint8_t * dir){
 
 }
 
-void * ltmmalloc(int size){
-	/*
+void * ltmalloc(int size){
+	
 	if(size < 0){
-		return null;
+		return NULL;
 	}
-	*/
+	
 	void * location;
 	callMalloc(size, &location); //le tengo que pasar un int * asi que lo desreferencio ???
 	return location;
@@ -255,6 +257,21 @@ int strequals(char * s1, char * s2){
 	return 1;
 }
 
+char * strcopy(char *destination, char *source)
+{
+    char *start = destination;
+
+    while(*source != '\0')
+    {
+        *destination = *source;
+        destination++;
+        source++;
+    }
+
+    *destination = '\0'; // add '\0' at the end
+    return start;
+}
+
 int error(){
 	int terror = 2/0;
 	return -1;
@@ -299,6 +316,21 @@ void launch_terminal(){
 		}
 		
 	return;
+}
+
+void debug(){
+	char * array = ltmalloc(1024*1024*128);
+	puts("Malloc retorna: 0x");
+	printHex(array);
+	newline();
+	for(int i=0; i < 505; i++){
+		if(i==499){
+			puts("cum");
+		}
+		array[i]='F';
+	}
+	//puts(array);
+	newline();
 }
 
 

@@ -31,8 +31,9 @@
    void help();
    void launch_terminal();
 
-   int strcmp(char * s1, char * s2);
+   int strequals(char * s1, char * s2);
    int strlen(char * string);
+   char * strcopy(char *destination, char *source);
    void show_scanf(char * buffer, int size);
 
    void printBase(uint64_t value, uint32_t base);
@@ -45,7 +46,8 @@
    extern void getContext(int * context);
    extern void changeContext();
 
-   void * callMalloc(int size, void ** location);
+   void * ltmalloc(int size);
+   void debug(); //FIXME: sacar esto
 #endif
 
 
