@@ -172,33 +172,4 @@ void launch_terminal(){
 	return;
 }
 
-void debug(){
-	char * array = ltmalloc(1024*1024);
-	puts("Malloc retorna: 0x");
-	printHex((int)array);
-	newline();
 
-	char * array2 = ltmalloc(1024*1024);
-	puts("Malloc 2 retorna: 0x");
-	printHex((int)array2);
-	newline();
-
-	ltmfree(array);
-	puts("Ya hice free");
-	newline();
-	puts("Dir. mem: 0x");
-	printHex((int)array);
-	newline();
-
-	ltmfree(array2);
-	puts("Ya hice free 2");
-	newline();
-	puts("Dir. mem 2: 0x");
-	printHex((int)array2);
-	newline();
-
-	array2 = ltmalloc(1024*1024);
-	puts("Malloc 2 retorna: 0x");
-	printHex((int)array2);
-	newline();
-}
