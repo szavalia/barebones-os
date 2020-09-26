@@ -7,14 +7,14 @@
 #include <stdint.h>
 #include "user_interrupts.h"
 
-static void int_20();
+static void int_20( uint64_t stack_pointer);
 static void int_21();
 static void int_80();
 
-void irqDispatcher(uint64_t irq) {
+void irqDispatcher(uint64_t irq , uint64_t stack_pointer) {
 	switch (irq) {
 		case 0:
-			int_20(); //TimerTick
+			int_20(stack_pointer); //TimerTick
 			break;
 		case 1:
 			int_21(); //Teclado
@@ -25,8 +25,8 @@ void irqDispatcher(uint64_t irq) {
 	return;
 }
 
-void int_20() {
-	timer_handler();
+void int_20( uint64_t stack_pointer) {
+	timer_handler(stack_pointer);
 }
 
 void int_21(){

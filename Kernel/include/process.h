@@ -9,3 +9,5 @@ typedef struct process_t{
     uint64_t base_pointer;
     uint64_t stack_pointer;
 }process_t;
+
+void switchProcess( uint64_t stackPointer);

@@ -66,14 +66,14 @@ SECTION .text
 %endmacro
 
 %macro irqHandlerMaster 1
-	push rax 
-	mov  rax ,[rsp+8] ; preservo el RIP
-	mov [ripaux], rax ; guardo el RIP en una var auxiliar
-	pop rax
+	;push rax 
+	;mov  rax ,[rsp+8] ; preservo el RIP
+	;mov [ripaux], rax ; guardo el RIP en una var auxiliar
+	;pop rax
 
 	pushState
 	mov rdi, %1 ; pasaje de parametro
-	
+	mov rsi , rsp
 	call irqDispatcher
 
 	; signal pic EOI (End of Interrupt)

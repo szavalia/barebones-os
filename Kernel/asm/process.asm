@@ -1,4 +1,5 @@
 GLOBAL prepareProcess
+GLOBAL switchProcess
 
 
 %macro pushState 0
@@ -77,3 +78,13 @@ prepareProcess:
     iretq
     
 
+;switchProcess( uint64_t stackPointer)
+switchProcess:
+	mov rsp , rdi
+	mov al, 20h
+	out 20h, al
+	
+	popState
+			
+
+	iretq
