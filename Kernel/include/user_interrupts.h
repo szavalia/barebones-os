@@ -13,6 +13,7 @@ void sys_cpuinfo();
 void sys_context();
 void sys_update_context();
 void sys_malloc();
+void sys_free();
 
 extern uint_least64_t cpuTemperature();
 extern uint8_t memContent(uint8_t * i);

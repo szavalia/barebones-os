@@ -48,7 +48,7 @@ static void init_mem(size_t first_block_size){
     mem_list.first = newFirst;
     mem_list.last = mem_list.first;
     mem_initialized = TRUE;  
-    }
+}
 
 //genero un puntero a una zona de memoria con size lugar disponible
 void * ltmalloc(size_t size ){
@@ -63,14 +63,23 @@ void * ltmalloc(size_t size ){
     }
     //TODO: mitosis cuando encuentro un bloque que me sirva, quiero agarrar el tamaño justo y guardar lo que me sobra en free_list
     if(free_initialized){
-        Node * previous;
         Node * current = free_list.first;
+        Node * previous = current;
+
         while(current->size < size && current->next != NULL){
             previous = current;
             current = current->next;
         }
         if(current->size >= size ){ //si es == NULL llegue al final y no hay ningun bloque que me sirva, sigo de largo
             current->occupied = TRUE;
+            if(previous == current){ //agarré el primero de la lista
+                if(current->next==NULL){//sólo había un nodo
+                    free_initialized=0;
+                }
+                else{//hay otros
+                    free_list.first=current->next;
+                }
+            }
             previous->next = current->next;
             return current->address;
         }      
@@ -107,8 +116,9 @@ void ltmfree(void * pointer){
     while(mem_iterator->address != pointer && mem_iterator != NULL){ //busco el nodo que me sirve
         previous = mem_iterator;
         mem_iterator = mem_iterator->next;
-    } //no lo encontrçé, no está en la líista
-    if(mem_iterator == NULL){
+    } 
+    if(mem_iterator == NULL){//no lo encontré, no está en la lísta
+        printS("No hago nada\n");
         return;
     }
     else{ //mem_iterator quedó parado en el nodo que quiero liberar
@@ -118,8 +128,11 @@ void ltmfree(void * pointer){
         block_to_add->size = mem_iterator->size;
         block_to_add->occupied = FALSE;
         block_to_add->address = mem_iterator->address;
+
         //lo que me queda por setear es el next
-        if(!free_initialized){
+
+        if(!free_initialized){ //no había liberado nada antes
+            printS("Es mi primera vez\n");
             free_list.first = block_to_add;
             block_to_add->next = NULL;
             free_list.last = free_list.first;
@@ -128,17 +141,20 @@ void ltmfree(void * pointer){
         else{
             Node * free_iterator;
             free_iterator = free_list.first; 
-            //para insertar el it y que free_list quede de menor a mayor
+
+            //quiero insertar el it y que free_list quede de menor a mayor
             while(free_iterator->size < block_to_add->size && free_iterator->next != NULL){ //busco la posicion en free_list
                 previous = free_iterator;
                 free_iterator = free_iterator->next;
             }
-            if(free_iterator->next == NULL){
+                        if(free_iterator->next == NULL){ //estoy en el último y no encontré lugar
+                printS("Inserto al final\n");
                 free_iterator->next = block_to_add;
                 block_to_add->next = NULL;
                 free_list.last = block_to_add;
             }
             else{
+                printS("Inserto en el medio\n");
                 block_to_add->next = free_iterator;
                 previous->next = block_to_add;
             }

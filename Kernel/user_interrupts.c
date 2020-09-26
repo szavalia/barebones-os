@@ -43,6 +43,9 @@ void int80_handler(){
         case 9:
             sys_malloc();
             break;
+        case 10:
+            sys_free();
+            break;
     }
 }
 
@@ -123,6 +126,7 @@ void sys_malloc(){
 
 void sys_free(){
     void * pointer = (void *) getR13();
+    printS("Entrando a free\n");
     ltmfree(pointer);
 }
 
