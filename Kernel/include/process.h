@@ -1,3 +1,5 @@
+#ifndef _PROCESS_H_
+#define _PROCESS_H_
 #include <stdint.h>
 #include "reg_t.h"
 
@@ -14,3 +16,5 @@ typedef struct process_t{
 
 uint64_t scheduler( uint64_t stack_pointer );
 void switchProcess( uint64_t stackPointer);
+void launchProcess( void * process , int argc , char * argv[]  );
+#endif

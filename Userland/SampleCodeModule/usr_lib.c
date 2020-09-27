@@ -46,7 +46,7 @@ void inforeg(){
 void printmem(char * hexDir){ 
 	int dir = hexadecimalToDecimal( hexDir); 
 	uint8_t bytes[32];
-	getMem((uint8_t *)dir, bytes);
+	getMem((uint8_t *)dir, bytes); //FIXME: casteos raros
 	putChar('\n');
 	for(int i = 0; i < 32; i++){
 		printHex((long) dir+i );
