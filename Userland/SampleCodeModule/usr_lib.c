@@ -3,6 +3,8 @@
 #include "usr_lib.h"
 extern void * callMalloc(int size, void ** location);
 extern void callFree(void * pointer);
+extern void callPs();
+extern void callKill(int pid);
 
 static char * usr_command;
 static int buffer_initialized=0;
@@ -93,12 +95,24 @@ void printTemp(){
 	newline();
 }
 
+void ps(){
+	callPs();
+}
+
+void kill(int pid){
+	callKill(pid);
+}
+
 void bootMsg(){
 	newline();
 	char msg[] = "Estos son los comandos disponibles:\n";
 	puts(msg);
 	help();
 	return;
+}
+
+void launchProcess( void * process , int argc , char * argv[]){
+	callLaunch(process, argc, argv);
 }
 
 void help(){
@@ -184,5 +198,7 @@ void launch_terminal(){
 		ltmfree(usr_command);
 	return;
 }
+
+
 
 

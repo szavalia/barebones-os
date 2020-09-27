@@ -11,6 +11,9 @@ GLOBAL changeContext
 GLOBAL callFree
 GLOBAL codeERROR
 GLOBAL mem
+GLOBAL callPs
+GLOBAL callKill
+GLOBAL callLaunch
 
 ;Acá vamos a poner los llamados al SO para interactuar con el hardware
 section .text
@@ -247,6 +250,63 @@ mem:
     mov r12, 11
     int 80h
 
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+callPs:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+
+    mov r12, 12
+    int 80h
+
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+callKill:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+    push r13 ;primer param, pid
+
+    mov r12, 13
+    mov r13, rdi
+    int 80h
+
+    pop r13
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret  
+
+callMalloc:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+    push r13 ;primer param, size
+    push r15 ;segundo param, el void *
+    push rbx
+
+    mov r12, 14
+    mov r13, rdi
+    mov r15, rsi
+    mov rbx, rdx
+    int 80h
+
+    pop rbx 
+    pop r15
+    pop r13
     pop r12
 
     mov rsp, rbp

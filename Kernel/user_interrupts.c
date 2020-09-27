@@ -7,6 +7,7 @@
 #include "keyboard.h"
 #include "time.h"
 #include "mem_manager.h"
+#include "process.h"
 #include "lib.h"
 
 
@@ -48,6 +49,15 @@ void int80_handler(){
             break;
         case 11:
             sys_mem();
+            break;
+        case 12:
+            sys_ps();
+            break;
+        case 13:
+            sys_kill();
+            break;
+        case 14:
+            sys_launch();
             break;
     }
 }
@@ -134,6 +144,22 @@ void sys_free(){
 
 void sys_mem(){
     printMemList();
+}
+
+void sys_ps(){
+    processDump();
+}
+
+void sys_kill(){
+    int pid = (int) getR13();
+    processKill(pid);
+}
+
+void sys_launch(){
+    void * process = (void *) getR13();
+    int argc = (int) getR15();
+    char * argv[] = (char**) getRBX();
+    launchProcess(process, argc, argv);
 }
 
 
