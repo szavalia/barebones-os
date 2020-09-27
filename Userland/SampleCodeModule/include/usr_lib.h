@@ -36,6 +36,10 @@
    void ltmfree(void * pointer);
    extern void mem();
 
+   void ps();
+   void kill(int pid);
+   void launchProcess( void * process , int argc , char * argv[]);
+
    extern void codeERROR();
 #endif
 
