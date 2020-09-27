@@ -4,7 +4,7 @@
 #include "process.h"
 #include "reg_t.h"
 #include "video_driver.h"
-#define MAXPROCESOS 250
+#define MAXPROCESOS 50
 #define BASE_PRIORITY 0
 #define STACK_ALING(number)  number & -32 
 #define NULL 0 
