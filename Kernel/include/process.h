@@ -4,6 +4,7 @@
 typedef struct process_t{
     char * name;
     int PID;
+    int estado; //0->block, 1->listo, 2->killed
     int priority;
     void * stack_start;
     uint64_t base_pointer;
