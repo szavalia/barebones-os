@@ -29,7 +29,7 @@ void * requestStack(){
 }
 
 
-void test(){  
+/*void test(){  
     while(1){
         printS("test");
         newline();
@@ -55,7 +55,7 @@ uint64_t scheduler( uint64_t stack_pointer ){
             return procesos[2].stack_pointer;
         }
     }
-}
+}*/
 
 
 
@@ -140,7 +140,7 @@ void launchProcess( void * process , int argc , char * argv[]  ){
 
 
 
-uint64_t schedule (uint64_t current_rsp){
+uint64_t scheduler (uint64_t current_rsp){
     procesos[current_proc].stack_pointer = current_rsp;
     int i = current_proc;
     do{
@@ -149,7 +149,7 @@ uint64_t schedule (uint64_t current_rsp){
             i = 0;
         }
     }
-    while(procesos[i].state != NOT_CREATED && procesos[i].state != BLOCKED );
+    while(procesos[i].state != READY );
     current_proc = i;
     return procesos[i].stack_pointer;
 }
