@@ -10,15 +10,14 @@ static int context[1];
 int main() 
 {
 	bootMsg();
-	char * aux;
-	
+	initializeCharBuffer();
+	initializeCommandBuffer();
 	do{
 	
 		getContext(context);
 		if(*context==0){
-			//launch_terminal();
-			debug();
-			scanf(aux,1);
+			launch_terminal();
+			
 		}
 		else if(*context == 1){
 			launch_calculator();
@@ -27,8 +26,6 @@ int main()
 
 	}
 	while(1);
-	
-	
 
 	
 	//puts("I have decided that I want to die\n");

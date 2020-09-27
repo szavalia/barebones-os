@@ -1,11 +1,13 @@
 #include "usr_strings.h"
+#include "usr_lib.h"
 #define BUFFER_SIZE 1024
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
-static char charBuffer[3 * BUFFER_SIZE]; 
-static char bufferNum[BUFFER_SIZE] = { '\0' };
-static char usr_command[BUFFER_SIZE] = { 0 }; 
+static char * charBuffer = NULL; 
 extern void codeERROR();
 
+void initializeCharBuffer(){
+	charBuffer=ltmalloc(NUM_BUFFER_SIZE);
+}
 
 //FIXME: scanf con código repetido
 void scanf(char * buffer, int size){

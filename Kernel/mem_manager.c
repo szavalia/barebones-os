@@ -49,11 +49,7 @@ static void init_mem(size_t first_block_size){
     
     mem_list.first = block_to_add;
     mem_list.last = mem_list.first;
-    mem_initialized = TRUE;
-    printS("En malloc inserto en: 0x");
-    printHex(block_to_add);
-    newline(); 
-    newline();   
+    mem_initialized = TRUE; 
 }
 
 //genero un puntero a una zona de memoria con size lugar disponible
@@ -153,4 +149,23 @@ void ltmfree(void * pointer){
         }
     }
 
+}
+
+void printMemList(){
+    if(!mem_initialized){
+        printS("No asignaste memoria dinamica!\n");
+    }
+    else{
+        Node * iterator = mem_list.first;
+        while(iterator->address != mem_list.last->address){
+            for(uint8_t i = 0; i < iterator->size; i++){
+                printS("Direccion 0x");
+                printHex( (uint64_t) iterator->address+i);
+                printS(": ");
+                printHex( memContent((uint8_t *)iterator->address+i) );
+                newline();
+            }
+            iterator = iterator->next;
+        }
+    }
 }
