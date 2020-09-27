@@ -6,19 +6,51 @@
 #include "video_driver.h"
 #define MAXPROCESOS 250
 #define BASE_PRIORITY 0
-#define STACK_ALING(number)  number & -32  
-long process_count = 1; 
-
+#define STACK_ALING(number)  number & -32 
+#define NULL 0 
+long process_count = 0; 
+int actual = 1;
+int flag = 0;
+void * secondmain;
 process_t procesos[MAXPROCESOS];
-
 char kernelName[] = "Kernel";
-
 extern void prepareProcess( int PID , uint64_t stackPointer , int argc , char * argv[] , void * main);
-
+extern void switchProcess( uint64_t stackPointer);
 
 void * requestStack(){
     return ltmalloc( 32 * 1024 + 8 );
 }
+
+
+void test(){  
+    while(1){
+        printS("test");
+        newline();
+        };
+}
+
+uint64_t scheduler( uint64_t stack_pointer ){
+    if ( flag == 0 ){
+        flag = 1;
+        procesos[1].stack_pointer = stack_pointer;
+        actual = 2;
+        launchProcess( test , 0 , 0 );
+    }
+    else{
+        if ( actual == 2  ){
+            actual = 1;
+            procesos[2].stack_pointer = stack_pointer;
+            return procesos[1].stack_pointer;
+        }
+        else{
+            actual = 2;
+            procesos[1].stack_pointer= stack_pointer;
+            return procesos[2].stack_pointer;
+        }
+    }
+}
+
+
 
 uint64_t getBasePointer( void * start){
     uint64_t stack = STACK_ALING( (int) start); // 32 kb de stack --> alineado mas atras pierdo hasta 7 bytes, lo que lo compenso agregando 1 cuando pido memoria 
@@ -31,7 +63,8 @@ int createPID(){
     if ( process_count >=250 ){
         return -1;
     }
-    return process_count++;
+    process_count+=1;
+    return process_count;
 
 
 }

@@ -9,11 +9,11 @@ static unsigned long ticks = 0;
 
 void timer_handler( uint64_t stack_pointer) {
 	ticks++;
-	if(ticks %100 ==  0 ){
+	if(ticks %10 ==  0 ){
 		printS("Este es mi pointer: ");
 		printHex(stack_pointer);
 		newline();
-		switchProcess(stack_pointer);
+		switchProcess(scheduler(stack_pointer));
 	}
 }
 

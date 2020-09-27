@@ -10,4 +10,7 @@ typedef struct process_t{
     uint64_t stack_pointer;
 }process_t;
 
+
+
+uint64_t scheduler( uint64_t stack_pointer );
 void switchProcess( uint64_t stackPointer);

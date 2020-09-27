@@ -74,6 +74,8 @@ prepareProcess:
     push rdi
     push rdi
     push rdi
+	mov al, 20h
+	out 20h, al
     popState
     iretq
     

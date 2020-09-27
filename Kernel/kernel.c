@@ -22,7 +22,6 @@ int side = 0, context=0;
 uint64_t stackBase;
 
 static const uint64_t PageSize = 0x1000;
-
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
 typedef int (*EntryPoint)();
@@ -43,6 +42,9 @@ void * getStackBase()
 		- sizeof(uint64_t)			//Begin at the top of the stack
 	);
 }
+
+
+
 
 void * initializeKernelBinary()
 {
@@ -93,6 +95,7 @@ void * initializeKernelBinary()
 	newline();
 	return stackBase;
 }
+
 
 
 int main()
