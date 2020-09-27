@@ -8,6 +8,10 @@
 #define BASE_PRIORITY 0
 #define STACK_ALING(number)  number & -32 
 #define NULL 0 
+#define NOT_CREATED 0
+#define READY 1
+#define BLOCKED 2
+#define KILLED 3
 long process_count = 0; 
 int actual = 1;
 int flag = 0;
@@ -16,6 +20,7 @@ process_t procesos[MAXPROCESOS];
 int current_proc = 0;
 
 char kernelName[] = "Kernel";
+char unnamed[] = "Unnamed";
 extern void prepareProcess( int PID , uint64_t stackPointer , int argc , char * argv[] , void * main);
 extern void switchProcess( uint64_t stackPointer);
 
@@ -118,25 +123,98 @@ void launchProcess( void * process , int argc , char * argv[]  ){
     //Deberia ser como un execve esto, el void* del procesos seria onda (entryPoint);
     //Igual siento que esto tendria que usarse el conjunto el fork en userland, porque pisaria el 
     int pid = createPID();
+    procesos[pid].PID= pid;
+    if ( argv != 0 ){
+        procesos[pid].name = argv[0];
+    }
+    else
+    {
+        procesos[pid].name = unnamed;
+    }
+    procesos[pid].state = READY;
     procesos[pid].stack_start = requestStack();
-    printS("Este es el stackStart: ");
-    printHex(procesos[pid].stack_start);
-    newline();
     procesos[pid].base_pointer = getBasePointer(procesos[pid].stack_start);
-    printS("Este es el stackPointer: ");
     printHex(procesos[pid].base_pointer);
     prepareProcess(pid , procesos[pid].base_pointer , argc , argv , process);
 }
 
 
+
 uint64_t schedule (uint64_t current_rsp){
     procesos[current_proc].stack_pointer = current_rsp;
     int i = current_proc;
-    while(procesos[i].estado != 1){
+    do{
         i++;
-        if(i ==MAXPROCESOS)
+        if(i ==MAXPROCESOS){
             i = 0;
+        }
     }
+    while(procesos[i].state != NOT_CREATED && procesos[i].state != BLOCKED );
     current_proc = i;
-    return procesos[i].PID;
+    return procesos[i].stack_pointer;
+}
+
+void processKill( int pid){
+    if (  procesos[pid].state != NOT_CREATED ){
+        procesos[pid].state = KILLED;
+    }else
+    {
+        printS("No such process\n");
+    }
+    
+}
+void processBlock( int pid){
+    if (  procesos[pid].state == READY){
+        procesos[pid].state = BLOCKED;
+    }else
+    {
+        printS("No such process \n");
+    }
+    
+}
+void printState( int i){
+    printS("State: ");
+    switch (i)
+    {
+    case READY:
+        printS("READY\n");
+        break;
+    
+    case BLOCKED:
+        printS("BLOCKED\n");
+        break;
+    case KILLED:
+        printS("KILLED\n");
+        break;
+    default:
+        printS("UNDEFINED\n");
+        break;
+    }
+}
+void processDump(){
+    int i;
+    printS("Procesos Activos:\n");
+    for( i = 0 ; i < MAXPROCESOS ; i++){
+        if( procesos[i].state != NOT_CREATED ){
+        printS("proceso: ");
+        printS(procesos[i].name);
+        printS("\n PID:");
+        printDec(procesos[i].PID);
+        printS("\nPriority: ");
+        printHex(procesos[i].priority);
+        printS("\n");
+        printState(procesos[i].state);
+        printS("\nForeground: ");
+        if( procesos[i].foreground == 0){
+            printS("no");
+        }
+        else{
+            printS("yes");
+        }
+        printS("\nBP: ");
+        printHex(procesos[i].base_pointer);
+        printS("\nSP: ");
+        printHex(procesos[i].stack_pointer);
+        }
+    }
 }
