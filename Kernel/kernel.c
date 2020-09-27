@@ -26,7 +26,7 @@ static const uint64_t PageSize = 0x1000;
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
 typedef int (*EntryPoint)();
-
+char * name = "BareUwUones terminal by LTM";
 extern void saveInitRegs( uint64_t rsp);
 
 
@@ -97,11 +97,6 @@ void * initializeKernelBinary()
 	return stackBase;
 }
 
-int restart(){
-	printS("[Restarting]");
-	printHex((uint64_t)sampleCodeModuleAddress);
-	launchProcess( sampleCodeModuleAddress , 0 , 0 );
-}
 
 int main()
 {
@@ -115,7 +110,10 @@ int main()
 	//clear();
 	saveInitRegs(stackBase);
 	printS("New process\n");
-	launchProcess( sampleCodeModuleAddress , 0 , 0 );
+	char * argv[2];
+	argv[0] = name;
+	argv[1] = NULL;
+	launchProcess( sampleCodeModuleAddress , 1 , argv , 0);
 	//printHex(((EntryPoint)sampleCodeModuleAddress)()); //acá llamo a main de userland
 	newline();
 	newline();

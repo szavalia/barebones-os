@@ -14,6 +14,7 @@ GLOBAL mem
 GLOBAL callPs
 GLOBAL callKill
 GLOBAL callLaunch
+GLOBAL fork
 
 ;Acá vamos a poner los llamados al SO para interactuar con el hardware
 section .text
@@ -307,6 +308,21 @@ callLaunch:
     pop rbx 
     pop r15
     pop r13
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+fork: ; TODO: 0xCACAC0DE
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+
+    mov r12, 15
+    int 80h
+
     pop r12
 
     mov rsp, rbp

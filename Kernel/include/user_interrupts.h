@@ -1,7 +1,7 @@
 #ifndef __USER_INTERRUPTS_H__
 #define __USER_INTERRUPTS_H__
 #include <stdint.h>
-void int80_handler();
+int int80_handler();
 
 void sys_write();
 void sys_read();
@@ -17,8 +17,8 @@ void sys_free();
 void sys_mem();
 void sys_kill();
 void sys_ps();
-void sys_launch();
-
+void sys_launch(uint64_t stack_pointer);
+int sys_fork(uint64_t stack_pointer);
 extern uint_least64_t cpuTemperature();
 extern uint8_t memContent(uint8_t * i);
 

@@ -40,9 +40,11 @@
    void ps();
    void kill();
    void launchProcess();
+   extern int fork();
 
    extern void codeERROR();
    void error();
+
 #endif
 
 

@@ -4,6 +4,7 @@
 #include "process.h"
 #include "reg_t.h"
 #include "video_driver.h"
+#include "mem_manager.h"
 #define STACK_SIZE ( 32 * 1024 + 8 )
 #define MAXPROCESOS 50
 #define BASE_PRIORITY 0
@@ -22,11 +23,12 @@ int initialized = FALSE;
 void * entryPoint;
 process_t procesos[MAXPROCESOS];
 int current_proc = 0;
-
+extern int side, context;
 char kernelName[] = "Kernel";
 char unnamed[] = "Unnamed";
 extern void prepareProcess( int PID , uint64_t stackPointer , int argc , char * argv[] , void * main);
 extern void switchProcess( uint64_t stackPointer);
+extern void prepareProcessForked(uint64_t stack_pointer , uint64_t basePointerParent , uint64_t basePointerChild );
 
 void * requestStack(){
     return ltmalloc( STACK_SIZE );
@@ -36,15 +38,27 @@ void * requestStack(){
 int fork( uint64_t stack_pointer ){
     //un fork es agarrar un proceso, ponerle un pid y copiar el resto de los otros.
     int pid = createPID();
-    if ( pid = -1 ){
-        //Error
+    if ( pid == -1 ){
+        //TODO: error
     }
+    //procesos[pid].state= READY;
     procesos[pid].PID = pid;
+    printS("fork: ");
+    printDec(pid);
+    newline();
     procesos[pid].stack_start = ltmalloc(STACK_SIZE);
     memcpy(procesos[pid].stack_start, procesos[current_proc].stack_start, STACK_SIZE);
     procesos[pid].priority= procesos[current_proc].priority;
     procesos[pid].base_pointer = getBasePointer(procesos[pid].stack_start);
+
     procesos[pid].stack_pointer =  procesos[pid].base_pointer - ( procesos[current_proc].base_pointer - stack_pointer);
+
+    prepareProcessForked(procesos[pid].stack_pointer , procesos[current_proc].base_pointer , procesos[pid].base_pointer);
+
+    procesos[pid].stack_pointer-=8; // tiene un push mas
+    printS("StackPointer:");
+    printHex(procesos[pid].stack_pointer);
+
     return pid;
 }
 
@@ -86,6 +100,7 @@ void processDump(){
     printS("Procesos Activos:\n");
     for( i = 0 ; i < MAXPROCESOS ; i++){
         if( procesos[i].state != NOT_CREATED ){
+        printS("---------------------------------------------\n");
         printS("proceso: ");
         printS(procesos[i].name);
         printS("\n PID:");
@@ -94,7 +109,7 @@ void processDump(){
         printHex(procesos[i].priority);
         printS("\n");
         printState(procesos[i].state);
-        printS("\nForeground: ");
+        printS("Foreground: ");
         if( procesos[i].foreground == 0){
             printS("no");
         }
@@ -105,8 +120,10 @@ void processDump(){
         printHex(procesos[i].base_pointer);
         printS("\nSP: ");
         printHex(procesos[i].stack_pointer);
+        newline();
         }
     }
+    printS("---------------------------------------------\n");
 }
 
 uint64_t getBasePointer( void * start){
@@ -130,11 +147,11 @@ void restart_kernel(){
           procesos[i].state = NOT_CREATED;
         }
         process_count = 0;
-        launchProcess(entryPoint , 0 , 0);
+        launchProcess(entryPoint , 0 , 0 , 0);
 }
 
 //execvec
-void launchProcess( void * process , int argc , char * argv[]  ){
+void launchProcess( void * process , int argc , char * argv[] , uint64_t stack_pointer ){
 
     //Deberia ser como un execve esto, el void* del procesos seria onda (entryPoint);
     //Igual siento que esto tendria que usarse el conjunto el fork en userland, porque pisaria el 
@@ -147,6 +164,17 @@ void launchProcess( void * process , int argc , char * argv[]  ){
         entryPoint = process;
         current_proc = pid;
         initialized = 1;
+    }else if ( current_proc != 0 ){
+        procesos[current_proc].stack_pointer = stack_pointer;
+        current_proc = pid;
+         if ( side == 0){ //cambio de pantalla
+            side = 1;
+            context = 1;
+        }
+        else{
+            side = 0;
+            context = 0;
+        }
     }
     procesos[pid].PID= pid;
     if ( argc != 0 ){
@@ -182,7 +210,22 @@ uint64_t scheduler (uint64_t current_rsp){
         }
     }
     while(procesos[i].state != READY );
+    if ( i != current_proc){
+        /*newline();
+        printS("cambiando al proceso: ");
+        printDec(i);
+        newline();*/
+        if ( side == 0){
+            side = 1;
+            context = 1;
+        }
+        else{
+            side = 0;
+            context = 0;
+        }
+    }
     current_proc = i;
+    
     return procesos[i].stack_pointer;
 }
 

@@ -9,7 +9,7 @@ static unsigned long ticks = 0;
 
 void timer_handler( uint64_t stack_pointer) {
 	ticks++;
-	if(ticks %10 ==  0 ){
+	if(ticks %(18*3) ==  0 ){
 		switchProcess(scheduler(stack_pointer));
 	}
 }

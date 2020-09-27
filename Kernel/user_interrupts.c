@@ -11,7 +11,7 @@
 #include "lib.h"
 
 
-void int80_handler(){
+int int80_handler( uint64_t stack_pointer){
     int option = getR12();
     switch(option){
         case 0:
@@ -57,9 +57,13 @@ void int80_handler(){
             sys_kill();
             break;
         case 14:
-            sys_launch();
+            sys_launch(stack_pointer);
+            break;
+        case 15:
+            return sys_fork(stack_pointer);
             break;
     }
+    return 1;
 }
 
 void sys_write(){
@@ -155,14 +159,13 @@ void sys_kill(){
     processKill(pid);
 }
 
-void sys_launch(){
+void sys_launch(uint64_t stack_pointer){
     void * process = (void *) getR13();
     int argc = (int) getR15();
     char ** argv = (char**) getRBX();
-    launchProcess(process, argc, argv);
+    launchProcess(process, argc, argv, stack_pointer);
 }
 
-
-
-
-
+int sys_fork(uint64_t stack_pointer){
+    return fork(stack_pointer);
+}

@@ -6,6 +6,7 @@ extern void callFree(void * pointer);
 extern void callPs();
 extern void callKill(int pid);
 extern void callLaunch( void * process , int argc , char * argv[] );
+extern int fork();
 
 typedef struct command_t{
 	void (*func)(void);
@@ -15,10 +16,10 @@ typedef struct command_t{
 
 static char * usr_command;
 static command_t commands[NUM_COMMANDS];
+static int buffer_initialized=0;
 static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","launch","kill","ps"};
 static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "lanza un proceso\n", "mata el proceso que le indiques\n", "lista los procesos\n"};
 static void (*functions[])(void) = {help, printTime, printCPUInfo, printTemp, error, codeERROR, inforeg, printmemWrapper, mem, launchProcess, kill,ps};
-static int buffer_initialized=0;
 
 void initializeCommandVector(){
 	for(int i=0; i<NUM_COMMANDS; i++){
@@ -142,9 +143,24 @@ void bootMsg(){
 	return;
 }
 
+void * getFunction( char * name){
+	for ( int i = 0 ; i < NUM_COMMANDS; i++){
+		if(strequals(commands[i].name, name)){
+			return commands[i].func;
+		}
+	}
+}
+void bokitaPasion(){
+	while(1){
+		puts("DALE DALE DALE DALE DALE DALE DALE BOCA\n");
+		puts("DALE DALE DALE DALE DALE DALE DALE BOOO\n");
+	}
+}
+char bokita[] = "Boca Yo te amo";
 void launchProcess(){
 	show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE);
 	char *argv[20]; //FIXME: magic number, pasar a macro
+	argv[0] = bokita;
 	char * token;
 	int i;
 	do{
@@ -152,7 +168,7 @@ void launchProcess(){
 		argv[i++] = token;
 	}
 	while(token != NULL && i < 20);
-	callLaunch(usr_command, i, argv);
+	callLaunch(bokitaPasion, i, argv);
 }
 
 void help(){
@@ -193,6 +209,7 @@ void launch_terminal(){
 			initializeCommandVector();
 			buffer_initialized = TRUE;
 		}
+		while(1){
 		puts("$ ");
 		show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE); 
 		newline();
@@ -202,7 +219,7 @@ void launch_terminal(){
 				(*(commands[i].func))();
 			}
 		}
-		
+	}
 	return;
 }
 

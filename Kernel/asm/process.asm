@@ -1,6 +1,6 @@
 GLOBAL prepareProcess
 GLOBAL switchProcess
-
+GLOBAL prepareProcessForked
 
 %macro pushState 0
 	push rax
@@ -75,12 +75,40 @@ prepareProcess:
     push rdi
     push rdi
     push rdi
-	
 	mov al, 20h
 	out 20h, al
     popState
     iretq
-    
+ 
+;   rdi ---> stackPointer del nuevo proceso
+; 	rsi ---> basePointer del viejo
+;	rbx ---> basePointer del nuevo
+prepareProcessForked:
+	pushState	
+	mov r8 , rdi
+	mov rcx , 18 ; cant de regs pusheados
+.loop:
+	mov rax , [rdi+8] ;
+	mov [rdi] , rax
+	add rdi , 8
+	dec rcx 
+	cmp rcx , 0
+	jne .loop
+
+	mov QWORD[rdi] , 0 ; fork child
+	add rdi , 8 ; rip
+	add rdi , 8 ; CS
+	add rdi , 8 ; RFLAGS
+	add rdi , 8 ; rsp --> STACK DEL PADRE
+	mov rcx , [rdi] ;
+	sub rsi , rcx ; creo el OFFSET
+	sub rbx , rsi; base pointer hijo - offset, paro el rsp del hijo donde tiene que ir
+	mov [rdi] , rbx;
+
+	popState
+	ret 
+	 
+
 
 ;switchProcess( uint64_t stackPointer)
 switchProcess:
