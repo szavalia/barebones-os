@@ -172,7 +172,7 @@ void processBlock( int pid){
     }
     
 }
-void printState( int i){
+void printState( int i ){
     printS("State: ");
     switch (i)
     {
@@ -190,6 +190,10 @@ void printState( int i){
         printS("UNDEFINED\n");
         break;
     }
+}
+
+void processNice(){
+    printS("Unused");
 }
 void processDump(){
     int i;
