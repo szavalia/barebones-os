@@ -13,7 +13,7 @@ typedef struct command_t{
 	char * desc;
 } command_t;
 
-static char * usr_command;
+//static char * usr_command;
 static command_t commands[NUM_COMMANDS];
 static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","launch","kill","ps"};
 static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "lanza un proceso\n", "mata el proceso que le indiques\n", "lista los procesos\n"};
@@ -28,9 +28,11 @@ void initializeCommandVector(){
 	}
 }
 
+/*
 static void initializeCommandBuffer(){
 	usr_command = ltmalloc(COMMAND_BUFFER_SIZE); 
 }
+*/
 
 uint64_t stringToNum(char * string){
 	uint64_t result = 0;
@@ -126,13 +128,14 @@ void ps(){
 }
 
 void kill(int pid){
+	char usr_command[NUM_BUFFER_SIZE];
 	show_numeric_scanf(usr_command, NUM_BUFFER_SIZE);
 	callKill(stringToNum(usr_command));
 }
 
 void bootMsg(){
 	if(!buffer_initialized){
-			initializeCommandBuffer();
+			//initializeCommandBuffer();
 			initializeCommandVector();
 			buffer_initialized = TRUE;
 	}
@@ -143,6 +146,7 @@ void bootMsg(){
 }
 
 void launchProcess(){
+	char usr_command[NUM_BUFFER_SIZE];
 	show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE);
 	char *argv[20]; //FIXME: magic number, pasar a macro
 	char * token;
@@ -189,10 +193,12 @@ void error(){
 
 void launch_terminal(){ 
 		if(!buffer_initialized){
-			initializeCommandBuffer();
+			//initializeCommandBuffer();
+
 			initializeCommandVector();
 			buffer_initialized = TRUE;
 		}
+		char usr_command[NUM_BUFFER_SIZE];
 		puts("$ ");
 		show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE); 
 		newline();
