@@ -15,9 +15,9 @@ typedef struct process_t{
     uint64_t stack_pointer;
 }process_t;
 
-
-
 uint64_t scheduler( uint64_t stack_pointer );
 void switchProcess( uint64_t stackPointer);
 void launchProcess( void * process , int argc , char * argv[]  );
+void processKill( int pid);
+void processDump();
 #endif

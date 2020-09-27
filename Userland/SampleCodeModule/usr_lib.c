@@ -1,7 +1,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "usr_lib.h"
-extern void * callMalloc(int size, void ** location);
+extern void callMalloc(int size, void ** location);
 extern void callFree(void * pointer);
 extern void callPs();
 extern void callKill(int pid);

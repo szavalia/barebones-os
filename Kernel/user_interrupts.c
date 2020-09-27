@@ -158,7 +158,7 @@ void sys_kill(){
 void sys_launch(){
     void * process = (void *) getR13();
     int argc = (int) getR15();
-    char * argv[] = (char**) getRBX();
+    char ** argv = (char**) getRBX();
     launchProcess(process, argc, argv);
 }
 

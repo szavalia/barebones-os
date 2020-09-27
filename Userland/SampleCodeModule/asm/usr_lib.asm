@@ -289,7 +289,7 @@ callKill:
     pop rbp
     ret  
 
-callMalloc:
+callLaunch:
     push rbp
     mov rbp, rsp 
 
