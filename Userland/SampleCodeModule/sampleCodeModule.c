@@ -17,7 +17,7 @@ int main()
 		getContext(context);
 		if(*context==0){
 			launch_terminal();
-			
+			scanf(aux,1);
 		}
 		else if(*context == 1){
 			launch_calculator();

@@ -19,9 +19,9 @@ extern uint8_t endOfKernel;
 
 int side = 0, context=0;
 
-static uint64_t stackBase;
-static const uint64_t PageSize = 0x1000;
+uint64_t stackBase;
 
+static const uint64_t PageSize = 0x1000;
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
 typedef int (*EntryPoint)();
@@ -42,6 +42,9 @@ void * getStackBase()
 		- sizeof(uint64_t)			//Begin at the top of the stack
 	);
 }
+
+
+
 
 void * initializeKernelBinary()
 {
@@ -94,6 +97,7 @@ void * initializeKernelBinary()
 }
 
 
+
 int main()
 {
 	load_idt();
@@ -105,7 +109,9 @@ int main()
 	printS("  Calling the sample code module returned: ");
 	//clear();
 	saveInitRegs(stackBase);
-	printHex(((EntryPoint)sampleCodeModuleAddress)()); //acá llamo a main de userland
+	printS("New process\n");
+	launchProcess( sampleCodeModuleAddress , 0 , 0 );
+	//printHex(((EntryPoint)sampleCodeModuleAddress)()); //acá llamo a main de userland
 	newline();
 	newline();
 	printS(" Sample data module at 0x");
