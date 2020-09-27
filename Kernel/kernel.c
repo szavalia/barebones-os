@@ -10,6 +10,7 @@
 #include "video_driver.h"
 #include "time.h"
 #include "keyboard.h"
+#include "process.h"
 extern uint8_t text;
 extern uint8_t rodata;
 extern uint8_t data;
