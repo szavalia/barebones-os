@@ -7,7 +7,7 @@ extern void callFree(void * pointer);
 static char * usr_command;
 
 void initializeCommandBuffer(){
-	usr_command = ltmalloc(NUM_BUFFER_SIZE); //FIXME: definirlo por otro lado?
+	usr_command = ltmalloc(COMMAND_BUFFER_SIZE); 
 }
 
 uint64_t stringToNum(char * string){

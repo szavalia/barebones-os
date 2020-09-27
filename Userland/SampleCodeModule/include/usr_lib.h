@@ -5,6 +5,7 @@
    #include "usr_math.h"
    #define NULL (void *) 0 //FIXME: esto no debería estar incluido de algún lado?
    #define BUFFER_SIZE 1024
+   #define COMMAND_BUFFER_SIZE 20
 
 
    void getTime(int * destination);

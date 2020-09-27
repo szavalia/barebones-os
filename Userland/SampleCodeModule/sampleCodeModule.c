@@ -4,7 +4,7 @@
 #include "usr_lib.h"
 #include "calculadora.h"
 
-
+char aux[COMMAND_BUFFER_SIZE];
 
 static int context[1];
 int main() 
