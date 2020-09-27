@@ -19,7 +19,7 @@
 long process_count = 0; 
 int actual = 1;
 int initialized = FALSE;
-void * secondmain;
+void * entryPoint;
 process_t procesos[MAXPROCESOS];
 int current_proc = 0;
 
@@ -33,16 +33,19 @@ void * requestStack(){
 }
 
 //fork
-int fork( int fatherPID ){
+int fork( uint64_t stack_pointer ){
     //un fork es agarrar un proceso, ponerle un pid y copiar el resto de los otros.
     int pid = createPID();
     if ( pid = -1 ){
         //Error
     }
     procesos[pid].PID = pid;
-    //procesos[pid].registers = procesos[fatherPID].registers;
-    procesos[pid].priority= BASE_PRIORITY;
-
+    procesos[pid].stack_start = ltmalloc(STACK_SIZE);
+    memcpy(procesos[pid].stack_start, procesos[current_proc].stack_start, STACK_SIZE);
+    procesos[pid].priority= procesos[current_proc].priority;
+    procesos[pid].base_pointer = getBasePointer(procesos[pid].stack_start);
+    procesos[pid].stack_pointer =  procesos[pid].base_pointer - ( procesos[current_proc].base_pointer - stack_pointer);
+    return pid;
 }
 
 
@@ -119,6 +122,16 @@ int createPID(){
     process_count+=1;
     return process_count;
 }
+void restart_kernel(){
+      for ( int i = 0 ; i < MAXPROCESOS ; i++){
+          if (procesos[i].state != NOT_CREATED){
+              ltmfree(procesos[i].stack_start);
+          }
+          procesos[i].state = NOT_CREATED;
+        }
+        process_count = 0;
+        launchProcess(entryPoint , 0 , 0);
+}
 
 //execvec
 void launchProcess( void * process , int argc , char * argv[]  ){
@@ -127,9 +140,11 @@ void launchProcess( void * process , int argc , char * argv[]  ){
     //Igual siento que esto tendria que usarse el conjunto el fork en userland, porque pisaria el 
     int pid = createPID();
       if ( initialized == 0 ){
+
         for ( int i = 0 ; i < MAXPROCESOS ; i++){
             procesos[i].state = NOT_CREATED;
         }
+        entryPoint = process;
         current_proc = pid;
         initialized = 1;
     }
@@ -154,10 +169,16 @@ void launchProcess( void * process , int argc , char * argv[]  ){
 uint64_t scheduler (uint64_t current_rsp){
     procesos[current_proc].stack_pointer = current_rsp;
     int i = current_proc;
+    int aux = 0;
     do{
         i++;
         if(i ==MAXPROCESOS){
             i = 0;
+            aux++;
+        }
+        if ( aux >3 ){
+            printS("Todos los procesos blockeados, restart");
+            restart_kernel();
         }
     }
     while(procesos[i].state != READY );
@@ -166,13 +187,26 @@ uint64_t scheduler (uint64_t current_rsp){
 }
 
 void processKill( int pid){
-    if (  procesos[pid].state != NOT_CREATED ){
+    if (  procesos[pid].state == READY || procesos[pid].state == BLOCKED){
         procesos[pid].state = KILLED;
+        process_count--;
+        if ( process_count == 0){
+            restart_kernel();
+        }
     }else
     {
-        printS("No such process\n");
+        printS("No such process is alive\n");
     }
     
+}
+
+void exceptionKill(){
+    if ( process_count == 1 ){
+        restart_kernel();
+    }else{
+        //ltmfree(procesos[current_proc].stack_start);
+        procesos[current_proc].state = KILLED;
+    }
 }
 
 
@@ -233,3 +267,5 @@ void fillRegisters( process_t *proceso , reg_t *registers ){ //recibe un proceso
     proceso->registers.flags = registers->flags; 
 }
 */
+
+

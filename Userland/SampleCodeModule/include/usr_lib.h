@@ -5,7 +5,8 @@
    #include "usr_math.h"
    #define NULL (void *) 0 //FIXME: esto no debería estar incluido de algún lado?
    #define BUFFER_SIZE 1024
-   #define COMMAND_BUFFER_SIZE 20
+   #define COMMAND_BUFFER_SIZE 50
+   #define NUM_COMMANDS 12
    #define TRUE 1
    #define FALSE 0
 
@@ -17,7 +18,7 @@
    void inforeg();
 
    void getMem(uint8_t * dir, uint8_t* bytes);
-   void printmem(char * hexDir);
+   void printmemWrapper();
 
    void getCPUInfo(char * vendor, char * brand);
    void printCPUInfo();
@@ -37,10 +38,11 @@
    extern void mem();
 
    void ps();
-   void kill(int pid);
-   void launchProcess( void * process , int argc , char * argv[]);
+   void kill();
+   void launchProcess();
 
    extern void codeERROR();
+   void error();
 #endif
 
 

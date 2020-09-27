@@ -97,7 +97,11 @@ void * initializeKernelBinary()
 	return stackBase;
 }
 
-
+int restart(){
+	printS("[Restarting]");
+	printHex((uint64_t)sampleCodeModuleAddress);
+	launchProcess( sampleCodeModuleAddress , 0 , 0 );
+}
 
 int main()
 {

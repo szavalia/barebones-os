@@ -95,15 +95,7 @@ SECTION .text
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
 
-	mov rsp, [initRegs]
-	mov rbp, [initRegs+8]
-	mov rbx, [initRegs+16]
-	mov r12, [initRegs+24]
-	mov r13, [initRegs+32]
-	mov r15, [initRegs+40]
-	jmp main
-
-	
+	jmp _hlt ; espero al timer tick	
 
 %endmacro
 
@@ -216,7 +208,6 @@ saveInitRegs:
 	mov [initRegs+32], r13
 	mov [initRegs+48], r15
 	ret
-;FIXME: no le falta un ret?
 
 SECTION .bss
 	aux resq 1

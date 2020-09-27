@@ -9,7 +9,7 @@
 
 static void int_20( uint64_t stack_pointer);
 static void int_21();
-static void int_80();
+static void int_80(uint64_t stack_pointer);
 
 void irqDispatcher(uint64_t irq , uint64_t stack_pointer) {
 	switch (irq) {
@@ -20,7 +20,7 @@ void irqDispatcher(uint64_t irq , uint64_t stack_pointer) {
 			int_21(); //Teclado
 			break;
 		case 60:
-			int_80(); //Int_80()
+			int_80(stack_pointer); //Int_80()
 	}
 	return;
 }
@@ -33,8 +33,8 @@ void int_21(){
 	keyboard_handler();
 }
 
-void int_80(){
-	int80_handler();
+void int_80(uint64_t stack_pointer){
+	int80_handler(stack_pointer);
 }
 
 

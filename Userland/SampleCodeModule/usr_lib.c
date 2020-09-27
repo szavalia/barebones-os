@@ -5,9 +5,28 @@ extern void callMalloc(int size, void ** location);
 extern void callFree(void * pointer);
 extern void callPs();
 extern void callKill(int pid);
+extern void callLaunch( void * process , int argc , char * argv[] );
+
+typedef struct command_t{
+	void (*func)(void);
+	char * name;
+	char * desc;
+} command_t;
 
 static char * usr_command;
+static command_t commands[NUM_COMMANDS];
+static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","launch","kill","ps"};
+static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "lanza un proceso\n", "mata el proceso que le indiques\n", "lista los procesos\n"};
+static void (*functions[])(void) = {help, printTime, printCPUInfo, printTemp, error, codeERROR, inforeg, printmemWrapper, mem, launchProcess, kill,ps};
 static int buffer_initialized=0;
+
+void initializeCommandVector(){
+	for(int i=0; i<NUM_COMMANDS; i++){
+		commands[i].name = names[i];
+		commands[i].desc = descriptions[i];
+		commands[i].func = functions[i];
+	}
+}
 
 static void initializeCommandBuffer(){
 	usr_command = ltmalloc(COMMAND_BUFFER_SIZE); 
@@ -45,6 +64,7 @@ void inforeg(){
 		putChar('\n');
 	}
 }
+
 //toma una dirección de memoria en hexa y devuelve los proximos 32 bytes
 void printmem(char * hexDir){ 
 	int dir = hexadecimalToDecimal( hexDir); 
@@ -58,6 +78,12 @@ void printmem(char * hexDir){
 		putChar('\n');
 	}
 
+}
+void printmemWrapper(){
+	char memory[NUM_BUFFER_SIZE] = { 0 };
+	puts("Inserte direccion de memoria (en hexa):\n");
+	show_processed_scanf(memory, NUM_BUFFER_SIZE); 
+	printmem(memory);	
 }
 
 void * ltmalloc(int size){
@@ -100,32 +126,43 @@ void ps(){
 }
 
 void kill(int pid){
-	callKill(pid);
+	show_numeric_scanf(usr_command, NUM_BUFFER_SIZE);
+	callKill(stringToNum(usr_command));
 }
 
 void bootMsg(){
+	if(!buffer_initialized){
+			initializeCommandBuffer();
+			initializeCommandVector();
+			buffer_initialized = TRUE;
+	}
 	newline();
 	puts("Estos son los comandos disponibles:\n");
 	help();
 	return;
 }
 
-void launchProcess( void * process , int argc , char * argv[]){
-	callLaunch(process, argc, argv);
+void launchProcess(){
+	show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE);
+	char *argv[20]; //FIXME: magic number, pasar a macro
+	char * token;
+	int i;
+	do{
+		token = strtok(usr_command, ' ');
+		argv[i++] = token;
+	}
+	while(token != NULL && i < 20);
+	callLaunch(usr_command, i, argv);
 }
 
 void help(){
-	puts("    - help: te muestra opciones de ayuda\n");
-	puts("    - inforeg: imprime registros, guardar con Alt+R\n");
-	puts("    - time: muestra la hora del sistema en formato HH:MM:SS\n");
-	puts("    - printmem: printea 32 bytes a partir de una direccion\n");
-	puts("    - cpuinfo: muestra la marca y modelo de la cpu\n");
-	puts("    - exit: cierra el programa\n");
-	puts("    - cputemp: muestra la temperatura del procesador\n");
-	puts("    - mem: imprime memoria dinamicamente asignada\n");
-	puts("    - div: excepcion de division por 0\n");
-	puts("    - op: excepcion de operacion invalida\n");
-	
+
+	for(int i=0; i < NUM_COMMANDS ; i++){
+		puts("\t- ");
+		puts(commands[i].name);
+		puts(": ");
+		puts(commands[i].desc);
+	}
 	return;
 }
 
@@ -144,57 +181,28 @@ char * strcopy(char *destination, char *source)
     return start;
 }
 
-int error(){
-	int terror = 2/0;
-	return -1;
+void error(){
+	int aux = 2/0;
 }
+
+
 
 void launch_terminal(){ 
 		if(!buffer_initialized){
 			initializeCommandBuffer();
+			initializeCommandVector();
 			buffer_initialized = TRUE;
 		}
-		char memory[NUM_BUFFER_SIZE] = { 0 };
 		puts("$ ");
-		show_processed_scanf(usr_command, 100); //no hay comandos más largos que 50 caracteres
+		show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE); 
 		newline();
-		if(strequals(usr_command, "help")){
-			help();
+
+		for(int i=0; i<NUM_COMMANDS ; i++){
+			if(strequals(usr_command, commands[i].name)){
+				(*(commands[i].func))();
+			}
 		}
-		else if(strequals(usr_command, "time")){
-			printTime();
-		}
-		else if(strequals(usr_command, "inforeg")){
-			inforeg();
-		}
-		else if(strequals(usr_command, "printmem")){
-			puts("Inserte direccion de memoria (en hexa):\n");
-			show_processed_scanf(memory, NUM_BUFFER_SIZE); 
-			printmem(memory);	
-		}
-		else if(strequals(usr_command, "cpuinfo")){
-			printCPUInfo();
-		}
-		else if(strequals(usr_command, "div")){
-			error();
-		}
-		else if(strequals(usr_command, "exit")){
-			return;
-		}
-		else if(strequals(usr_command, "cputemp")){
-			printTemp();
-		}
-		else if(strequals(usr_command, "op")){
-			codeERROR();
-		}
-		else if(strequals(usr_command, "mem")){
-			char * aux = ltmalloc(6);
-			mem();
-		}
-		else {
-			puts("Command not recognized\n");
-		}
-		ltmfree(usr_command);
+		
 	return;
 }
 

@@ -6,6 +6,10 @@ static char * charBuffer;
 static int buffer_initialized=0; 
 extern void codeERROR();
 
+static char * strtokPointer = NULL;
+static int strtokPosition = 0;
+static int strLength = 0 ;
+
 static void initializeCharBuffer(){
 	charBuffer=ltmalloc(NUM_BUFFER_SIZE);
 }
@@ -181,4 +185,47 @@ int strequals(char * s1, char * s2){
 		}
 	}
 	return 1;
+}
+
+char * strtok( char * string , char key ){ // UNA LOCURA, funciona como el stktok de verdad(algo asi)
+        //aclaracion, si le paso NULL a string, no va a hacer lo de key
+        //transforma el string a un "STREAM" o algo por el estilo, se modifica el string original
+        //el strtok guarda de froma estatica el ultimo string que se le ingreso y sabe como iterar sobre sus tokens
+        int i = 0;
+        int lastPos;
+        //strtokPointer y strtokPosition y strLength estan declaradas de forma estatica fuera del codigo
+        if ( string != NULL ){
+                //printf("cargando un pointer\n");
+                strtokPointer = string;
+                strtokPosition = 0;
+                while ( strtokPointer[i] != 0 ){
+                        if( strtokPointer[i] == key ){
+                                strtokPointer[i] = '\0'; // primero reemplazo todos los 'key' con eof
+                        }
+                        i++;
+                }
+               // printf("el length en el strktok es %d\n", i );
+                strLength = i; //me guardo el strlen 
+        }
+        if ( strtokPointer == NULL ){ // si no entro al if de arriba y no tenia nada da un NULL
+                //printf("Debes cargar un pointer\n");
+                return NULL;
+        }
+
+        do{ // abajo explico porque esto esta en un do while
+            if ( ( i = strtokPosition) > strLength){ // seteo un index en la posicion que quedo mirando , si estoy mirando algo fuera del "STREAM" 
+               // printf("ya llegue al final\n");
+                strLength = 0; 
+                strtokPosition =0; // este es el index actual sobre mi string
+                strtokPointer= NULL; //llegue al final de mi string
+                return NULL;
+            }
+            while( strtokPointer[i++] != 0 ){}
+                lastPos = strtokPosition; //en donde empieza
+                strtokPosition = i; // en donde el proximo
+              //  printf("La position donde arranca el token es %d\n", lastPos);
+        }
+        while( *(strtokPointer+lastPos) == 0 ); //ahora me tengo que fijar, si el token que le voy a devolver seria string[] = "\0" , que seria un string vacion , no uno nulo, que no me sirve
+        
+        return strtokPointer+lastPos;       
 }
