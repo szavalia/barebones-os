@@ -2,25 +2,24 @@
 #include "usr_lib.h"
 #define BUFFER_SIZE 1024
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
-static char * charBuffer;
-static int buffer_initialized=0; 
+//static char * charBuffer;
+//static int buffer_initialized=0; 
 extern void codeERROR();
 
 static char * strtokPointer = NULL;
 static int strtokPosition = 0;
 static int strLength = 0 ;
 
+/*
 static void initializeCharBuffer(){
 	charBuffer=ltmalloc(NUM_BUFFER_SIZE);
 }
+*/
 
 //FIXME: scanf con código repetido
 void scanf(char * buffer, int size){
     int  current = 0;
-	if(!buffer_initialized){
-		initializeCharBuffer();
-		buffer_initialized=TRUE;
-	}
+	char * charBuffer = ltmalloc(NUM_BUFFER_SIZE);
     *charBuffer = 0;
     while( *charBuffer != '\n'){
         scanChar(charBuffer);
@@ -29,15 +28,13 @@ void scanf(char * buffer, int size){
         }        
     }
 	buffer[current]='\0';
+	ltmfree(charBuffer);
 	return;
 }
 
 void show_scanf(char * buffer, int size){
     int  current = 0, deletes=0;
-	if(!buffer_initialized){
-		initializeCharBuffer();
-		buffer_initialized=TRUE;
-	}
+	char * charBuffer = ltmalloc(NUM_BUFFER_SIZE);
 	*charBuffer = 0;
     while( *charBuffer != '\n' ){
         scanChar(charBuffer);
@@ -52,15 +49,13 @@ void show_scanf(char * buffer, int size){
         }        
     }
 	buffer[current]='\0';
+	ltmfree(charBuffer);
 	return;
 }
 
 void show_processed_scanf(char * buffer, int size){
 	int  current = 0;
-	if(!buffer_initialized){
-		initializeCharBuffer();
-		buffer_initialized=TRUE;
-	}
+	char * charBuffer = ltmalloc(NUM_BUFFER_SIZE);
 	*charBuffer = 0;
     while( *charBuffer != '\n' ){
         scanChar(charBuffer);
@@ -84,15 +79,13 @@ void show_processed_scanf(char * buffer, int size){
         }        
     }
 	buffer[current]='\0';
+	ltmfree(charBuffer);
 	return;
 }
 
 void scanf_for_calculator(char * buffer, int size){
 	int  current = 0;
-	if(!buffer_initialized){
-		initializeCharBuffer();
-		buffer_initialized=TRUE;
-	}
+	char * charBuffer = ltmalloc(NUM_BUFFER_SIZE);
 	*charBuffer = 0;
     while( *charBuffer != '=' ){
         scanChar(charBuffer);
@@ -116,15 +109,13 @@ void scanf_for_calculator(char * buffer, int size){
         }        
     }
 	buffer[current-1]='\0';
+	ltmfree(charBuffer);
 	return;
 }
 
 void show_numeric_scanf(char * buffer, int size){
 	int  current = 0;
-	if(!buffer_initialized){
-		initializeCharBuffer();
-		buffer_initialized=TRUE;
-	}
+	char * charBuffer = ltmalloc(NUM_BUFFER_SIZE);
 	*charBuffer = 0;
 	
     while( *charBuffer != '\n' ){
@@ -143,6 +134,7 @@ void show_numeric_scanf(char * buffer, int size){
         }        
     }
 	buffer[current]='\0';
+	ltmfree(charBuffer);
 	return;
 }
 
@@ -153,12 +145,10 @@ void puts(char * string){
 }
 
 void putChar(char c){
-	if(!buffer_initialized){
-		initializeCharBuffer();
-		buffer_initialized=TRUE;
-	}
+	char * charBuffer = ltmalloc(NUM_BUFFER_SIZE);
     *charBuffer = c;
     put(charBuffer , 1);
+	ltmfree(charBuffer);
 	return;
 }
 
