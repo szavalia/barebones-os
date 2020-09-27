@@ -4,7 +4,6 @@
 #include "usr_lib.h"
 #include "calculadora.h"
 
-char aux[COMMAND_BUFFER_SIZE];
 
 static int context[1];
 int main() 
@@ -16,7 +15,6 @@ int main()
 		getContext(context);
 		if(*context==0){
 			launch_terminal();
-			scanf(aux,1);
 		}
 		else if(*context == 1){
 			launch_calculator();

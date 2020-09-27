@@ -48,8 +48,8 @@ prepareProcess:
     mov rsp , rsi
     
     ;push exit_fnc
-    mov rax, 8 ; align
-	push rax
+    ;mov rax, 8 ; align
+	;push rax
     mov rax, 0x0 ; SS
     push rax      
     push rsi ; rsp

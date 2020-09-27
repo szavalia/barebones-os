@@ -105,8 +105,7 @@ void kill(int pid){
 
 void bootMsg(){
 	newline();
-	char msg[] = "Estos son los comandos disponibles:\n";
-	puts(msg);
+	puts("Estos son los comandos disponibles:\n");
 	help();
 	return;
 }
@@ -124,8 +123,8 @@ void help(){
 	puts("    - exit: cierra el programa\n");
 	puts("    - cputemp: muestra la temperatura del procesador\n");
 	puts("    - mem: imprime memoria dinamicamente asignada\n");
-	puts("    - diverror: excepcion de division por 0\n");
-	puts("    - invalid opcode: excepcion de operacion invalida\n");
+	puts("    - div: excepcion de division por 0\n");
+	puts("    - op: excepcion de operacion invalida\n");
 	
 	return;
 }
@@ -176,7 +175,7 @@ void launch_terminal(){
 		else if(strequals(usr_command, "cpuinfo")){
 			printCPUInfo();
 		}
-		else if(strequals(usr_command, "diverror")){
+		else if(strequals(usr_command, "div")){
 			error();
 		}
 		else if(strequals(usr_command, "exit")){
@@ -185,7 +184,7 @@ void launch_terminal(){
 		else if(strequals(usr_command, "cputemp")){
 			printTemp();
 		}
-		else if(strequals(usr_command, "invalid opcode")){
+		else if(strequals(usr_command, "op")){
 			codeERROR();
 		}
 		else if(strequals(usr_command, "mem")){
