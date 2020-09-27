@@ -21,5 +21,5 @@ void launchProcess( void * process , int argc , char * argv[]  );
 void processKill( int pid);
 void processDump();
 void exceptionKill();
-
+uint64_t getBasePointer( void * start);
 #endif
