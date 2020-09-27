@@ -48,7 +48,8 @@ prepareProcess:
     mov rsp , rsi
     
     ;push exit_fnc
-    
+    mov rax, 8 ; align
+	push rax
     mov rax, 0x0 ; SS
     push rax      
     push rsi ; rsp
@@ -56,7 +57,7 @@ prepareProcess:
     push rax
     mov rax, 0x8 ; CS
     push rax 
-    push r8 ;main del proceso
+    push r8 ; main del proceso
     
     ;push de los registros 
     push rdi ;rax
@@ -74,6 +75,7 @@ prepareProcess:
     push rdi
     push rdi
     push rdi
+	
 	mov al, 20h
 	out 20h, al
     popState
@@ -82,6 +84,7 @@ prepareProcess:
 
 ;switchProcess( uint64_t stackPointer)
 switchProcess:
+
 	mov rsp , rdi
 	mov al, 20h
 	out 20h, al
