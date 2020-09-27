@@ -2,16 +2,21 @@
 #include "usr_lib.h"
 #define BUFFER_SIZE 1024
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
-static char * charBuffer = NULL; 
+static char * charBuffer;
+static int buffer_initialized=0; 
 extern void codeERROR();
 
-void initializeCharBuffer(){
+static void initializeCharBuffer(){
 	charBuffer=ltmalloc(NUM_BUFFER_SIZE);
 }
 
 //FIXME: scanf con código repetido
 void scanf(char * buffer, int size){
     int  current = 0;
+	if(!buffer_initialized){
+		initializeCharBuffer();
+		buffer_initialized=TRUE;
+	}
     *charBuffer = 0;
     while( *charBuffer != '\n'){
         scanChar(charBuffer);
@@ -25,6 +30,10 @@ void scanf(char * buffer, int size){
 
 void show_scanf(char * buffer, int size){
     int  current = 0, deletes=0;
+	if(!buffer_initialized){
+		initializeCharBuffer();
+		buffer_initialized=TRUE;
+	}
 	*charBuffer = 0;
     while( *charBuffer != '\n' ){
         scanChar(charBuffer);
@@ -44,6 +53,10 @@ void show_scanf(char * buffer, int size){
 
 void show_processed_scanf(char * buffer, int size){
 	int  current = 0;
+	if(!buffer_initialized){
+		initializeCharBuffer();
+		buffer_initialized=TRUE;
+	}
 	*charBuffer = 0;
     while( *charBuffer != '\n' ){
         scanChar(charBuffer);
@@ -72,6 +85,10 @@ void show_processed_scanf(char * buffer, int size){
 
 void scanf_for_calculator(char * buffer, int size){
 	int  current = 0;
+	if(!buffer_initialized){
+		initializeCharBuffer();
+		buffer_initialized=TRUE;
+	}
 	*charBuffer = 0;
     while( *charBuffer != '=' ){
         scanChar(charBuffer);
@@ -100,6 +117,10 @@ void scanf_for_calculator(char * buffer, int size){
 
 void show_numeric_scanf(char * buffer, int size){
 	int  current = 0;
+	if(!buffer_initialized){
+		initializeCharBuffer();
+		buffer_initialized=TRUE;
+	}
 	*charBuffer = 0;
 	
     while( *charBuffer != '\n' ){
@@ -128,6 +149,10 @@ void puts(char * string){
 }
 
 void putChar(char c){
+	if(!buffer_initialized){
+		initializeCharBuffer();
+		buffer_initialized=TRUE;
+	}
     *charBuffer = c;
     put(charBuffer , 1);
 	return;

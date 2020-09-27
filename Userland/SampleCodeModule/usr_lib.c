@@ -5,8 +5,9 @@ extern void * callMalloc(int size, void ** location);
 extern void callFree(void * pointer);
 
 static char * usr_command;
+static int buffer_initialized=0;
 
-void initializeCommandBuffer(){
+static void initializeCommandBuffer(){
 	usr_command = ltmalloc(COMMAND_BUFFER_SIZE); 
 }
 
@@ -136,6 +137,10 @@ int error(){
 }
 
 void launch_terminal(){ 
+		if(!buffer_initialized){
+			initializeCommandBuffer();
+			buffer_initialized = TRUE;
+		}
 		char memory[NUM_BUFFER_SIZE] = { 0 };
 		puts("$ ");
 		show_processed_scanf(usr_command, 100); //no hay comandos más largos que 50 caracteres

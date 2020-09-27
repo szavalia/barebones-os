@@ -10,8 +10,7 @@ static int context[1];
 int main() 
 {
 	bootMsg();
-	initializeCharBuffer();
-	initializeCommandBuffer();
+
 	do{
 	
 		getContext(context);

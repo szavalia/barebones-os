@@ -13,5 +13,4 @@
     void newline();
     int strlen(char * string);
     int strequals(char * s1, char * s2);
-    void initializeCharBuffer();
 #endif
