@@ -13,6 +13,8 @@ int actual = 1;
 int flag = 0;
 void * secondmain;
 process_t procesos[MAXPROCESOS];
+int current_proc = 0;
+
 char kernelName[] = "Kernel";
 extern void prepareProcess( int PID , uint64_t stackPointer , int argc , char * argv[] , void * main);
 extern void switchProcess( uint64_t stackPointer);
@@ -58,7 +60,6 @@ uint64_t getBasePointer( void * start){
     return stack;
 }
 
-
 int createPID(){
     if ( process_count >=250 ){
         return -1;
@@ -95,10 +96,8 @@ void fillRegisters( process_t *proceso , reg_t *registers ){ //recibe un proceso
     proceso->registers.rsp = registers->rsp;
     proceso->registers.rip = registers->rip;
     proceso->registers.cs = registers->cs;
-    proceso->registers.flags = registers->flags;
-    
+    proceso->registers.flags = registers->flags; 
 }
-
 */
 
 //fork
@@ -127,4 +126,17 @@ void launchProcess( void * process , int argc , char * argv[]  ){
     printS("Este es el stackPointer: ");
     printHex(procesos[pid].base_pointer);
     prepareProcess(pid , procesos[pid].base_pointer , argc , argv , process);
+}
+
+
+uint64_t schedule (uint64_t current_rsp){
+    procesos[current_proc].stack_pointer = current_rsp;
+    int i = current_proc;
+    while(procesos[i].estado != 1){
+        i++;
+        if(i ==MAXPROCESOS)
+            i = 0;
+    }
+    current_proc = i;
+    return procesos[i].PID;
 }
