@@ -4,7 +4,7 @@
 #include "process.h"
 #include "reg_t.h"
 #include "video_driver.h"
-#define MAXPROCESOS 250
+#define MAXPROCESOS 50
 #define BASE_PRIORITY 0
 #define STACK_ALING(number)  number & -32 
 #define NULL 0 
@@ -12,7 +12,7 @@ long process_count = 0;
 int actual = 1;
 int flag = 0;
 void * secondmain;
-process_t procesos[MAXPROCESOS];
+process_t procesos[MAXPROCESOS]; //en bss, es todo cero.
 char kernelName[] = "Kernel";
 extern void prepareProcess( int PID , uint64_t stackPointer , int argc , char * argv[] , void * main);
 extern void switchProcess( uint64_t stackPointer);
