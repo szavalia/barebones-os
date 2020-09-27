@@ -26,7 +26,7 @@ void int80_handler(){
             sys_time();
             break;
         case 4:
-            sys_mem();
+            sys_getMem();
             break;
         case 5:
             sys_cpuinfo();
@@ -45,6 +45,9 @@ void int80_handler(){
             break;
         case 10:
             sys_free();
+            break;
+        case 11:
+            sys_mem();
             break;
     }
 }
@@ -78,7 +81,7 @@ void sys_time(){
     }
 }
 
-void sys_mem(){
+void sys_getMem(){
     uint8_t * destination = (uint8_t *) getR13();
     uint8_t * start = (uint8_t *) getR15();
     for(int i = 0; i<32; i++){ //TODO: verificar este cambio a uint8_t
@@ -126,8 +129,11 @@ void sys_malloc(){
 
 void sys_free(){
     void * pointer = (void *) getR13();
-    printS("Entrando a free\n");
     ltmfree(pointer);
+}
+
+void sys_mem(){
+    printMemList();
 }
 
 

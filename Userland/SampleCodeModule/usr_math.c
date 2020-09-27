@@ -1,13 +1,51 @@
 #include "usr_math.h"
-#include "usr_strings.h"
-#define BUFFER_SIZE 1024
+#define NUM_BUFFER_SIZE 20
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
-static char bufferNum[BUFFER_SIZE] = { '\0' };
 extern void codeERROR();
+
+// Function to convert hexadecimal to decimal, extraida de https://www.geeksforgeeks.org/program-for-hexadecimal-to-decimal/ 
+int hexadecimalToDecimal(char hexVal[]) 
+{    
+    int len = strlen(hexVal); 
+      
+    // Initializing base value to 1, i.e 16^0 
+    int base = 1; 
+      
+    int dec_val = 0; 
+      
+    // Extracting characters as digits from last character 
+    for (int i=len-1; i>=0; i--) 
+    {    
+        // if character lies in '0'-'9', converting  
+        // it to integral 0-9 by subtracting 48 from 
+        // ASCII value. 
+        if (hexVal[i]>='0' && hexVal[i]<='9') 
+        { 
+            dec_val += (hexVal[i] - 48)*base; 
+                  
+            // incrementing base by power 
+            base = base * 16; 
+        } 
+  
+        // if character lies in 'A'-'F' , converting  
+        // it to integral 10 - 15 by subtracting 55  
+        // from ASCII value 
+        else if (hexVal[i]>='A' && hexVal[i]<='F') 
+        { 
+            dec_val += (hexVal[i] - 55)*base; 
+          
+            // incrementing base by power 
+            base = base*16; 
+        } 
+    } 
+      
+    return dec_val; 
+} 
 
 void printBase(uint64_t value, uint32_t base)
 {
 	int digits;
+	char bufferNum[NUM_BUFFER_SIZE];
     digits = uintToBase(value, bufferNum, base);
 	put(bufferNum, digits);
 	return;
@@ -39,6 +77,7 @@ void printBin(uint64_t value){
 }
 
 void printReg(uint64_t value){
+	char bufferNum[NUM_BUFFER_SIZE];
 	int  digits = uintToBase(value,bufferNum,16);
 	digits = 16-digits;
 	while((digits--) > 0){

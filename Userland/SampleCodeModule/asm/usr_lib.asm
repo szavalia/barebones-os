@@ -10,6 +10,7 @@ GLOBAL callMalloc
 GLOBAL changeContext
 GLOBAL callFree
 GLOBAL codeERROR
+GLOBAL mem
 
 ;Acá vamos a poner los llamados al SO para interactuar con el hardware
 section .text
@@ -236,3 +237,18 @@ callFree:
     mov rsp, rbp
     pop rbp
     ret 
+
+mem:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+
+    mov r12, 11
+    int 80h
+
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret

@@ -1,13 +1,14 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "usr_lib.h"
-#include "usr_strings.h"
-#define BUFFER_SIZE 1024
-#define NULL (void *) 0 //FIXME: esto no debería estar incluido de algún lado?
-//static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
-static char usr_command[BUFFER_SIZE] = { 0 }; 
-extern void codeERROR();
 extern void * callMalloc(int size, void ** location);
+extern void callFree(void * pointer);
+
+static char * usr_command;
+
+void initializeCommandBuffer(){
+	usr_command = ltmalloc(NUM_BUFFER_SIZE); //FIXME: definirlo por otro lado?
+}
 
 uint64_t stringToNum(char * string){
 	uint64_t result = 0;
@@ -41,10 +42,11 @@ void inforeg(){
 		putChar('\n');
 	}
 }
-
-void printmem(uint8_t * dir){ 
+//toma una dirección de memoria en hexa y devuelve los proximos 32 bytes
+void printmem(char * hexDir){ 
+	int dir = hexadecimalToDecimal( hexDir); 
 	uint8_t bytes[32];
-	getMem(dir, bytes);
+	getMem((uint8_t *)dir, bytes);
 	putChar('\n');
 	for(int i = 0; i < 32; i++){
 		printHex((long) dir+i );
@@ -106,8 +108,10 @@ void help(){
 	puts("    - cpuinfo: muestra la marca y modelo de la cpu\n");
 	puts("    - exit: cierra el programa\n");
 	puts("    - cputemp: muestra la temperatura del procesador\n");
+	puts("    - mem: imprime memoria dinamicamente asignada\n");
 	puts("    - diverror: excepcion de division por 0\n");
 	puts("    - invalid opcode: excepcion de operacion invalida\n");
+	
 	return;
 }
 
@@ -132,7 +136,7 @@ int error(){
 }
 
 void launch_terminal(){ 
-		char memory[20] = { 0 };
+		char memory[NUM_BUFFER_SIZE] = { 0 };
 		puts("$ ");
 		show_processed_scanf(usr_command, 100); //no hay comandos más largos que 50 caracteres
 		newline();
@@ -146,10 +150,9 @@ void launch_terminal(){
 			inforeg();
 		}
 		else if(strequals(usr_command, "printmem")){
-			puts("Inserte direccion de memoria (en decimal):\n");
-			show_numeric_scanf(memory, 20); 
-			uint64_t direc = stringToNum(memory);
-			printmem((uint8_t *)direc);	
+			puts("Inserte direccion de memoria (en hexa):\n");
+			show_processed_scanf(memory, NUM_BUFFER_SIZE); 
+			printmem(memory);	
 		}
 		else if(strequals(usr_command, "cpuinfo")){
 			printCPUInfo();
@@ -162,13 +165,18 @@ void launch_terminal(){
 		}
 		else if(strequals(usr_command, "cputemp")){
 			printTemp();
-		}else if(strequals(usr_command, "invalid opcode")){
+		}
+		else if(strequals(usr_command, "invalid opcode")){
 			codeERROR();
+		}
+		else if(strequals(usr_command, "mem")){
+			char * aux = ltmalloc(6);
+			mem();
 		}
 		else {
 			puts("Command not recognized\n");
 		}
-		
+		ltmfree(usr_command);
 	return;
 }
 

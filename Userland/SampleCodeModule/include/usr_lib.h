@@ -3,6 +3,9 @@
    #include <stdint.h>
    #include "usr_strings.h"
    #include "usr_math.h"
+   #define NULL (void *) 0 //FIXME: esto no debería estar incluido de algún lado?
+   #define BUFFER_SIZE 1024
+
 
    void getTime(int * destination);
    void printTime();
@@ -12,7 +15,7 @@
    void inforeg();
 
    void getMem(uint8_t * dir, uint8_t* bytes);
-   void printmem(uint8_t * dir);
+   void printmem(char * hexDir);
 
    void getCPUInfo(char * vendor, char * brand);
    void printCPUInfo();
@@ -29,7 +32,10 @@
 
    void * ltmalloc(int size);
    void ltmfree(void * pointer);
-   void debug(); //FIXME: sacar esto
+   extern void mem();
+
+   extern void codeERROR();
+   void initializeCommandBuffer();
 #endif
 
 
