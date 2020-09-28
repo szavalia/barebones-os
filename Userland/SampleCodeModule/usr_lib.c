@@ -1,6 +1,9 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "usr_lib.h"
+
+#define NUM_COMMANDS 13
+
 extern void callMalloc(int size, void ** location);
 extern void callFree(void * pointer);
 extern void callPs();
@@ -17,9 +20,9 @@ typedef struct command_t{
 //static char * usr_command;
 static command_t commands[NUM_COMMANDS];
 static int buffer_initialized=0;
-static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","launch","kill","ps"};
-static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "lanza un proceso\n", "mata el proceso que le indiques\n", "lista los procesos\n"};
-static void (*functions[])(void) = {help, printTime, printCPUInfo, printTemp, error, codeERROR, inforeg, printmemWrapper, mem, launchProcess, kill,ps};
+static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","launch","kill","ps","sh"};
+static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "lanza un proceso\n", "mata el proceso que le indiques\n", "lista los procesos\n", "lanza la terminal\n"};
+static void (*functions[])(void) = {help, printTime, printCPUInfo, printTemp, error, codeERROR, inforeg, printmemWrapper, mem, launchProcess, kill,ps,sh};
 
 void initializeCommandVector(){
 	for(int i=0; i<NUM_COMMANDS; i++){
@@ -28,12 +31,6 @@ void initializeCommandVector(){
 		commands[i].func = functions[i];
 	}
 }
-
-/*
-static void initializeCommandBuffer(){
-	usr_command = ltmalloc(COMMAND_BUFFER_SIZE); 
-}
-*/
 
 uint64_t stringToNum(char * string){
 	uint64_t result = 0;
@@ -147,32 +144,36 @@ void bootMsg(){
 }
 
 void * getFunction( char * name){
+	puts(name);
 	for ( int i = 0 ; i < NUM_COMMANDS; i++){
 		if(strequals(commands[i].name, name)){
 			return commands[i].func;
 		}
 	}
+	return NULL;
 }
-void bokitaPasion(){
-	while(1){
-		puts("DALE DALE DALE DALE DALE DALE DALE BOCA\n");
-		puts("DALE DALE DALE DALE DALE DALE DALE BOOO\n");
-	}
-}
-char bokita[] = "Boca Yo te amo";
+
 void launchProcess(){
 	char usr_command[NUM_BUFFER_SIZE];
 	show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE);
-	char *argv[20]; //FIXME: magic number, pasar a macro
-	argv[0] = bokita;
+	char *argv[MAX_ARGS];
 	char * token;
-	int i;
-	do{
-		token = strtok(usr_command, ' ');
+	*argv = strtok(usr_command, ' ');
+	int i=1;
+	do{	
+		token = strtok(NULL, ' ');
 		argv[i++] = token;
 	}
-	while(token != NULL && i < 20);
-	callLaunch(bokitaPasion, i, argv);
+	while(token != NULL && i < MAX_ARGS);
+	puts("ARGS\n");
+	void * funct = getFunction(*argv);
+	if(funct != NULL){
+		callLaunch(funct, i, argv);
+	}
+	else{
+		puts("\nNo existe tal funcion\n");
+	}
+	
 }
 
 void help(){
@@ -207,14 +208,12 @@ void error(){
 
 
 
-void launch_terminal(){ 
+void sh(){ 
 		if(!buffer_initialized){
-			//initializeCommandBuffer();
-
 			initializeCommandVector();
 			buffer_initialized = TRUE;
 		}
-		char usr_command[NUM_BUFFER_SIZE];
+		char usr_command[COMMAND_BUFFER_SIZE];
 		while(1){
 		puts("$ ");
 		show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE); 

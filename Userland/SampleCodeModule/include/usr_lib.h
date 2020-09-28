@@ -6,7 +6,7 @@
    #define NULL (void *) 0 //FIXME: esto no debería estar incluido de algún lado?
    #define BUFFER_SIZE 1024
    #define COMMAND_BUFFER_SIZE 50
-   #define NUM_COMMANDS 12
+   #define MAX_ARGS 5
    #define TRUE 1
    #define FALSE 0
 
@@ -28,7 +28,7 @@
 
    void bootMsg(); //prompt al bootear
    void help();
-   void launch_terminal();
+   void sh(); //lanza la terminal
 
    extern void getContext(int * context);
    extern void changeContext();

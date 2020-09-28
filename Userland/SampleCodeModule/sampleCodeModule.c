@@ -14,10 +14,10 @@ int main()
 	
 		getContext(context);
 		if(*context==0){
-			launch_terminal();
+			sh();
 		}
 		else if(*context == 1){
-			launch_calculator();
+			sh();
 		}	
 		changeContext();
 
