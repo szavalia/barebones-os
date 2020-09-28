@@ -1,7 +1,7 @@
 GLOBAL prepareProcess
 GLOBAL switchProcess
 GLOBAL prepareProcessForked
-
+EXTERN exitProcess
 %macro pushState 0
 	push rax
 	push rbx
@@ -40,13 +40,23 @@ GLOBAL prepareProcessForked
 
 section .text
 
+
+exit:
+	cli
+	call exitProcess	
+	sti
+	hlt
+	ret
+
 ;llena el stack de forma correcta
 ; extern void prepareProcess( int PID , uint64_t stackPointer , int argc , char * argv[] , void * main );
 ; rdi -> PID , rsi -> stackPointer , rbx -> argc , rcx ->argv , r8 -> main
 prepareProcess:
     mov rbp , rsi
     mov rsp , rsi
-    
+	mov r10, 0x55
+	add rsp, 8 
+    push r10
     ;push exit_fnc
     ;mov rax, 8 ; align
 	;push rax
@@ -121,3 +131,4 @@ switchProcess:
 			
 
 	iretq
+

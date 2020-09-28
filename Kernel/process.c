@@ -188,7 +188,6 @@ void launchProcess( void * process , int argc , char * argv[] , uint64_t stack_p
     procesos[pid].stack_start = requestStack(); 
     procesos[pid].base_pointer = getBasePointer(procesos[pid].stack_start);
     procesos[pid].stack_pointer = procesos[pid].base_pointer;
-    printHex(procesos[pid].base_pointer);
     prepareProcess(pid , procesos[pid].base_pointer , argc , argv , process);
 }
 
@@ -252,7 +251,12 @@ void exceptionKill(){
     }
 }
 
-
+void exitProcess(){
+    printS("Closing: ");
+    printDec(current_proc);
+    procesos[current_proc].state = NOT_CREATED;
+    ltmfree(procesos[current_proc].stack_start);
+}
 /*void test(){  
     while(1){
         printS("test");

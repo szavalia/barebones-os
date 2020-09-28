@@ -151,10 +151,8 @@ void * getFunction( char * name){
 	}
 }
 void bokitaPasion(){
-	while(1){
 		puts("DALE DALE DALE DALE DALE DALE DALE BOCA\n");
 		puts("DALE DALE DALE DALE DALE DALE DALE BOOO\n");
-	}
 }
 char bokita[] = "Boca Yo te amo";
 void launchProcess(){
