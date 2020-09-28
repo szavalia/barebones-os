@@ -14,7 +14,7 @@ typedef struct command_t{
 	char * desc;
 } command_t;
 
-static char * usr_command;
+//static char * usr_command;
 static command_t commands[NUM_COMMANDS];
 static int buffer_initialized=0;
 static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","launch","kill","ps"};
@@ -29,9 +29,11 @@ void initializeCommandVector(){
 	}
 }
 
+/*
 static void initializeCommandBuffer(){
 	usr_command = ltmalloc(COMMAND_BUFFER_SIZE); 
 }
+*/
 
 uint64_t stringToNum(char * string){
 	uint64_t result = 0;
@@ -127,13 +129,14 @@ void ps(){
 }
 
 void kill(int pid){
+	char usr_command[NUM_BUFFER_SIZE];
 	show_numeric_scanf(usr_command, NUM_BUFFER_SIZE);
 	callKill(stringToNum(usr_command));
 }
 
 void bootMsg(){
 	if(!buffer_initialized){
-			initializeCommandBuffer();
+			//initializeCommandBuffer();
 			initializeCommandVector();
 			buffer_initialized = TRUE;
 	}
@@ -158,6 +161,7 @@ void bokitaPasion(){
 }
 char bokita[] = "Boca Yo te amo";
 void launchProcess(){
+	char usr_command[NUM_BUFFER_SIZE];
 	show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE);
 	char *argv[20]; //FIXME: magic number, pasar a macro
 	argv[0] = bokita;
@@ -205,10 +209,12 @@ void error(){
 
 void launch_terminal(){ 
 		if(!buffer_initialized){
-			initializeCommandBuffer();
+			//initializeCommandBuffer();
+
 			initializeCommandVector();
 			buffer_initialized = TRUE;
 		}
+		char usr_command[NUM_BUFFER_SIZE];
 		while(1){
 		puts("$ ");
 		show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE); 
