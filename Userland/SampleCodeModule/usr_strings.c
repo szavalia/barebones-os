@@ -19,7 +19,7 @@ static void initializeCharBuffer(){
 //FIXME: scanf con código repetido
 void scanf(char * buffer, int size){
     int  current = 0;
-	char * charBuffer = ltmalloc(NUM_BUFFER_SIZE);
+	char * charBuffer = ltmalloc(BUFFER_SIZE);
     *charBuffer = 0;
     while( *charBuffer != '\n'){
         scanChar(charBuffer);
@@ -34,7 +34,7 @@ void scanf(char * buffer, int size){
 
 void show_scanf(char * buffer, int size){
     int  current = 0, deletes=0;
-	char * charBuffer = ltmalloc(NUM_BUFFER_SIZE);
+	char * charBuffer = ltmalloc(BUFFER_SIZE);
 	*charBuffer = 0;
     while( *charBuffer != '\n' ){
         scanChar(charBuffer);
@@ -55,7 +55,7 @@ void show_scanf(char * buffer, int size){
 
 void show_processed_scanf(char * buffer, int size){
 	int  current = 0;
-	char * charBuffer = ltmalloc(NUM_BUFFER_SIZE);
+	char * charBuffer = ltmalloc(BUFFER_SIZE);
 	*charBuffer = 0;
     while( *charBuffer != '\n' ){
         scanChar(charBuffer);
@@ -85,7 +85,7 @@ void show_processed_scanf(char * buffer, int size){
 
 void scanf_for_calculator(char * buffer, int size){
 	int  current = 0;
-	char * charBuffer = ltmalloc(NUM_BUFFER_SIZE);
+	char * charBuffer = ltmalloc(BUFFER_SIZE);
 	*charBuffer = 0;
     while( *charBuffer != '=' ){
         scanChar(charBuffer);
@@ -115,7 +115,7 @@ void scanf_for_calculator(char * buffer, int size){
 
 void show_numeric_scanf(char * buffer, int size){
 	int  current = 0;
-	char * charBuffer = ltmalloc(NUM_BUFFER_SIZE);
+	char * charBuffer = ltmalloc(BUFFER_SIZE);
 	*charBuffer = 0;
 	
     while( *charBuffer != '\n' ){
@@ -145,10 +145,9 @@ void puts(char * string){
 }
 
 void putChar(char c){
-	char * charBuffer = ltmalloc(NUM_BUFFER_SIZE);
-    *charBuffer = c;
-    put(charBuffer , 1);
-	ltmfree(charBuffer);
+	char charito;
+    charito = c;
+    put(&charito , 1);
 	return;
 }
 
@@ -181,7 +180,7 @@ char * strtok( char * string , char key ){ // UNA LOCURA, funciona como el stkto
         //aclaracion, si le paso NULL a string, no va a hacer lo de key
         //transforma el string a un "STREAM" o algo por el estilo, se modifica el string original
         //el strtok guarda de froma estatica el ultimo string que se le ingreso y sabe como iterar sobre sus tokens
-        int i = 0;
+		int i = 0;
         int lastPos;
         //strtokPointer y strtokPosition y strLength estan declaradas de forma estatica fuera del codigo
         if ( string != NULL ){
