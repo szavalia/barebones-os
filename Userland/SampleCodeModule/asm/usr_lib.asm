@@ -14,6 +14,7 @@ GLOBAL mem
 GLOBAL callPs
 GLOBAL callKill
 GLOBAL callLaunch
+GLOBAL callLoop
 GLOBAL fork
 
 ;Acá vamos a poner los llamados al SO para interactuar con el hardware
@@ -328,3 +329,18 @@ fork: ; TODO: 0xCACAC0DE
     mov rsp, rbp
     pop rbp
     ret
+
+callLoop:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+
+    mov r12, 16
+    int 80h
+
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret  

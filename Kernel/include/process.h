@@ -8,7 +8,6 @@ typedef struct process_t{
     char * name;
     int PID;
     int state; //0->block, 1->listo, 2->killed
-    int foreground;
     int priority;
     void * stack_start;
     uint64_t base_pointer;
@@ -22,5 +21,8 @@ void processKill( int pid);
 void processDump();
 void exceptionKill();
 uint64_t getBasePointer( void * start);
-int fork( uint64_t stack_pointer );
+int fork( uint64_t stack_pointer ); //legacy
+int processIsInForeground();
+void printGreeting();
+int getProcessCount();
 #endif

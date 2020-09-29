@@ -62,6 +62,9 @@ int int80_handler( uint64_t stack_pointer){
         case 15:
             return sys_fork(stack_pointer);
             break;
+        case 16:
+            sys_loop();
+            break;
     }
     return 1;
 }
@@ -75,7 +78,9 @@ void sys_write(){
 
  void sys_read(){
     char * c = (char *) getR13();
-    *c = readChar(); //si no hay nada en el buffer, te retorna un 0    
+    if(processIsInForeground()){
+        *c = readChar(); //si no hay nada en el buffer, te retorna un 0    
+    }
 }
 
 void sys_getReg(){
@@ -168,4 +173,8 @@ void sys_launch(uint64_t stack_pointer){
 
 int sys_fork(uint64_t stack_pointer){
     return fork(stack_pointer);
+}
+
+void sys_loop(){
+    printGreeting();
 }

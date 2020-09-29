@@ -17,10 +17,12 @@ void sys_free();
 void sys_mem();
 void sys_kill();
 void sys_ps();
+void sys_loop();
 void sys_launch(uint64_t stack_pointer);
 int sys_fork(uint64_t stack_pointer);
+
+
 extern uint_least64_t cpuTemperature();
 extern uint8_t memContent(uint8_t * i);
-
 
 #endif
