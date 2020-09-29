@@ -116,7 +116,6 @@ int main()
 	side = 0;
 	clear();
 	saveInitRegs(stackBase);
-	printS("New process\n");
 	char * argv[2];
 	argv[0] = name;
 	argv[1] = NULL;
