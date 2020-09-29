@@ -45,11 +45,9 @@ void * getStackBase()
 }
 
 
-
-
 void * initializeKernelBinary()
 {
-	//splitScreen();
+	splitScreen();
 	char vendor[13], brand[49]; //FIXME: magic numbers raros
 	printS("[x64BareBones]");
 	newline();
@@ -97,6 +95,8 @@ void * initializeKernelBinary()
 	return stackBase;
 }
 
+void bokitaPrint();
+
 
 int main()
 {
@@ -108,6 +108,13 @@ int main()
 	newline();
 	printS("  Calling the sample code module returned: ");
 	//clear();
+	context = 1;
+	side = 1;
+	clear();
+	bokitaPrint();
+	context = 0;
+	side = 0;
+	clear();
 	saveInitRegs(stackBase);
 	printS("New process\n");
 	char * argv[2];
@@ -128,3 +135,34 @@ int main()
 	while(1);
 	return 0;
 }
+
+void bokitaPrint(){
+printS("                                                          \n");  
+printS("                                                          \n"); 
+printS("               .@@@@.                   (@@@@             \n");  
+printS("            #@@@@  %@@@@#           @@@@@/  @@@@,         \n"); 
+printS("         @@@@/  (@#    .@@@@@@@@@@@@@    /@(.  %@@@&      \n");  
+printS("      @@@@                                        ,@@@@   \n"); 
+printS("   @@@@     @/     @*     @(     @.     @#     @*     @@@@\n"); 
+printS("   @@@  .                        ,     .     (     &   @@@\n");  
+printS("   @@@  #@    (&    %&    @#    @(    @/    %,    ,.(  @@%\n"); 
+printS("   &@@   @     @     *     *     ,    *     ,     %    @@*\n"); 
+printS("   .@@  * #   / (   *     ,     ,      ,     ,   . #  .@@ \n");  
+printS("    @@/      @@@@@@    @@@@@@   @@@@@@@     @@@@@     %@@ \n"); 
+printS("    &@@     @@@  @@@   %@@@@&   /@@/ @@@     @@@      @@( \n");  
+printS("     @@,    @@@       &@@(/@@@  /@@@@@@@     @@@     %@@  \n");  
+printS("     #@@    @@@  @@@ %@@#  (@@% (@@/ @@@ @@@ @@@     @@,  \n");  
+printS("      @@@    &@@@@/ .@@@@  @@@@.@@@@@@&   %@@@&     @@&   \n");  
+printS("       @@@  .@.  .**.  .@.   .&.  .,(.  .@.   .@.  @@@    \n");  
+printS("        @@@                                       @@@     \n");  
+printS("         @@@  @@*   @@*   @@/   @@%   @@/   @@&  @@@      \n");  
+printS("          @@@                 ,     .          .@@#       \n");  
+printS("           .@@@  @/    @@    @(     @*    @@  @@@         \n");  
+printS("             @@@,    @    #@(  .*@*    #    (@@#          \n");  
+printS("               @@@. / #               ( . /@@@            \n");  
+printS("                 @@@(  &@@.  .@   @@@   %@@@              \n"); 
+printS("                   @@@@               @@@(                \n");  
+printS("                      @@@@   ,@    @@@@                   \n");  
+printS("                         @@@@   @@@@                      \n");  
+printS("                            @@@@@                         \n");
+}  

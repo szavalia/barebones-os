@@ -187,12 +187,6 @@ void launchProcess( void * process , int argc , char * argv[] , uint64_t stack_p
 
     if(foreground_proc < 0){ //si no hay nadie en foreground, tomalo
         foreground_proc = current_proc;
-        printS("PID: ");
-        printDec(pid);
-        newline();
-        printS("Foreground PID: ");
-        printDec(procesos[foreground_proc].PID);
-        newline();
     }
 
     prepareProcess(pid , procesos[pid].base_pointer , argc , argv , process);
