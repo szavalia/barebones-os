@@ -49,7 +49,7 @@ void * getStackBase()
 
 void * initializeKernelBinary()
 {
-	splitScreen();
+	//splitScreen();
 	char vendor[13], brand[49]; //FIXME: magic numbers raros
 	printS("[x64BareBones]");
 	newline();

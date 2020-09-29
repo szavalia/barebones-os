@@ -42,6 +42,7 @@
    void launchProcess();
    extern int fork();
    void loop();
+   void exit();
    
 
    extern void codeERROR();

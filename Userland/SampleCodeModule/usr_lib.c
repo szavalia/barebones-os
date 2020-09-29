@@ -2,7 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "usr_lib.h"
 
-#define NUM_COMMANDS 14
+#define NUM_COMMANDS 15
 
 extern void callMalloc(int size, void ** location);
 extern void callFree(void * pointer);
@@ -11,6 +11,7 @@ extern void callKill(int pid);
 extern void callLaunch( void * process , int argc , char * argv[] );
 extern int fork();
 extern void callLoop();
+extern void callExit();
 
 typedef struct command_t{
 	void (*func)(void);
@@ -21,9 +22,9 @@ typedef struct command_t{
 //static char * usr_command;
 static command_t commands[NUM_COMMANDS];
 static int buffer_initialized=0;
-static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","launch","kill","ps","sh","loop"};
-static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "lanza un proceso\n", "mata el proceso que le indiques\n", "lista los procesos\n", "lanza la terminal\n", "Imprime el PID actual junto con un saludo\n"};
-static void (*functions[])(void) = {help, printTime, printCPUInfo, printTemp, error, codeERROR, inforeg, printmemWrapper, mem, launchProcess, kill,ps,sh, loop};
+static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","launch","kill","ps","sh","loop", "exit"};
+static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "lanza un proceso\n", "mata el proceso que le indiques\n", "lista los procesos\n", "lanza la terminal\n", "Imprime el PID actual junto con un saludo\n", "Finaliza el proceso actual\n"};
+static void (*functions[])(void) = {help, printTime, printCPUInfo, printTemp, error, codeERROR, inforeg, printmemWrapper, mem, launchProcess, kill,ps,sh, loop, exit};
 
 void initializeCommandVector(){
 	for(int i=0; i<NUM_COMMANDS; i++){
@@ -133,8 +134,13 @@ void kill(int pid){
 }
 
 void loop(){
+	int i=1;
 	callLoop();
-}
+	while(i++>0){
+		if(i % 100000000 == 0)
+			callLoop();
+	}
+}	
 
 void bootMsg(){
 	if(!buffer_initialized){
@@ -158,7 +164,8 @@ void * getFunction( char * name){
 }
 
 void launchProcess(){
-	char usr_command[NUM_BUFFER_SIZE];
+	char usr_command[COMMAND_BUFFER_SIZE];
+	puts("Ingresa el nombre y los argumentos (como en bash!)\n");
 	show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE);
 	char *argv[MAX_ARGS];
 	char * token;
@@ -172,12 +179,17 @@ void launchProcess(){
 	argv[i] = NULL;
 	void * funct = getFunction(*argv);
 	if(funct != NULL){
+		newline();
 		callLaunch(funct, i, argv);
 	}
 	else{
 		puts("\nNo existe tal funcion\n");
 	}
 	
+}
+
+void exit(){
+	callExit();
 }
 
 void help(){

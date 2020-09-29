@@ -65,6 +65,9 @@ int int80_handler( uint64_t stack_pointer){
         case 16:
             sys_loop();
             break;
+        case 17:
+            sys_exit();
+            break;
     }
     return 1;
 }
@@ -177,4 +180,8 @@ int sys_fork(uint64_t stack_pointer){
 
 void sys_loop(){
     printGreeting();
+}
+
+void sys_exit(){
+    exitProcess();
 }
