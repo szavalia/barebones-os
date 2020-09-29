@@ -6,10 +6,12 @@
 #include "video_driver.h"
 #include "keyboard.h"
 #include "time.h"
+#include "mem_manager.h"
+#include "process.h"
 #include "lib.h"
 
 
-void int80_handler(){
+int int80_handler( uint64_t stack_pointer){
     int option = getR12();
     switch(option){
         case 0:
@@ -25,7 +27,7 @@ void int80_handler(){
             sys_time();
             break;
         case 4:
-            sys_mem();
+            sys_getMem();
             break;
         case 5:
             sys_cpuinfo();
@@ -39,7 +41,35 @@ void int80_handler(){
         case 8:
             sys_update_context();
             break;
+        case 9:
+            sys_malloc();
+            break;
+        case 10:
+            sys_free();
+            break;
+        case 11:
+            sys_mem();
+            break;
+        case 12:
+            sys_ps();
+            break;
+        case 13:
+            sys_kill();
+            break;
+        case 14:
+            sys_launch(stack_pointer);
+            break;
+        case 15:
+            return sys_fork(stack_pointer);
+            break;
+        case 16:
+            sys_loop();
+            break;
+        case 17:
+            sys_exit();
+            break;
     }
+    return 1;
 }
 
 void sys_write(){
@@ -51,7 +81,9 @@ void sys_write(){
 
  void sys_read(){
     char * c = (char *) getR13();
-    *c = readChar(); //si no hay nada en el buffer, te retorna un 0    
+    if(processIsInForeground()){
+        *c = readChar(); //si no hay nada en el buffer, te retorna un 0    
+    }
 }
 
 void sys_getReg(){
@@ -71,7 +103,7 @@ void sys_time(){
     }
 }
 
-void sys_mem(){
+void sys_getMem(){
     uint8_t * destination = (uint8_t *) getR13();
     uint8_t * start = (uint8_t *) getR15();
     for(int i = 0; i<32; i++){ //TODO: verificar este cambio a uint8_t
@@ -110,7 +142,46 @@ void sys_update_context(){
     changeContext();
 }
 
+void sys_malloc(){
+    int size = (int) getR13();
+    void ** location = (void **) getR15();
+    void * res = ltmalloc(size);
+    memcpy(location, &res, sizeof(void *));
+}
 
+void sys_free(){
+    void * pointer = (void *) getR13();
+    ltmfree(pointer);
+}
 
+void sys_mem(){
+    printMemList();
+}
 
+void sys_ps(){
+    processDump();
+}
 
+void sys_kill(){
+    int pid = (int) getR13();
+    processKill(pid);
+}
+
+void sys_launch(uint64_t stack_pointer){
+    void * process = (void *) getR13();
+    int argc = (int) getR15();
+    char ** argv = (char**) getRBX();
+    launchProcess(process, argc, argv, stack_pointer);
+}
+
+int sys_fork(uint64_t stack_pointer){
+    return fork(stack_pointer);
+}
+
+void sys_loop(){
+    printGreeting();
+}
+
+void sys_exit(){
+    exitProcess();
+}

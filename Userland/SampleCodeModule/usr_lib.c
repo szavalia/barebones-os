@@ -1,123 +1,37 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "usr_lib.h"
-#define BUFFER_SIZE 1024
-static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
-static char charBuffer[3 * BUFFER_SIZE]; //FIXME: magic numbers raros
-static char bufferNum[BUFFER_SIZE] = { '\0' };
-static char usr_command[BUFFER_SIZE] = { 0 }; 
-extern void codeERROR();
 
-//FIXME: scanf con código repetido
-void scanf(char * buffer, int size){
-    int  current = 0;
-    *charBuffer = 0;
-    while( *charBuffer != '\n'){
-        scanChar(charBuffer);
-        if(*charBuffer != 0 && current < size){
-            buffer[current++] = *charBuffer;
-        }        
-    }
-	buffer[current]='\0';
-	return;
-}
+#define NUM_COMMANDS 15
 
-void show_scanf(char * buffer, int size){
-    int  current = 0, deletes=0;
-	*charBuffer = 0;
-    while( *charBuffer != '\n' ){
-        scanChar(charBuffer);
-        if(*charBuffer != 0 && current < size){
-            buffer[current++] = *charBuffer;
-			if(*charBuffer == '\b'){
-				if(current-(deletes+1)>=0){ //para no borrar cosas anteriores
-					deletes++;
-					putChar(*charBuffer);
-				}
-			}
-        }        
-    }
-	buffer[current]='\0';
-	return;
-}
+extern void callMalloc(int size, void ** location);
+extern void callFree(void * pointer);
+extern void callPs();
+extern void callKill(int pid);
+extern void callLaunch( void * process , int argc , char * argv[] );
+extern int fork();
+extern void callLoop();
+extern void callExit();
 
-void show_processed_scanf(char * buffer, int size){
-	int  current = 0;
-	*charBuffer = 0;
-    while( *charBuffer != '\n' ){
-        scanChar(charBuffer);
-        if(*charBuffer != 0 && current < size){
-			
-			if(' ' <= *charBuffer && *charBuffer < 127 ){ //es una letra, número o signo de puntuación, '\b' = 127
-				putChar(*charBuffer);
-				buffer[current++] = *charBuffer;
-			}
-			else if(*charBuffer == '\t'){
-				for(int i=0; i<5;i++){
-					buffer[current++] = ' ';
-				}
-			}
-			else if(*charBuffer == '\b'){
-				if(current>0){ //para no borrar cosas anteriores
-					current--;
-					putChar(*charBuffer);
-				}
-			}
-        }        
-    }
-	buffer[current]='\0';
-	return;
-}
+typedef struct command_t{
+	void (*func)(void);
+	char * name;
+	char * desc;
+} command_t;
 
-void scanf_for_calculator(char * buffer, int size){
-	int  current = 0;
-	*charBuffer = 0;
-    while( *charBuffer != '=' ){
-        scanChar(charBuffer);
-        if(*charBuffer != 0 && current < size){
-			
-			if(' ' <= *charBuffer && *charBuffer < 127 ){ //es una letra, número o signo de puntuación, '\b' = 127
-				putChar(*charBuffer);
-				buffer[current++] = *charBuffer;
-			}
-			else if(*charBuffer == '\t'){
-				for(int i=0; i<5;i++){
-					buffer[current++] = ' ';
-				}
-			}
-			else if(*charBuffer == '\b'){
-				if(current>0){ //para no borrar cosas anteriores
-					current--;
-					putChar(*charBuffer);
-				}
-			}
-        }        
-    }
-	buffer[current-1]='\0';
-	return;
-}
+//static char * usr_command;
+static command_t commands[NUM_COMMANDS];
+static int buffer_initialized=0;
+static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","launch","kill","ps","sh","loop", "exit"};
+static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "lanza un proceso\n", "mata el proceso que le indiques\n", "lista los procesos\n", "lanza la terminal\n", "Imprime el PID actual junto con un saludo\n", "Finaliza el proceso actual\n"};
+static void (*functions[])(void) = {help, printTime, printCPUInfo, printTemp, error, codeERROR, inforeg, printmemWrapper, mem, launchProcess, kill,ps,sh, loop, exit};
 
-void show_numeric_scanf(char * buffer, int size){
-	int  current = 0;
-	*charBuffer = 0;
-	
-    while( *charBuffer != '\n' ){
-        scanChar(charBuffer);
-        if(*charBuffer != 0 && current < size){	
-			if('0' <= *charBuffer && *charBuffer <= '9' ){ //es una letra, número o signo de puntuación, '\b' = 127
-				putChar(*charBuffer);
-				buffer[current++] = *charBuffer;
-			}
-			else if(*charBuffer == '\b'){
-				if(current>0){ //para no borrar cosas anteriores
-					current--;
-					putChar(*charBuffer);
-				}
-			}
-        }        
-    }
-	buffer[current]='\0';
-	return;
+void initializeCommandVector(){
+	for(int i=0; i<NUM_COMMANDS; i++){
+		commands[i].name = names[i];
+		commands[i].desc = descriptions[i];
+		commands[i].func = functions[i];
+	}
 }
 
 uint64_t stringToNum(char * string){
@@ -127,19 +41,6 @@ uint64_t stringToNum(char * string){
 		result = result * 10 + ( string[i] - '0' );
 	}
 	return result;
-}
-
-
-void puts(char * string){
-	int length = strlen(string);
-	put(string, length);
-	return;
-}
-
-void putChar(char c){
-    *charBuffer = c;
-    put(charBuffer , 1);
-	return;
 }
 
 void printTime(){
@@ -152,9 +53,6 @@ void printTime(){
 	printDec(time[2]); //segundos
 	putChar('\n');
 	return;
-}
-void newline(){
-	putChar('\n');
 }
 
 void inforeg(){ 
@@ -169,9 +67,11 @@ void inforeg(){
 	}
 }
 
-void printmem(uint8_t * dir){ 
+//toma una dirección de memoria en hexa y devuelve los proximos 32 bytes
+void printmem(char * hexDir){ 
+	int dir = hexadecimalToDecimal( hexDir); 
 	uint8_t bytes[32];
-	getMem(dir, bytes);
+	getMem((uint8_t *)dir, bytes); //FIXME: casteos raros
 	putChar('\n');
 	for(int i = 0; i < 32; i++){
 		printHex((long) dir+i );
@@ -180,6 +80,27 @@ void printmem(uint8_t * dir){
 		putChar('\n');
 	}
 
+}
+void printmemWrapper(){
+	char memory[NUM_BUFFER_SIZE] = { 0 };
+	puts("Inserte direccion de memoria (en hexa):\n");
+	show_processed_scanf(memory, NUM_BUFFER_SIZE); 
+	printmem(memory);	
+}
+
+void * ltmalloc(int size){
+	
+	if(size < 0){
+		return NULL;
+	}
+	
+	void * location;
+	callMalloc(size, &location); //le tengo que pasar un int * asi que lo desreferencio ???
+	return location;
+}
+
+void ltmfree(void * pointer){
+	callFree(pointer);
 }
 
 void printCPUInfo(){
@@ -202,190 +123,127 @@ void printTemp(){
 	newline();
 }
 
+void ps(){
+	callPs();
+}
+
+void kill(int pid){
+	char usr_command[NUM_BUFFER_SIZE];
+	show_numeric_scanf(usr_command, NUM_BUFFER_SIZE);
+	callKill(stringToNum(usr_command));
+}
+
+void loop(){
+	int i=1;
+	callLoop();
+	while(i++>0){
+		if(i % 100000000 == 0)
+			callLoop();
+	}
+}	
+
 void bootMsg(){
+	if(!buffer_initialized){
+			//initializeCommandBuffer();
+			initializeCommandVector();
+			buffer_initialized = TRUE;
+	}
 	newline();
-	char msg[] = "Estos son los comandos disponibles:\n";
-	puts(msg);
+	puts("Estos son los comandos disponibles:\n");
 	help();
 	return;
 }
 
-void help(){
-	puts("    - help: te muestra opciones de ayuda\n");
-	puts("    - inforeg: imprime registros, guardar con Alt+R\n");
-	puts("    - time: muestra la hora del sistema en formato HH:MM:SS\n");
-	puts("    - printmem: printea 32 bytes a partir de una direccion\n");
-	puts("    - cpuinfo: muestra la marca y modelo de la cpu\n");
-	puts("    - exit: cierra el programa\n");
-	puts("    - cputemp: muestra la temperatura del procesador\n");
-	puts("    - diverror: excepcion de division por 0\n");
-	puts("    - invalid opcode: excepcion de operacion invalida\n");
-	return;
-}
-
-int strlen(char * string){
-	int count = 0;
-	while(string[count++] != 0);
-	return count-1;
-}
-
-int strequals(char * s1, char * s2){
-	int l1 = strlen(s1), l2=strlen(s2);
-	int min = (l1<l2)? l1 : l2;
-	if ( l1 != l2){
-		return 0;
-	}
-	int equals = 1;
-	for(int i=0; i < min && equals; i++){
-		if(s1[i] != s2[i]){
-			return 0;
+void * getFunction( char * name){
+	for ( int i = 0 ; i < NUM_COMMANDS; i++){
+		if(strequals(commands[i].name, name)){
+			return commands[i].func;
 		}
 	}
-	return 1;
+	return NULL;
 }
 
-int error(){
-	int terror = 2/0;
-	return -1;
-}
-
-void launch_terminal(){ 
-		char memory[20] = { 0 };
-		puts("$ ");
-		show_processed_scanf(usr_command, 100); //no hay comandos más largos que 50 caracteres
+void launchProcess(){
+	char usr_command[COMMAND_BUFFER_SIZE];
+	puts("Ingresa el nombre y los argumentos (como en bash!)\n");
+	show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE);
+	char *argv[MAX_ARGS];
+	char * token;
+	*argv = strtok(usr_command, ' ');
+	int i=1;
+	do{	
+		token = strtok(NULL, ' ');
+		argv[i++] = token;
+	}
+	while(token != NULL && i < MAX_ARGS);
+	argv[i] = NULL;
+	void * funct = getFunction(*argv);
+	if(funct != NULL){
 		newline();
-		if(strequals(usr_command, "help")){
-			help();
-		}
-		else if(strequals(usr_command, "time")){
-			printTime();
-		}
-		else if(strequals(usr_command, "inforeg")){
-			inforeg();
-		}
-		else if(strequals(usr_command, "printmem")){
-			puts("Inserte direccion de memoria (en decimal):\n");
-			show_numeric_scanf(memory, 20); 
-			uint64_t direc = stringToNum(memory);
-			printmem((uint8_t *)direc);	
-		}
-		else if(strequals(usr_command, "cpuinfo")){
-			printCPUInfo();
-		}
-		else if(strequals(usr_command, "diverror")){
-			error();
-		}
-		else if(strequals(usr_command, "exit")){
-			return;
-		}
-		else if(strequals(usr_command, "cputemp")){
-			printTemp();
-		}else if(strequals(usr_command, "invalid opcode")){
-			codeERROR();
-		}
-		else {
-			puts("Command not recognized\n");
-		}
-		
+		callLaunch(funct, i, argv);
+	}
+	else{
+		puts("\nNo existe tal funcion\n");
+	}
+	
+}
+
+void exit(){
+	callExit();
+}
+
+void help(){
+
+	for(int i=0; i < NUM_COMMANDS ; i++){
+		puts("\t- ");
+		puts(commands[i].name);
+		puts(": ");
+		puts(commands[i].desc);
+	}
 	return;
 }
 
-
-
-
-
-
-
-
-
-
-
-//--------------------------------------------------------------
-
-
-void printBase(uint64_t value, uint32_t base)
+char * strcopy(char *destination, char *source)
 {
-	int digits;
-    digits = uintToBase(value, bufferNum, base);
-	put(bufferNum, digits);
+    char *start = destination;
+
+    while(*source != '\0')
+    {
+        *destination = *source;
+        destination++;
+        source++;
+    }
+
+    *destination = '\0'; // add '\0' at the end
+    return start;
+}
+
+void error(){
+	int aux = 2/0;
+}
+
+
+
+void sh(){ 
+		if(!buffer_initialized){
+			initializeCommandVector();
+			buffer_initialized = TRUE;
+		}
+		char usr_command[COMMAND_BUFFER_SIZE];
+		while(1){
+		puts("$ ");
+		show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE); 
+		newline();
+
+		for(int i=0; i<NUM_COMMANDS ; i++){
+			if(strequals(usr_command, commands[i].name)){
+				(*(commands[i].func))();
+			}
+		}
+	}
 	return;
 }
 
-void printDec(uint64_t value){
-    printBase(value, 10);
-	return;
-}
 
-void printWithDecimals(double value){
-	long  ent = parteEntera(value);
-	printDec(ent);
-	putChar('.');
-	value-= ent;
-	value *= 10000;
-	long deci = parteEntera(value);
-	printDec(deci);
-}
 
-void printHex(uint64_t value){
-    printBase(value, 16);
-	return;
-}
-
-void printBin(uint64_t value){
-    printBase(value, 2);
-	return;
-}
-
-void printReg(uint64_t value){
-	int  digits = uintToBase(value,bufferNum,16);
-	digits = 16-digits;
-	while((digits--) > 0){
-		putChar('0');
-	}
-	puts(bufferNum);
-}
-
-long parteEntera(uint64_t value){
-	long rta = 0;
-	long mult = 1;
-	do{
-		uint32_t remainder = value%10;
-		rta+=  remainder * mult;
-		mult *= 10;
-	}
-	while(value /= 10);
-	return rta;
-}
-
-static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base){
-	char *p = buffer;
-	char *p1, *p2;
-	uint32_t digits = 0;
-
-	//Calculate characters for each digit
-	do
-	{
-		uint32_t remainder = value % base;
-		*p++ = (remainder < 10) ? remainder + '0' : remainder + 'A' - 10;
-		digits++;
-	}
-	while (value /= base);
-
-	// Terminate string in buffer.
-	*p = 0;
-
-	//Reverse string in buffer.
-	p1 = buffer;
-	p2 = p - 1;
-	while (p1 < p2)
-	{
-		char tmp = *p1;
-		*p1 = *p2;
-		*p2 = tmp;
-		p1++;
-		p2--;
-	}
-
-	return digits;
-}
 

@@ -5,28 +5,24 @@
 #include "calculadora.h"
 
 
-
 static int context[1];
 int main() 
 {
 	bootMsg();
 
-	
 	do{
 	
 		getContext(context);
 		if(*context==0){
-			launch_terminal();
+			sh();
 		}
 		else if(*context == 1){
-			launch_calculator();
+			sh();
 		}	
 		changeContext();
 
 	}
 	while(1);
-	
-	
 
 	
 	//puts("I have decided that I want to die\n");

@@ -5,12 +5,12 @@
 #include <stdint.h>
 #include <string.h>
 #include "lib.h"
-#include <moduleLoader.h>
+#include "moduleLoader.h"
 #include "idtLoader.h"
 #include "video_driver.h"
 #include "time.h"
 #include "keyboard.h"
-
+#include "process.h"
 extern uint8_t text;
 extern uint8_t rodata;
 extern uint8_t data;
@@ -20,14 +20,14 @@ extern uint8_t endOfKernel;
 
 int side = 0, context=0;
 
+uint64_t stackBase;
 
 static const uint64_t PageSize = 0x1000;
-
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
 typedef int (*EntryPoint)();
-
-extern void saveInitRegs();
+char * name = "BareUwUones terminal by LTM";
+extern void saveInitRegs( uint64_t rsp);
 
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
@@ -43,6 +43,7 @@ void * getStackBase()
 		- sizeof(uint64_t)			//Begin at the top of the stack
 	);
 }
+
 
 void * initializeKernelBinary()
 {
@@ -85,10 +86,16 @@ void * initializeKernelBinary()
 	printS("  bss: 0x");
 	printHex((uint64_t)&bss);
 	newline();
+	stackBase = getStackBase();
+	printS("  Stack base: 0x");
+	printHex(stackBase);
+	newline();
 	printS("[Done]");
-	
-	return getStackBase();
+	newline();
+	return stackBase;
 }
+
+void bokitaPrint();
 
 
 int main()
@@ -100,12 +107,23 @@ int main()
 	printHex((uint64_t)sampleCodeModuleAddress);
 	newline();
 	printS("  Calling the sample code module returned: ");
+	//clear();
+	context = 1;
+	side = 1;
 	clear();
-	saveInitRegs();
-	printHex(((EntryPoint)sampleCodeModuleAddress)());
+	bokitaPrint();
+	context = 0;
+	side = 0;
+	clear();
+	saveInitRegs(stackBase);
+	printS("New process\n");
+	char * argv[2];
+	argv[0] = name;
+	argv[1] = NULL;
+	launchProcess( sampleCodeModuleAddress , 1 , argv , NULL);
+	//printHex(((EntryPoint)sampleCodeModuleAddress)()); //acá llamo a main de userland
 	newline();
 	newline();
-
 	printS(" Sample data module at 0x");
 	printHex(((EntryPoint)sampleDataModuleAddress)());
 	newline();
@@ -117,3 +135,34 @@ int main()
 	while(1);
 	return 0;
 }
+
+void bokitaPrint(){
+printS("                                                          \n");  
+printS("                                                          \n"); 
+printS("               .@@@@.                   (@@@@             \n");  
+printS("            #@@@@  %@@@@#           @@@@@/  @@@@,         \n"); 
+printS("         @@@@/  (@#    .@@@@@@@@@@@@@    /@(.  %@@@&      \n");  
+printS("      @@@@                                        ,@@@@   \n"); 
+printS("   @@@@     @/     @*     @(     @.     @#     @*     @@@@\n"); 
+printS("   @@@  .                        ,     .     (     &   @@@\n");  
+printS("   @@@  #@    (&    %&    @#    @(    @/    %,    ,.(  @@%\n"); 
+printS("   &@@   @     @     *     *     ,    *     ,     %    @@*\n"); 
+printS("   .@@  * #   / (   *     ,     ,      ,     ,   . #  .@@ \n");  
+printS("    @@/      @@@@@@    @@@@@@   @@@@@@@     @@@@@     %@@ \n"); 
+printS("    &@@     @@@  @@@   %@@@@&   /@@/ @@@     @@@      @@( \n");  
+printS("     @@,    @@@       &@@(/@@@  /@@@@@@@     @@@     %@@  \n");  
+printS("     #@@    @@@  @@@ %@@#  (@@% (@@/ @@@ @@@ @@@     @@,  \n");  
+printS("      @@@    &@@@@/ .@@@@  @@@@.@@@@@@&   %@@@&     @@&   \n");  
+printS("       @@@  .@.  .**.  .@.   .&.  .,(.  .@.   .@.  @@@    \n");  
+printS("        @@@                                       @@@     \n");  
+printS("         @@@  @@*   @@*   @@/   @@%   @@/   @@&  @@@      \n");  
+printS("          @@@                 ,     .          .@@#       \n");  
+printS("           .@@@  @/    @@    @(     @*    @@  @@@         \n");  
+printS("             @@@,    @    #@(  .*@*    #    (@@#          \n");  
+printS("               @@@. / #               ( . /@@@            \n");  
+printS("                 @@@(  &@@.  .@   @@@   %@@@              \n"); 
+printS("                   @@@@               @@@(                \n");  
+printS("                      @@@@   ,@    @@@@                   \n");  
+printS("                         @@@@   @@@@                      \n");  
+printS("                            @@@@@                         \n");
+}  

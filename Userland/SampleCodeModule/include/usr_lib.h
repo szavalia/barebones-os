@@ -1,15 +1,14 @@
 #ifndef _USR_LIB_H_
 #define _USR_LIB_H_
    #include <stdint.h>
-   void scanf(char * destination, int length);
-   void put(char * source, int length);
-   void puts(char * source);
-   void scanChar(char * destination);
-   void show_scanf(char * buffer, int size);
-   void show_processed_scanf(char * buffer, int size);
-   void scanf_for_calculator(char * buffer, int size);
-   void putChar(char c);
-   void newline();
+   #include "usr_strings.h"
+   #include "usr_math.h"
+   #define NULL (void *) 0 //FIXME: esto no debería estar incluido de algún lado?
+   #define BUFFER_SIZE 1024
+   #define COMMAND_BUFFER_SIZE 50
+   #define MAX_ARGS 5
+   #define TRUE 1
+   #define FALSE 0
 
    void getTime(int * destination);
    void printTime();
@@ -19,7 +18,7 @@
    void inforeg();
 
    void getMem(uint8_t * dir, uint8_t* bytes);
-   void printmem(uint8_t * dir);
+   void printmemWrapper();
 
    void getCPUInfo(char * vendor, char * brand);
    void printCPUInfo();
@@ -29,21 +28,26 @@
 
    void bootMsg(); //prompt al bootear
    void help();
-   void launch_terminal();
-
-   int strcmp(char * s1, char * s2);
-   int strlen(char * string);
-   void show_scanf(char * buffer, int size);
-
-   void printBase(uint64_t value, uint32_t base);
-   void printDec(uint64_t value);
-   void printHex(uint64_t value);
-   void printBin(uint64_t value);
-   void printWithDecimals(double value);
-   long parteEntera(uint64_t value);
+   void sh(); //lanza la terminal
 
    extern void getContext(int * context);
    extern void changeContext();
+
+   void * ltmalloc(int size);
+   void ltmfree(void * pointer);
+   extern void mem();
+
+   void ps();
+   void kill();
+   void launchProcess();
+   extern int fork();
+   void loop();
+   void exit();
+   
+
+   extern void codeERROR();
+   void error();
+
 #endif
 
 

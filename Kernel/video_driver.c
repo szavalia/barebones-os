@@ -225,7 +225,7 @@ int getContext(){
 }
 
 char * getPixelDataByPosition(int x, int y){
-    return (char *) screen_info->framebuffer + (x+y*WIDTH) * 3;
+    return (char *) (screen_info->framebuffer + (x+y*WIDTH) * 3);
 }
 void writePixel(int y, int x, int colour[]){ //colour[3] = B - G - R
     char * pos = getPixelDataByPosition(y,x); //TODO: invertí el nombre de las variables, chequear que se vaya el warning

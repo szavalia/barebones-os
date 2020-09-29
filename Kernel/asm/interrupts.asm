@@ -65,15 +65,48 @@ SECTION .text
 	pop rax
 %endmacro
 
+%macro pushStateNoRax 0
+	push rbx
+	push rcx
+	push rdx
+	push rbp
+	push rdi
+	push rsi
+	push r8
+	push r9
+	push r10
+	push r11
+	push r12
+	push r13
+	push r14
+	push r15
+%endmacro
+
+%macro popStateNoRax 0
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop r11
+	pop r10
+	pop r9
+	pop r8
+	pop rsi
+	pop rdi
+	pop rbp
+	pop rdx
+	pop rcx
+	pop rbx
+%endmacro
 %macro irqHandlerMaster 1
-	push rax 
-	mov  rax ,[rsp+8] ; preservo el RIP
-	mov [ripaux], rax ; guardo el RIP en una var auxiliar
-	pop rax
+	;push rax 
+	;mov  rax ,[rsp+8] ; preservo el RIP
+	;mov [ripaux], rax ; guardo el RIP en una var auxiliar
+	;pop rax
 
 	pushState
 	mov rdi, %1 ; pasaje de parametro
-	
+	mov rsi , rsp
 	call irqDispatcher
 
 	; signal pic EOI (End of Interrupt)
@@ -90,23 +123,12 @@ SECTION .text
 
 
 %macro exceptionHandler 1
-	push rax 
-	mov  rax ,[rsp+8] ; recupero el RIP
-	mov [ripaux], rax ; guardo el RIP en una var auxiliar
-	pop rax
-
+	
+	mov rsi, [rsp];
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
 
-	mov rsp, [initRegs]
-	mov rbp, [initRegs+8]
-	mov rbx, [initRegs+16]
-	mov r12, [initRegs+24]
-	mov r13, [initRegs+32]
-	mov r15, [initRegs+40]
-	jmp main
-
-	
+	jmp _hlt ; espero al timer tick	
 
 %endmacro
 
@@ -171,7 +193,17 @@ _irq05Handler:
 
 ;int 80h
 _irq60Handler:
-	irqHandlerMaster 60
+	pushState;--->
+	mov rdi, 60 ; pasaje de parametro
+	mov rsi , rsp
+	call irqDispatcher
+	; signal pic EOI (End of Interrupt)
+	mov al, 20h
+	out 20h, al
+	popState
+			
+
+	iretq
 
 
 ;Zero Division Exception
@@ -210,13 +242,15 @@ restoreCpu:
 			ret
 
 saveInitRegs:
-	mov [initRegs], rsp
-	mov [initRegs+8], rbp
+	mov rax , rdi ; en rdi está en stackBase
+	sub rax , 8
+	mov [initRegs], rax ; rsp
+	mov [initRegs+8], rdi ;rbp
 	mov [initRegs+16] , rbx
 	mov [initRegs+24] , r12
 	mov [initRegs+32], r13
 	mov [initRegs+48], r15
-
+	ret
 
 SECTION .bss
 	aux resq 1
