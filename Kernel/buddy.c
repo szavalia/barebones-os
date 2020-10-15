@@ -6,8 +6,9 @@
 typedef struct Pair{
     int flag; 
     void * lowerBound;
-    void * UpperBound;
+    void * upperBound;
 }Pair;
+
 #define MAX_AUX_NODES ((0x100000 / sizeof(Pair))+1)
 #define MEM_INIT_ADDRESS 0x600000
 #define MEM_END_ADDRESS  0xFFFFFF
@@ -16,16 +17,9 @@ typedef struct Pair{
 /*128MB=2^27
 4K=2^12
 128MB/4K=2^15 --> un "arbol" de 16 niveles; el 2^0 cuenta
-
-
 */
 #define ALIVE 1
 
-typedef struct Pair{
-    int flag; 
-    void * lowerBound;
-    void * upperBound;
-}Pair;
 
 typedef struct Level{
     int max_size;
@@ -37,7 +31,7 @@ typedef struct Level{
 Level levels[17]; // Hasta 1GB de blocks 
 
 void initialize(){
-    int size =
+    createNodes();
 
 
 }
