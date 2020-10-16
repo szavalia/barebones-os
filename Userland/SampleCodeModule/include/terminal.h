@@ -34,6 +34,7 @@
     void launchProcess();
     void cat();
     void wc();
+    void filter();
     
     extern void codeERROR();
     void error();

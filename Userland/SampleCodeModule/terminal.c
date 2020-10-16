@@ -1,5 +1,5 @@
 #include "terminal.h"
-#define NUM_COMMANDS 17
+#define NUM_COMMANDS 18
 
 typedef struct command_t{
 	void (*func)(void);
@@ -10,9 +10,9 @@ typedef struct command_t{
 //static char * usr_command;
 static command_t commands[NUM_COMMANDS];
 static int buffer_initialized=0;
-static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","launch","kill","ps","sh","loop", "exit", "cat", "wc"};
-static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "lanza un proceso\n", "mata el proceso que le indiques\n", "lista los procesos\n", "lanza la terminal\n", "Imprime el PID actual junto con un saludo\n", "Finaliza el proceso actual\n", "Escribe a pantalla\n", "Cuenta cantidad de lineas en stdin\n"};
-static void (*functions[])(void) = {help, printTime, printCPUInfo, printTemp, error, codeERROR, inforeg, printmemWrapper, mem, launchProcess, kill,ps,sh, loop, exit, cat, wc};
+static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","launch","kill","ps","sh","loop", "exit", "cat", "wc", "filter"};
+static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "lanza un proceso\n", "mata el proceso que le indiques\n", "lista los procesos\n", "lanza la terminal\n", "Imprime el PID actual junto con un saludo\n", "Finaliza el proceso actual\n", "Escribe a pantalla\n", "Cuenta cantidad de lineas en stdin\n", "filtra las vocales\n"};
+static void (*functions[])(void) = {help, printTime, printCPUInfo, printTemp, error, codeERROR, inforeg, printmemWrapper, mem, launchProcess, kill,ps,sh, loop, exit, cat, wc, filter};
 
 void initializeCommandVector(){
 	for(int i=0; i<NUM_COMMANDS; i++){
@@ -189,6 +189,12 @@ void wc(){
 	newline();
 	puts("cantidad de lineas:");
 	printDec(count);
+	newline();
+}
+
+void filter(){
+	char usr_command[COMMAND_BUFFER_SIZE];
+	scanf_for_cat(usr_command, BUFFER_SIZE, 2); 
 	newline();
 }
 

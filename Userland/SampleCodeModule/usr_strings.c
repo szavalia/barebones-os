@@ -6,6 +6,16 @@ static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
 //static int buffer_initialized=0; 
 extern void codeERROR();
 
+#define A 0x61
+#define E 0x65
+#define I 0x69
+#define O 0x6F
+#define U 0x75
+
+#define EsVocal(c) (c=='A'||c=='a' || c=='E' || c=='e' ||c=='i' ||c=='I' || c=='O' || c=='o' || c=='U' || c=='u')
+
+
+
 static char * strtokPointer = NULL;
 static int strtokPosition = 0;
 static int strLength = 0 ;
@@ -101,8 +111,11 @@ int scanf_for_cat(char * buffer, int size, int mode){
 				return 0;
 			}
 			else if(' ' <= *charBuffer && *charBuffer < 127 ){ //es una letra, número o signo de puntuación, '\b' = 127
-				putChar(*charBuffer);
-				buffer[current++] = *charBuffer;
+				//if(mode != 2 || (*charBuffer != A && *charBuffer != E && *charBuffer != I && *charBuffer != O && *charBuffer != U)){
+				if(mode != 2 ||! EsVocal(*charBuffer)){
+					putChar(*charBuffer);
+					buffer[current++] = *charBuffer;
+				}
 			}
 			else if(*charBuffer == '\t'){
 				for(int i=0; i<5;i++){
