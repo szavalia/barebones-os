@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "usr_lib.h"
 
+
 void * ltmalloc(int size){
 	
 	if(size < 0){
@@ -19,10 +20,13 @@ void ltmfree(void * pointer){
 
 void loop(){
 	int i=1;
+	newline();
 	callLoop();
 	while(i++>0){
-		if(i % 100000000 == 0)
+		if(i % 100000000 == 0){
+			newline();
 			callLoop();
+		}
 	}
 }	
 
