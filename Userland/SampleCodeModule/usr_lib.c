@@ -18,7 +18,7 @@ void ltmfree(void * pointer){
 	callFree(pointer);
 }
 
-void loop(){
+void loop(int argc, char **argv){
 	int i=1;
 	newline();
 	callLoop();
@@ -30,7 +30,7 @@ void loop(){
 	}
 }	
 
-void exit(){
+void exit(int argc, char **argv){
 	callExit(); //FIXME: wrapper al pedo
 }
 

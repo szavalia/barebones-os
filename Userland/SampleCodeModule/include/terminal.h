@@ -22,7 +22,6 @@
 
     void printCPUInfo(int argc, char ** argv);
 
-    void getTemp(uint64_t *temp);
     void printTemp(int argc, char ** argv);
 
     void help(int argc, char ** argv);

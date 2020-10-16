@@ -20,8 +20,8 @@
    extern void mem();
 
    
-   void loop();
-   void exit();   
+   void loop(int argc, char **argv);
+   void exit(int argc, char **argv);   
    
    extern void getMem(uint8_t * dir, uint8_t* bytes);
    extern void getTime(int * destination);
@@ -34,6 +34,7 @@
    extern void callLaunch( void * process , int argc , char * argv[] );
    extern void callLoop();
    extern void callExit();
+   extern void getTemp(uint64_t *temp);
    extern int fork(); //FIXME: deprecated
 
 #endif

@@ -15,7 +15,7 @@ static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, print
 static command_t processes[MAX_PROCESSES];
 static char * process_names[] = {"loop", "sh", NULL};
 static char * process_descriptions[] = {"Imprime el PID actual junto con un saludo\n", "lanza la terminal\n", NULL};
-static char * process_functions[] = {loop, sh, NULL};
+static void (*process_functions[])(int, char **) = {loop, sh, NULL};
 
 static void setupCalls(){
 	for(int i=0; names[i] != NULL; i++){
@@ -94,7 +94,7 @@ void printTemp(int argc, char ** argv){
 	newline();
 }
 
-void ps(int argc, char ** argv){ //FIXME: wrapper al pedo
+void ps(int argc, char ** argv){ 
 	callPs();
 }
 
@@ -127,18 +127,20 @@ void error(int argc, char ** argv){
 	int aux = 2/0;
 }
 
-static void * getFunction( char * name){	
+static void call( int argc, char **argv){	
 	for ( int i = 0 ; names[i] != NULL; i++){
-		if(strequals(commands[i].name, name)){
-			return commands[i].func;
+		if(strequals(commands[i].name, *argv)){
+			(*(commands[i].func))(argc, argv);
+			return;
 		}
 	}
 	for(int i = 0; process_names[i] != NULL; i++){
-		if(strequals(processes[i].name, name)){
-			return processes[i].func;
+		if(strequals(processes[i].name, *argv)){
+			callLaunch(processes[i].func, argc, argv);
+			return;
 		}
 	}
-	return NULL;
+	puts("No existe tal función\n");
 }
 
 void parse_command(){ //TODO: bring her death
@@ -155,24 +157,9 @@ void parse_command(){ //TODO: bring her death
 		argv[i++] = token;
 	}
 	while(token != NULL && i < MAX_ARGS);
-	int argc=i-1;
 
-	void * funct = getFunction(*argv);
-	if(funct != NULL){
-		for(int j=0; process_names[j] != NULL; j++){ //si es un proceso, lanzá uno nuevo
-			if(strequals(*argv, processes[j].name))			
-				callLaunch(funct, argc, argv);
-		}
-		for(int j=0; names[j] != NULL; j++){
-			if(strequals(*argv, commands[j].name)){
-				(*(commands[j].func))(argc, argv);	
-			}
-		}				
-	}
-	else{
-		puts("\nNo existe tal funcion\n");
-	}
-	
+	int argc=i-1;
+	call(argc, argv);	
 }
 
 void sh(int argc, char ** argv){ 
