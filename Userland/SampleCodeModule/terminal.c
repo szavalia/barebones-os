@@ -8,9 +8,9 @@ typedef struct command_t{
 
 static command_t commands[MAX_COMMANDS];
 static int buffer_initialized=0;
-static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "mata el proceso que le indiques\n", "lista los procesos\n", "Finaliza el proceso actual\n", NULL};
-static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, printTemp, error, codeERROR, inforeg, printmem, mem, kill,ps, exit, NULL};
-static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "exit", NULL};
+static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "mata el proceso que le indiques\n", "lista los procesos\n", "Imprime stdin a pantalla\n", "Cuenta cantidad de lineas de stdin\n","Filtra vocales de stdin\n", "Finaliza el proceso actual\n", NULL};
+static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, printTemp, error, codeERROR, inforeg, printmem, mem, kill,ps, cat, wc, filter, exit, NULL};
+static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "cat", "wc","filter", "exit", NULL};
 
 static command_t processes[MAX_PROCESSES];
 static char * process_names[] = {"loop", "sh", NULL};

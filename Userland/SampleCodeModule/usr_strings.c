@@ -28,7 +28,8 @@ static void initializeCharBuffer(){
 //FIXME: scanf con código repetido
 void scanf(char * buffer, int size){
     int  current = 0;
-	char * charBuffer = ltmalloc(BUFFER_SIZE);
+	char character;
+	char * charBuffer = &character;
     *charBuffer = 0;
     while( *charBuffer != '\n'){
         scanChar(charBuffer);
@@ -37,13 +38,13 @@ void scanf(char * buffer, int size){
         }        
     }
 	buffer[current]='\0';
-	ltmfree(charBuffer);
 	return;
 }
 
 void show_scanf(char * buffer, int size){
     int  current = 0, deletes=0;
-	char * charBuffer = ltmalloc(BUFFER_SIZE);
+	char character;
+	char * charBuffer = &character;
 	*charBuffer = 0;
     while( *charBuffer != '\n' ){
         scanChar(charBuffer);
@@ -58,13 +59,13 @@ void show_scanf(char * buffer, int size){
         }        
     }
 	buffer[current]='\0';
-	ltmfree(charBuffer);
 	return;
 }
 
 void show_processed_scanf(char * buffer, int size){
 	int  current = 0;
-	char * charBuffer = ltmalloc(BUFFER_SIZE);
+	char character;
+	char * charBuffer = &character;
 	*charBuffer = 0;
     while( *charBuffer != '\n' ){
         scanChar(charBuffer);
@@ -88,13 +89,13 @@ void show_processed_scanf(char * buffer, int size){
         }        
     }
 	buffer[current]='\0';
-	ltmfree(charBuffer);
 	return;
 }
 
 int scanf_for_cat(char * buffer, int size, int mode){
 	int  current = 0;
-	char * charBuffer = ltmalloc(BUFFER_SIZE);
+	char character;
+	char * charBuffer = &character;
 	*charBuffer = 0;
 	int count = 0;
     while( *charBuffer != 3 ){
@@ -131,7 +132,6 @@ int scanf_for_cat(char * buffer, int size, int mode){
     }
 	//putChar(' ');
 	buffer[current]='\0';
-	ltmfree(charBuffer);
 	if(mode == 1){
 		return count;
 	}
@@ -141,7 +141,8 @@ int scanf_for_cat(char * buffer, int size, int mode){
 
 void scanf_for_calculator(char * buffer, int size){
 	int  current = 0;
-	char * charBuffer = ltmalloc(BUFFER_SIZE);
+	char character;
+	char * charBuffer = &character;
 	*charBuffer = 0;
     while( *charBuffer != '=' ){
         scanChar(charBuffer);
@@ -165,15 +166,14 @@ void scanf_for_calculator(char * buffer, int size){
         }        
     }
 	buffer[current-1]='\0';
-	ltmfree(charBuffer);
 	return;
 }
 
 void show_numeric_scanf(char * buffer, int size){
 	int  current = 0;
-	char * charBuffer = ltmalloc(BUFFER_SIZE);
+	char character;
+	char * charBuffer = &character;
 	*charBuffer = 0;
-	
     while( *charBuffer != '\n' ){
         scanChar(charBuffer);
         if(*charBuffer != 0 && current < size){	
@@ -190,7 +190,6 @@ void show_numeric_scanf(char * buffer, int size){
         }        
     }
 	buffer[current]='\0';
-	ltmfree(charBuffer);
 	return;
 }
 
