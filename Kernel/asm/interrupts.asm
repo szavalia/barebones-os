@@ -109,12 +109,12 @@ SECTION .text
 	mov rsi , rsp
 	call irqDispatcher
 
+	
 	; signal pic EOI (End of Interrupt)
 	mov al, 20h
 	out 20h, al
-	
+	sti
 	popState
-			
 
 	iretq
 %endmacro
@@ -200,6 +200,7 @@ _irq60Handler:
 	; signal pic EOI (End of Interrupt)
 	mov al, 20h
 	out 20h, al
+	sti
 	popState
 			
 

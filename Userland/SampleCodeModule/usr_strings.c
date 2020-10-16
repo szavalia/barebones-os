@@ -6,6 +6,16 @@ static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
 //static int buffer_initialized=0; 
 extern void codeERROR();
 
+#define A 0x61
+#define E 0x65
+#define I 0x69
+#define O 0x6F
+#define U 0x75
+
+#define EsVocal(c) (c=='A'||c=='a' || c=='E' || c=='e' ||c=='i' ||c=='I' || c=='O' || c=='o' || c=='U' || c=='u')
+
+
+
 static char * strtokPointer = NULL;
 static int strtokPosition = 0;
 static int strLength = 0 ;
@@ -81,6 +91,53 @@ void show_processed_scanf(char * buffer, int size){
 	buffer[current]='\0';
 	ltmfree(charBuffer);
 	return;
+}
+
+int scanf_for_cat(char * buffer, int size, int mode){
+	int  current = 0;
+	char * charBuffer = ltmalloc(BUFFER_SIZE);
+	*charBuffer = 0;
+	int count = 0;
+    while( *charBuffer != 3 ){
+        scanChar(charBuffer);
+        if(*charBuffer != 0 && current < size && *charBuffer != 3){
+
+			if(*charBuffer == '\n'){
+				count++;
+				newline();
+			}
+			if(*charBuffer == 3){
+				putChar('c');
+				return 0;
+			}
+			else if(' ' <= *charBuffer && *charBuffer < 127 ){ //es una letra, número o signo de puntuación, '\b' = 127
+				//if(mode != 2 || (*charBuffer != A && *charBuffer != E && *charBuffer != I && *charBuffer != O && *charBuffer != U)){
+				if(mode != 2 ||! EsVocal(*charBuffer)){
+					putChar(*charBuffer);
+					buffer[current++] = *charBuffer;
+				}
+			}
+			else if(*charBuffer == '\t'){
+				for(int i=0; i<5;i++){
+					buffer[current++] = ' ';
+				}
+			}
+			else if(*charBuffer == '\b'){
+				if(current>0){ //para no borrar cosas anteriores
+					current--;
+					putChar(*charBuffer);
+				}
+			}
+        }        
+    }
+	//putChar(' ');
+	buffer[current]='\0';
+	ltmfree(charBuffer);
+	if(mode == 1){
+		return count;
+	}
+	else
+		return;
 }
 
 void scanf_for_calculator(char * buffer, int size){
@@ -217,4 +274,28 @@ char * strtok( char * string , char key ){ // UNA LOCURA, funciona como el stkto
         while( *(strtokPointer+lastPos) == 0 ); //ahora me tengo que fijar, si el token que le voy a devolver seria string[] = "\0" , que seria un string vacion , no uno nulo, que no me sirve
         
         return strtokPointer+lastPos;       
+}
+
+uint64_t stringToNum(char * string){
+	uint64_t result = 0;
+	int length = strlen(string);
+	for(int i=0; i<length; i++){
+		result = result * 10 + ( string[i] - '0' );
+	}
+	return result;
+}
+
+char * strcopy(char *destination, char *source)
+{
+    char *start = destination;
+
+    while(*source != '\0')
+    {
+        *destination = *source;
+        destination++;
+        source++;
+    }
+
+    *destination = '\0'; // add '\0' at the end
+    return start;
 }

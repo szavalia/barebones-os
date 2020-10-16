@@ -22,13 +22,18 @@ int actual = 1;
 int initialized = FALSE;
 void * entryPoint;
 process_t procesos[MAXPROCESOS];
-int current_proc = 0;
+int current_proc = 0, foreground_proc = -1;
 extern int side, context;
 char kernelName[] = "Kernel";
 char unnamed[] = "Unnamed";
 extern void prepareProcess( int PID , uint64_t stackPointer , int argc , char * argv[] , void * main);
 extern void switchProcess( uint64_t stackPointer);
 extern void prepareProcessForked(uint64_t stack_pointer , uint64_t basePointerParent , uint64_t basePointerChild );
+
+
+int getProcessCount(){
+    return process_count;
+}
 
 void * requestStack(){
     return ltmalloc( STACK_SIZE );
@@ -69,9 +74,9 @@ void processBlock( int pid){
     }else
     {
         printS("No such process \n");
-    }
-    
+    }    
 }
+
 void printState( int i ){
     printS("State: ");
     switch (i)
@@ -92,7 +97,7 @@ void printState( int i ){
     }
 }
 
-void processNice(){
+void processNice(){ //TODO:
     printS("Unused");
 }
 void processDump(){
@@ -110,11 +115,11 @@ void processDump(){
         printS("\n");
         printState(procesos[i].state);
         printS("Foreground: ");
-        if( procesos[i].foreground == 0){
-            printS("no");
+        if( procesos[i].PID == foreground_proc){
+            printS("yes");
         }
         else{
-            printS("yes");
+            printS("no");
         }
         printS("\nBP: ");
         printHex(procesos[i].base_pointer);
@@ -162,20 +167,11 @@ void launchProcess( void * process , int argc , char * argv[] , uint64_t stack_p
             procesos[i].state = NOT_CREATED;
         }
         entryPoint = process;
-        current_proc = pid;
         initialized = 1;
     }else if ( current_proc != 0 ){
         procesos[current_proc].stack_pointer = stack_pointer;
-        current_proc = pid;
-         if ( side == 0){ //cambio de pantalla
-            side = 1;
-            context = 1;
-        }
-        else{
-            side = 0;
-            context = 0;
-        }
     }
+    current_proc = pid;
     procesos[pid].PID= pid;
     if ( argc != 0 ){
         procesos[pid].name = argv[0];
@@ -188,7 +184,11 @@ void launchProcess( void * process , int argc , char * argv[] , uint64_t stack_p
     procesos[pid].stack_start = requestStack(); 
     procesos[pid].base_pointer = getBasePointer(procesos[pid].stack_start);
     procesos[pid].stack_pointer = procesos[pid].base_pointer;
-    printHex(procesos[pid].base_pointer);
+
+    if(foreground_proc < 0){ //si no hay nadie en foreground, tomalo
+        foreground_proc = current_proc;
+    }
+
     prepareProcess(pid , procesos[pid].base_pointer , argc , argv , process);
 }
 
@@ -204,32 +204,28 @@ uint64_t scheduler (uint64_t current_rsp){
             i = 0;
             aux++;
         }
-        if ( aux >3 ){
-            printS("Todos los procesos blockeados, restart");
-            restart_kernel();
-        }
+        
     }
     while(procesos[i].state != READY );
-    if ( i != current_proc){
-        /*newline();
-        printS("cambiando al proceso: ");
-        printDec(i);
-        newline();*/
-        if ( side == 0){
-            side = 1;
-            context = 1;
-        }
-        else{
-            side = 0;
-            context = 0;
-        }
-    }
+    
     current_proc = i;
     
     return procesos[i].stack_pointer;
 }
 
+void exitProcess(){
+    printS("Exiting: ");
+    printDec(current_proc);
+    procesos[current_proc].state = NOT_CREATED;
+    ltmfree(procesos[current_proc].stack_start);
+}
+
 void processKill( int pid){
+
+    if(foreground_proc == pid){
+        foreground_proc = -1;
+    }
+
     if (  procesos[pid].state == READY || procesos[pid].state == BLOCKED){
         procesos[pid].state = KILLED;
         process_count--;
@@ -244,6 +240,10 @@ void processKill( int pid){
 }
 
 void exceptionKill(){
+    if(foreground_proc == current_proc){
+        foreground_proc = -1;
+    }
+
     if ( process_count == 1 ){
         restart_kernel();
     }else{
@@ -252,63 +252,13 @@ void exceptionKill(){
     }
 }
 
-
-/*void test(){  
-    while(1){
-        printS("test");
-        newline();
-        };
+int processIsInForeground(){
+    return current_proc == foreground_proc;
 }
 
-uint64_t scheduler( uint64_t stack_pointer ){
-    if ( flag == 0 ){
-        flag = 1;
-        procesos[1].stack_pointer = stack_pointer;
-        actual = 2;
-        launchProcess( test , 0 , 0 );
-    }
-    else{
-        if ( actual == 2  ){
-            actual = 1;
-            procesos[2].stack_pointer = stack_pointer;
-            return procesos[1].stack_pointer;
-        }
-        else{
-            actual = 2;
-            procesos[1].stack_pointer= stack_pointer;
-            return procesos[2].stack_pointer;
-        }
-    }
+void printGreeting(){
+    printS("Hola! Soy el proceso con PID ");
+    printDec(procesos[current_proc].PID);
+    newline();       
 }
-
-void kernelLaunch(){
-    procesos[0].PID = 0;
-    procesos[0].registers; //No se que poner aca
-    procesos[0].name = kernelName;
-    procesos[0].priority = 1;
-}
-
-void fillRegisters( process_t *proceso , reg_t *registers ){ //recibe un proceso, podria hacerse con el PID, seria mas lindo no?
-    proceso->registers.r8 = registers->r8;
-    proceso->registers.r9 = registers->r9 ;
-    proceso->registers.r10 = registers->r10;
-    proceso->registers.r11 = registers->r11;
-    proceso->registers.r12 = registers->r12;
-    proceso->registers.r13 = registers->r13;
-    proceso->registers.r14 = registers->r14;
-    proceso->registers.r15 = registers->r15;
-    proceso->registers.rax = registers->rax;
-    proceso->registers.rbx = registers->rbx;
-    proceso->registers.rcx = registers->rcx;
-    proceso->registers.rdx = registers->rdx;
-    proceso->registers.rdi = registers->rdi;
-    proceso->registers.rsi = registers->rsi;
-    proceso->registers.rbp = registers->rbp;
-    proceso->registers.rsp = registers->rsp;
-    proceso->registers.rip = registers->rip;
-    proceso->registers.cs = registers->cs;
-    proceso->registers.flags = registers->flags; 
-}
-*/
-
 
