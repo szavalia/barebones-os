@@ -17,12 +17,13 @@
 
    void * ltmalloc(int size);
    void ltmfree(void * pointer);
-   extern void mem();
 
    
    void loop(int argc, char **argv);
-   void exit(int argc, char **argv);   
+   void exit(int argc, char **argv);
+   void pid(int argc, char **argv);
    
+   extern void mem();
    extern void getMem(uint8_t * dir, uint8_t* bytes);
    extern void getTime(int * destination);
    extern void getCPUInfo(char * vendor, char * brand);
@@ -35,7 +36,7 @@
    extern void callLoop();
    extern void callExit();
    extern void getTemp(uint64_t *temp);
-   extern int fork(); //FIXME: deprecated
+   extern void getPID(int * destination); 
 
 #endif
 

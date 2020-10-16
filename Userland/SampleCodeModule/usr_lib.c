@@ -19,19 +19,29 @@ void ltmfree(void * pointer){
 }
 
 void loop(int argc, char **argv){
-	int i=1;
+	int i=1, greets = 0;
 	newline();
 	callLoop();
-	while(i++>0){
+	while(i++>0 && greets <= 3){
 		if(i % 100000000 == 0){
 			newline();
 			callLoop();
+			greets++;
 		}
 	}
+	callExit();
 }	
 
 void exit(int argc, char **argv){
-	callExit(); //FIXME: wrapper al pedo
+	callExit();
+}
+
+void pid(int argc, char **argv){
+	int * aux;
+	getPID(aux);
+	printDec(*aux);
+	newline();
+	callExit();
 }
 
 

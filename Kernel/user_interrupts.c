@@ -60,7 +60,7 @@ int int80_handler( uint64_t stack_pointer){
             sys_launch(stack_pointer);
             break;
         case 15:
-            return sys_fork(stack_pointer);
+            sys_pid();
             break;
         case 16:
             sys_loop();
@@ -194,8 +194,9 @@ void sys_launch(uint64_t stack_pointer){
     launchProcess(process, argc, argv, stack_pointer);
 }
 
-int sys_fork(uint64_t stack_pointer){
-    return fork(stack_pointer);
+void sys_pid(){
+    int * pid = getR13();
+    *pid=getPID();
 }
 
 void sys_loop(){

@@ -15,7 +15,7 @@ GLOBAL callPs
 GLOBAL callKill
 GLOBAL callLaunch
 GLOBAL callLoop
-GLOBAL fork
+GLOBAL getPID
 GLOBAL callExit
 
 ;Acá vamos a poner los llamados al SO para interactuar con el hardware
@@ -316,15 +316,18 @@ callLaunch:
     pop rbp
     ret
 
-fork: ; TODO: 0xCACAC0DE
+getPID:
     push rbp
     mov rbp, rsp 
 
     push r12
+    push r13
 
     mov r12, 15
+    mov r13, rdi
     int 80h
 
+    pop r13
     pop r12
 
     mov rsp, rbp

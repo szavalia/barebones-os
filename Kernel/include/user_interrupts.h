@@ -19,7 +19,7 @@ void sys_kill();
 void sys_ps();
 void sys_loop();
 void sys_launch(uint64_t stack_pointer);
-int sys_fork(uint64_t stack_pointer);
+void sys_pid();
 void sys_exit();
 
 
