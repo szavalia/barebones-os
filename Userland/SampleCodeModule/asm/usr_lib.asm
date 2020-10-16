@@ -17,9 +17,6 @@ GLOBAL callLaunch
 GLOBAL callLoop
 GLOBAL fork
 GLOBAL callExit
-GLOBAL callSemInit
-GLOBAL callSemPost
-GLOBAL callSemWait
 
 ;Acá vamos a poner los llamados al SO para interactuar con el hardware
 section .text
@@ -374,13 +371,12 @@ callSemInit:
 
     mov r12, 18
     mov r13, rdi ; sem pointer pointer
-    mov r15, rsi ; value
+    mov r15, rsi; value
     int 80h
 
     pop r15
     pop r13
     pop r12
-
     mov rsp, rbp
     pop rbp
     ret
@@ -396,7 +392,7 @@ callSemWait:
     mov r15 , rdi
     int 80h
 
-    pop r15
+    por r15
     pop r12
 
     mov rsp, rbp
@@ -409,10 +405,9 @@ callSemPost:
 
     push r12
     push r15
-
+    
     mov r12, 20
     mov r15 , rdi
-
     int 80h
 
     pop r15
