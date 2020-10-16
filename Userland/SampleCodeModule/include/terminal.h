@@ -32,6 +32,7 @@
     void ps();
     void kill();
     void launchProcess();
+    void cat();
     
     extern void codeERROR();
     void error();
