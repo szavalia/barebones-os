@@ -29,6 +29,9 @@
 
     void ps(int argc, char ** argv);
     void kill(int argc, char ** argv);
+    void cat();
+    void wc();
+    void filter();
     
     extern void codeERROR(int argc, char ** argv);
     void error(int argc, char ** argv);

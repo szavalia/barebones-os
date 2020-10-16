@@ -154,6 +154,7 @@ void launchProcess( void * process , int argc , char **argv , uint64_t stack_poi
         procesos[pid].name = unnamed;
     }
     procesos[pid].state = READY;
+    procesos[pid].priority = 0;
     procesos[pid].stack_start = requestStack(); 
     procesos[pid].base_pointer = getBasePointer(procesos[pid].stack_start);
     procesos[pid].stack_pointer = procesos[pid].base_pointer;

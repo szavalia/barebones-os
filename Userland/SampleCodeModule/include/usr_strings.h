@@ -16,4 +16,5 @@
     char * strtok( char * string , char key );
     uint64_t stringToNum(char * string);
     char * strcopy(char *destination, char *source);
+    int scanf_for_cat(char * buffer, int size, int mode);
 #endif
