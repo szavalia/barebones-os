@@ -27,9 +27,6 @@
    extern void callLaunch( void * process , int argc , char * argv[] );
    extern void callLoop();
    extern void callExit();
-   extern void callSemInit( void ** sem , int value);
-   extern void callSemWait( void * sem);
-   extern void callSemPost( void * sem);
    extern int fork(); //FIXME: deprecated
 
 #endif
