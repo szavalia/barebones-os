@@ -1,7 +1,7 @@
 #include "terminal.h"
 
 typedef struct command_t{
-	void (*func)(void);
+	void (*func)(int, char **);
 	char * name;
 	char * desc;
 } command_t;
@@ -155,17 +155,17 @@ void parse_command(){ //TODO: bring her death
 		argv[i++] = token;
 	}
 	while(token != NULL && i < MAX_ARGS);
-	argv[i] = NULL;
+	int argc=i-1;
 
 	void * funct = getFunction(*argv);
 	if(funct != NULL){
 		for(int j=0; process_names[j] != NULL; j++){ //si es un proceso, lanzá uno nuevo
 			if(strequals(*argv, processes[j].name))			
-				callLaunch(funct, i, argv);
+				callLaunch(funct, argc, argv);
 		}
 		for(int j=0; names[j] != NULL; j++){
 			if(strequals(*argv, commands[j].name)){
-				(*(commands[j].func))();	
+				(*(commands[j].func))(argc, argv);	
 			}
 		}				
 	}
