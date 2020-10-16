@@ -114,10 +114,10 @@ prepareProcessForked:
 switchProcess:
 
 	mov rsp , rdi
+	sti
 	mov al, 20h
 	out 20h, al
 	
 	popState
-			
-
+	
 	iretq
