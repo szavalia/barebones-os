@@ -9,6 +9,7 @@
 #include "mem_manager.h"
 #include "process.h"
 #include "lib.h"
+#include "semaphore.h"
 
 
 int int80_handler( uint64_t stack_pointer){
@@ -83,13 +84,20 @@ int int80_handler( uint64_t stack_pointer){
 }
 
 void sys_sem_init(){
+    semaphore_t ** sem = (semaphore_t **) getR13();
+    int value = getR15();
+    *sem = sem_init(value);
     return;
 }
 
 void sys_sem_wait(){
+    semaphore_t * sem = (semaphore_t*) getR13();
+    sem_wait(sem);
     return;
 }
 void sys_sem_post(){
+    semaphore_t * sem = (semaphore_t*) getR13();
+    sem_post(sem);
     return;
 }
 void sys_write(){
