@@ -94,7 +94,7 @@ void printTemp(int argc, char ** argv){
 	newline();
 }
 
-void ps(int argc, char ** argv){ 
+void ps(int argc, char ** argv){ //FIXME: wrapper al pedo
 	callPs();
 }
 
@@ -127,22 +127,6 @@ void error(int argc, char ** argv){
 	int aux = 2/0;
 }
 
-static void call( int argc, char **argv){	
-	for ( int i = 0 ; names[i] != NULL; i++){
-		if(strequals(commands[i].name, *argv)){
-			(*(commands[i].func))(argc, argv);
-			return;
-		}
-	}
-	for(int i = 0; process_names[i] != NULL; i++){
-		if(strequals(processes[i].name, *argv)){
-			callLaunch(processes[i].func, argc, argv);
-			return;
-		}
-	}
-	puts("No existe tal función\n");
-}
-
 void parse_command(){ //TODO: bring her death
 	char usr_command[COMMAND_BUFFER_SIZE];
 	puts("$ ");
@@ -157,9 +141,26 @@ void parse_command(){ //TODO: bring her death
 		argv[i++] = token;
 	}
 	while(token != NULL && i < MAX_ARGS);
-
 	int argc=i-1;
-	call(argc, argv);	
+
+	for(int j=0; names[j] != NULL; j++){
+		if(strequals(*argv, commands[j].name)){
+			(*(commands[j].func))(argc, argv);	
+			return;
+		}
+	}	
+
+	for(int j=0; process_names[j] != NULL; j++){ //si es un proceso, lanzá uno nuevo
+		if(strequals(*argv, processes[j].name)){		
+			callLaunch(processes[j].func, argc, argv);
+			return;
+		}
+	}
+					
+	
+	puts("No existe tal funcion\n");
+	
+	
 }
 
 void sh(int argc, char ** argv){ 
