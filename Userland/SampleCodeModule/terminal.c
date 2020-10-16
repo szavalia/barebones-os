@@ -1,28 +1,37 @@
 #include "terminal.h"
-#define NUM_COMMANDS 18
 
 typedef struct command_t{
-	void (*func)(void);
+	void (*func)(int, char **);
 	char * name;
 	char * desc;
 } command_t;
 
-//static char * usr_command;
-static command_t commands[NUM_COMMANDS];
+static command_t commands[MAX_COMMANDS];
 static int buffer_initialized=0;
-static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","launch","kill","ps","sh","loop", "exit", "cat", "wc", "filter"};
-static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "lanza un proceso\n", "mata el proceso que le indiques\n", "lista los procesos\n", "lanza la terminal\n", "Imprime el PID actual junto con un saludo\n", "Finaliza el proceso actual\n", "Escribe a pantalla\n", "Cuenta cantidad de lineas en stdin\n", "filtra las vocales\n"};
-static void (*functions[])(void) = {help, printTime, printCPUInfo, printTemp, error, codeERROR, inforeg, printmemWrapper, mem, launchProcess, kill,ps,sh, loop, exit, cat, wc, filter};
+static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "mata el proceso que le indiques\n", "lista los procesos\n", "Finaliza el proceso actual\n", NULL};
+static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, printTemp, error, codeERROR, inforeg, printmem, mem, kill,ps, exit, NULL};
+static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "exit", NULL};
 
-void initializeCommandVector(){
-	for(int i=0; i<NUM_COMMANDS; i++){
+static command_t processes[MAX_PROCESSES];
+static char * process_names[] = {"loop", "sh", NULL};
+static char * process_descriptions[] = {"Imprime el PID actual junto con un saludo\n", "lanza la terminal\n", NULL};
+static void (*process_functions[])(int, char **) = {loop, sh, NULL};
+
+static void setupCalls(){
+	for(int i=0; names[i] != NULL; i++){
 		commands[i].name = names[i];
 		commands[i].desc = descriptions[i];
 		commands[i].func = functions[i];
 	}
+
+	for(int j=0; process_names[j] != NULL; j++){
+		processes[j].name = process_names[j];
+		processes[j].desc = process_descriptions[j];
+		processes[j].func = process_functions[j];
+	}
 }
 
-void printTime(){
+void printTime(int argc, char ** argv){
     int time[3];
 	getTime(time);
 	printDec(time[0]); //horas
@@ -34,7 +43,7 @@ void printTime(){
 	return;
 }
 
-void inforeg(){ 
+void inforeg(int argc, char ** argv){ 
 	uint64_t regs[16];
 	char * regNames[] = {"RAX","RBX","RCX","RDX","RSI","RDI","RBP","RSP","R8","R9","R10","R11","R12","R13","R14","R15"};
 	getReg(regs);
@@ -47,7 +56,11 @@ void inforeg(){
 }
 
 //toma una dirección de memoria en hexa y devuelve los proximos 32 bytes
-void printmem(char * hexDir){ 
+void printmem(int argc, char ** argv){ 
+    if(argc != 2){
+        return;
+    }
+    char * hexDir = argv[1];
 	int dir = hexadecimalToDecimal( hexDir); 
 	uint8_t bytes[32];
 	getMem((uint8_t *)dir, bytes); //FIXME: casteos raros
@@ -60,14 +73,8 @@ void printmem(char * hexDir){
 	}
 
 }
-void printmemWrapper(){
-	char memory[NUM_BUFFER_SIZE] = { 0 };
-	puts("Inserte direccion de memoria (en hexa):\n");
-	show_processed_scanf(memory, NUM_BUFFER_SIZE); 
-	printmem(memory);	
-}
 
-void printCPUInfo(){
+void printCPUInfo(int argc, char ** argv){
 	char vendor[13], brand[49];
 	getCPUInfo(vendor, brand);
 	puts("CPU Vendor: ");
@@ -80,48 +87,51 @@ void printCPUInfo(){
 
 }
 
-void printTemp(){
+void printTemp(int argc, char ** argv){
 	uint64_t temp;
 	getTemp(&temp);
 	printDec(temp);
 	newline();
 }
 
-void ps(){ //FIXME: wrapper al pedo
+void ps(int argc, char ** argv){ //FIXME: wrapper al pedo
 	callPs();
 }
 
-void kill(int pid){
-	char usr_command[NUM_BUFFER_SIZE];
-	show_numeric_scanf(usr_command, NUM_BUFFER_SIZE);
-	callKill(stringToNum(usr_command));
+void kill(int argc, char ** argv){
+    if(argc != 2){
+        return;
+    }
+    int pid = stringToNum(argv[1]);
+	callKill(pid);
 }
 
-void bootMsg(){
-	if(!buffer_initialized){
-			//initializeCommandBuffer();
-			initializeCommandVector();
-			buffer_initialized = TRUE;
+
+void help(int argc, char ** argv){
+	for(int i=0; commands[i].name != NULL ; i++){
+		puts("\t- ");
+		puts(commands[i].name);
+		puts(": ");
+		puts(commands[i].desc);
 	}
-	newline();
-	puts("Estos son los comandos disponibles:\n");
-	help();
+	for(int j=0; processes[j].name != NULL; j++){
+		puts("\t- ");
+		puts(processes[j].name);
+		puts(": ");
+		puts(processes[j].desc);
+	}
 	return;
 }
 
-void * getFunction( char * name){
-	for ( int i = 0 ; i < NUM_COMMANDS; i++){
-		if(strequals(commands[i].name, name)){
-			return commands[i].func;
-		}
-	}
-	return NULL;
+void error(int argc, char ** argv){
+	int aux = 2/0;
 }
 
-void launchProcess(){
+void parse_command(){ //TODO: bring her death
 	char usr_command[COMMAND_BUFFER_SIZE];
-	puts("Ingresa el nombre y los argumentos (como en bash!)\n");
+	puts("$ ");
 	show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE);
+	newline();
 	char *argv[MAX_ARGS];
 	char * token;
 	*argv = strtok(usr_command, ' ');
@@ -131,48 +141,35 @@ void launchProcess(){
 		argv[i++] = token;
 	}
 	while(token != NULL && i < MAX_ARGS);
-	argv[i] = NULL;
-	void * funct = getFunction(*argv);
-	if(funct != NULL){
-		newline();
-		callLaunch(funct, i, argv);
+	int argc=i-1;
+
+	for(int j=0; names[j] != NULL; j++){
+		if(strequals(*argv, commands[j].name)){
+			(*(commands[j].func))(argc, argv);	
+			return;
+		}
+	}	
+
+	for(int j=0; process_names[j] != NULL; j++){ //si es un proceso, lanzá uno nuevo
+		if(strequals(*argv, processes[j].name)){		
+			callLaunch(processes[j].func, argc, argv);
+			return;
+		}
 	}
-	else{
-		puts("\nNo existe tal funcion\n");
-	}
+					
+	
+	puts("No existe tal funcion\n");
+	
 	
 }
 
-void help(){
-	for(int i=0; i < NUM_COMMANDS ; i++){
-		puts("\t- ");
-		puts(commands[i].name);
-		puts(": ");
-		puts(commands[i].desc);
+void sh(int argc, char ** argv){ 
+	if(!buffer_initialized){
+		setupCalls();
+		buffer_initialized = TRUE;
 	}
-	return;
-}
-
-void error(){
-	int aux = 2/0;
-}
-
-void sh(){ 
-		if(!buffer_initialized){
-			initializeCommandVector();
-			buffer_initialized = TRUE;
-		}
-		char usr_command[COMMAND_BUFFER_SIZE];
-		while(1){
-		puts("$ ");
-		show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE); 
-		newline();
-
-		for(int i=0; i<NUM_COMMANDS ; i++){
-			if(strequals(usr_command, commands[i].name)){
-				(*(commands[i].func))();
-			}
-		}
+	while(1){
+		parse_command();		
 	}
 	return;
 }

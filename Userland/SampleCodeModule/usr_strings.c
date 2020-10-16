@@ -1,7 +1,6 @@
 #include "usr_strings.h"
 #include "usr_lib.h"
 #define BUFFER_SIZE 1024
-static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
 //static char * charBuffer;
 //static int buffer_initialized=0; 
 extern void codeERROR();
