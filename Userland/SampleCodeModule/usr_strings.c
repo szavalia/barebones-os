@@ -1,7 +1,6 @@
 #include "usr_strings.h"
 #include "usr_lib.h"
 #define BUFFER_SIZE 1024
-static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
 //static char * charBuffer;
 //static int buffer_initialized=0; 
 extern void codeERROR();
@@ -217,4 +216,28 @@ char * strtok( char * string , char key ){ // UNA LOCURA, funciona como el stkto
         while( *(strtokPointer+lastPos) == 0 ); //ahora me tengo que fijar, si el token que le voy a devolver seria string[] = "\0" , que seria un string vacion , no uno nulo, que no me sirve
         
         return strtokPointer+lastPos;       
+}
+
+uint64_t stringToNum(char * string){
+	uint64_t result = 0;
+	int length = strlen(string);
+	for(int i=0; i<length; i++){
+		result = result * 10 + ( string[i] - '0' );
+	}
+	return result;
+}
+
+char * strcopy(char *destination, char *source)
+{
+    char *start = destination;
+
+    while(*source != '\0')
+    {
+        *destination = *source;
+        destination++;
+        source++;
+    }
+
+    *destination = '\0'; // add '\0' at the end
+    return start;
 }

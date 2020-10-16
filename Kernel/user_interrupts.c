@@ -65,10 +65,33 @@ int int80_handler( uint64_t stack_pointer){
         case 16:
             sys_loop();
             break;
+        case 17:
+            sys_exit();
+            break;
+        case 18:
+            sys_sem_init();
+            break;
+        case 19:
+            sys_sem_wait();
+            break;
+        case 20:
+            sys_sem_post();
+            break;
+
     }
     return 1;
 }
 
+void sys_sem_init(){
+    return;
+}
+
+void sys_sem_wait(){
+    return;
+}
+void sys_sem_post(){
+    return;
+}
 void sys_write(){
     char * buffer = (char *) getR13();
     int size = getR15();
@@ -177,4 +200,8 @@ int sys_fork(uint64_t stack_pointer){
 
 void sys_loop(){
     printGreeting();
+}
+
+void sys_exit(){
+    exitProcess();
 }

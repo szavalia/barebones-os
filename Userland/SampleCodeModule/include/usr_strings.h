@@ -14,4 +14,6 @@
     int strlen(char * string);
     int strequals(char * s1, char * s2);
     char * strtok( char * string , char key );
+    uint64_t stringToNum(char * string);
+    char * strcopy(char *destination, char *source);
 #endif

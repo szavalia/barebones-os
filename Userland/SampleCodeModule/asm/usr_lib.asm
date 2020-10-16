@@ -16,6 +16,7 @@ GLOBAL callKill
 GLOBAL callLaunch
 GLOBAL callLoop
 GLOBAL fork
+GLOBAL callExit
 
 ;Acá vamos a poner los llamados al SO para interactuar con el hardware
 section .text
@@ -343,4 +344,19 @@ callLoop:
 
     mov rsp, rbp
     pop rbp
-    ret  
+    ret
+
+callExit:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+
+    mov r12, 17
+    int 80h
+
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret

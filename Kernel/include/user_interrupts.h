@@ -20,6 +20,7 @@ void sys_ps();
 void sys_loop();
 void sys_launch(uint64_t stack_pointer);
 int sys_fork(uint64_t stack_pointer);
+void sys_exit();
 
 
 extern uint_least64_t cpuTemperature();

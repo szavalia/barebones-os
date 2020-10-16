@@ -74,9 +74,9 @@ void processBlock( int pid){
     }else
     {
         printS("No such process \n");
-    }
-    
+    }    
 }
+
 void printState( int i ){
     printS("State: ");
     switch (i)
@@ -97,7 +97,7 @@ void printState( int i ){
     }
 }
 
-void processNice(){
+void processNice(){ //TODO:
     printS("Unused");
 }
 void processDump(){
@@ -161,9 +161,6 @@ void launchProcess( void * process , int argc , char * argv[] , uint64_t stack_p
     //Deberia ser como un execve esto, el void* del procesos seria onda (entryPoint);
     //Igual siento que esto tendria que usarse el conjunto el fork en userland, porque pisaria el 
     int pid = createPID();
-    printS("PID OTORGADO:");
-    printDec(pid);
-    newline();
       if ( initialized == 0 ){
 
         for ( int i = 0 ; i < MAXPROCESOS ; i++){
@@ -173,14 +170,6 @@ void launchProcess( void * process , int argc , char * argv[] , uint64_t stack_p
         initialized = 1;
     }else if ( current_proc != 0 ){
         procesos[current_proc].stack_pointer = stack_pointer;
-         if ( side == 0){ //cambio de pantalla
-            side = 1;
-            context = 1;
-        }
-        else{
-            side = 0;
-            context = 0;
-        }
     }
     current_proc = pid;
     procesos[pid].PID= pid;
@@ -198,12 +187,6 @@ void launchProcess( void * process , int argc , char * argv[] , uint64_t stack_p
 
     if(foreground_proc < 0){ //si no hay nadie en foreground, tomalo
         foreground_proc = current_proc;
-        printS("PID: ");
-        printDec(pid);
-        newline();
-        printS("Foreground PID: ");
-        printDec(procesos[foreground_proc].PID);
-        newline();
     }
 
     prepareProcess(pid , procesos[pid].base_pointer , argc , argv , process);
@@ -221,34 +204,25 @@ uint64_t scheduler (uint64_t current_rsp){
             i = 0;
             aux++;
         }
-        /*if ( aux >3 ){
-            printS("Todos los procesos blockeados, restart");
-            restart_kernel();
-        }*/
+        
     }
     while(procesos[i].state != READY );
-    if ( i != current_proc){
-        /*newline();
-        printS("cambiando al proceso: ");
-        printDec(i);
-        newline();*/
-        if ( side == 0){
-            side = 1;
-            context = 1;
-        }
-        else{
-            side = 0;
-            context = 0;
-        }
-    }
+    
     current_proc = i;
     
     return procesos[i].stack_pointer;
 }
 
+void exitProcess(){
+    printS("Exiting: ");
+    printDec(current_proc);
+    procesos[current_proc].state = NOT_CREATED;
+    ltmfree(procesos[current_proc].stack_start);
+}
+
 void processKill( int pid){
 
-    if(foreground_proc == current_proc){
+    if(foreground_proc == pid){
         foreground_proc = -1;
     }
 
@@ -283,15 +257,8 @@ int processIsInForeground(){
 }
 
 void printGreeting(){
-    int i=1;
-    while(i++>0){
-        if(i % 1000 == 0){
-            printS("Hola! Soy el proceso con PID ");
-            printDec(procesos[current_proc].PID);
-            newline();       
-        }
-      
-    }
-    
+    printS("Hola! Soy el proceso con PID ");
+    printDec(procesos[current_proc].PID);
+    newline();       
 }
 
