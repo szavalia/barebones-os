@@ -83,15 +83,17 @@ void show_processed_scanf(char * buffer, int size){
 	return;
 }
 
-void scanf_for_cat(char * buffer, int size){
+int scanf_for_cat(char * buffer, int size, int mode){
 	int  current = 0;
 	char * charBuffer = ltmalloc(BUFFER_SIZE);
 	*charBuffer = 0;
+	int count = 0;
     while( *charBuffer != 3 ){
         scanChar(charBuffer);
         if(*charBuffer != 0 && current < size && *charBuffer != 3){
 
 			if(*charBuffer == '\n'){
+				count++;
 				newline();
 			}
 			if(*charBuffer == 3){
@@ -118,7 +120,11 @@ void scanf_for_cat(char * buffer, int size){
 	//putChar(' ');
 	buffer[current]='\0';
 	ltmfree(charBuffer);
-	return;
+	if(mode == 1){
+		return count;
+	}
+	else
+		return;
 }
 
 void scanf_for_calculator(char * buffer, int size){

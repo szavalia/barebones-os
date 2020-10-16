@@ -33,6 +33,7 @@
     void kill();
     void launchProcess();
     void cat();
+    void wc();
     
     extern void codeERROR();
     void error();
