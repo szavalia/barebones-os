@@ -11,12 +11,14 @@
 #define SHIFT_RELEASE 170
 #define CAPSLOCK 0x3A
 #define DELETE 0x0E
+#define CTRL 29
 #define ENTER 28
 #define CHUNK 10
 #define LALT 0x38
 #define R 0x13
 #define P 0x19
 #define T 0x14
+#define D 0x20
 #define BUF_SIZE 1024
 
 static char ascode[59][2] = {
@@ -25,7 +27,7 @@ static char ascode[59][2] = {
 {'\n','\n'},{0,0},{'a','A'},{'s','S'},{'d','D'},{'f','F'},{'g','G'},{'h','H'},{'j','J'},{'k','K'},{'l','L'}, {';',':'},{'\'', '\"'},{'°','~'},{0,0},{'\\','|'},
 {'z','Z'},{'x','X'},{'c','C'},{'v','V'},{'b','B'},{'n','N'},{'m','M'}, {',', '<'},{'.','>'},{'-','?'},{0,0},{0,0},{0,0},{' ',' '}, {0,0}};
 
-static int flagShift=0, flagNoCaps = 1, buffer_size = 0, left_alt = 0;
+static int flagShift=0, flagNoCaps = 1, buffer_size = 0, left_alt = 0, ctrl=0;
 static char buffer[BUF_SIZE]; 
 static uint64_t regs[16];
 extern int side , context;
@@ -49,6 +51,9 @@ void keyboard_handler(){
         if (scanCode == LALT){
             left_alt = !left_alt;
         }
+        if(scanCode == CTRL){
+            ctrl = !ctrl;
+        }
 
         if(scanCode == R && left_alt){ //alt + R para inforeg
             saveRegs();
@@ -57,6 +62,11 @@ void keyboard_handler(){
         else if (scanCode == T && left_alt && (context == side)){
             left_alt = 0;
             context = 1 - context;
+        }
+        else if(scanCode == D && ctrl){
+            ctrl = 0;
+            buffer[buffer_size++] = 3;
+            return 0;
         }
         
         else if(keyPress != 0){ //para que no imprima las keys no mappeadas

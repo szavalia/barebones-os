@@ -179,6 +179,11 @@ void sh(){
 
 void cat(){
 	char usr_command[COMMAND_BUFFER_SIZE];
-	show_processed_scanf(usr_command, BUFFER_SIZE); 
+	scanf_for_cat(usr_command, BUFFER_SIZE); 
 	newline();
 }
+
+
+
+
+

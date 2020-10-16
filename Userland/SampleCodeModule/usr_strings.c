@@ -83,6 +83,44 @@ void show_processed_scanf(char * buffer, int size){
 	return;
 }
 
+void scanf_for_cat(char * buffer, int size){
+	int  current = 0;
+	char * charBuffer = ltmalloc(BUFFER_SIZE);
+	*charBuffer = 0;
+    while( *charBuffer != 3 ){
+        scanChar(charBuffer);
+        if(*charBuffer != 0 && current < size && *charBuffer != 3){
+
+			if(*charBuffer == '\n'){
+				newline();
+			}
+			if(*charBuffer == 3){
+				putChar('c');
+				return 0;
+			}
+			else if(' ' <= *charBuffer && *charBuffer < 127 ){ //es una letra, número o signo de puntuación, '\b' = 127
+				putChar(*charBuffer);
+				buffer[current++] = *charBuffer;
+			}
+			else if(*charBuffer == '\t'){
+				for(int i=0; i<5;i++){
+					buffer[current++] = ' ';
+				}
+			}
+			else if(*charBuffer == '\b'){
+				if(current>0){ //para no borrar cosas anteriores
+					current--;
+					putChar(*charBuffer);
+				}
+			}
+        }        
+    }
+	//putChar(' ');
+	buffer[current]='\0';
+	ltmfree(charBuffer);
+	return;
+}
+
 void scanf_for_calculator(char * buffer, int size){
 	int  current = 0;
 	char * charBuffer = ltmalloc(BUFFER_SIZE);
