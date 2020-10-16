@@ -74,9 +74,9 @@ void processBlock( int pid){
     }else
     {
         printS("No such process \n");
-    }    
+    }
+    
 }
-
 void printState( int i ){
     printS("State: ");
     switch (i)
@@ -97,7 +97,7 @@ void printState( int i ){
     }
 }
 
-void processNice(){ //TODO:
+void processNice(){
     printS("Unused");
 }
 void processDump(){
