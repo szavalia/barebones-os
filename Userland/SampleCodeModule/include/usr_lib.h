@@ -8,6 +8,9 @@
    #define BUFFER_SIZE 1024
    #define TRUE 1
    #define FALSE 0   
+   #define MAX_PROCESSES 5
+
+   
 
    extern void getContext(int * context);
    extern void changeContext();
@@ -19,7 +22,11 @@
    
    void loop();
    void exit();   
-
+   
+   extern void getMem(uint8_t * dir, uint8_t* bytes);
+   extern void getTime(int * destination);
+   extern void getCPUInfo(char * vendor, char * brand);
+   extern void getReg(uint64_t * regs);
    extern void callMalloc(int size, void ** location);
    extern void callFree(void * pointer);
    extern void callPs();
