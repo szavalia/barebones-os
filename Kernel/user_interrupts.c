@@ -37,10 +37,11 @@ static void (*syscalls[])(uint64_t *) = {
     sys_renounce,
     sys_block,
     sys_nice,
-    sys_pipeWrite,
-    sys_pipeRead,
-    sys_pipeOpen,
-    sys_pipeClose
+    sys_pipe_write,
+    sys_pipe_read,
+    sys_pipe_open,
+    sys_pipe_close,
+    sys_pipe_states
 };
 
 int int80_handler( uint64_t * stack_pointer){
@@ -190,26 +191,30 @@ void sys_nice(uint64_t regs[]){
    processNice(pid, new_prio); 
 }
 
-void sys_pipeWrite(uint64_t regs[]){
+void sys_pipe_write(uint64_t regs[]){
     int id = (int) regs[R13];
     char * address = (char *) regs[R15];
     int bytes = (int) regs[RBX];
     pipeWrite(id, address, bytes);
 }
 
-void sys_pipeRead(uint64_t regs[]){
+void sys_pipe_read(uint64_t regs[]){
     int id = (int) regs[R13];
     char * address = (char *) regs[R15];
     int bytes = (int) regs[RBX];
     pipeRead(id, address, bytes);
 }
 
-void sys_pipeOpen(uint64_t regs[]){
+void sys_pipe_open(uint64_t regs[]){
     int * id = (int *) regs[R13];
     *id = pipeOpen();
 }
 
-void sys_pipeClose(uint64_t regs[]){
+void sys_pipe_close(uint64_t regs[]){
     int id = (int) regs[R13];
     pipeClose(id);
+}
+
+void sys_pipe_states(uint64_t regs[]){
+    pipeStates();
 }

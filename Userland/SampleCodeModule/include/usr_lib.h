@@ -25,7 +25,6 @@
    #define MAX_PROCESSES 5
    void loop(int argc, char **argv);
    void exit(int argc, char **argv);
-   void pid(int argc, char **argv);
 
    extern void callPs();
    extern void callKill(int pid);
@@ -48,11 +47,13 @@
 
    //Pipes
    #define PIPESIZE 1024
+   void pipe(int argc, char **argv);
 
    extern void pipeWrite(int pipeID, char * address, int bytes);
    extern void pipeRead(int pipeID, char * address, int bytes);
    extern void pipeOpen(int * destinationForID);
    extern void pipeClose(int pipeID);
+   extern void callPipe();
 
 #endif
 

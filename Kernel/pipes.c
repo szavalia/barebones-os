@@ -64,6 +64,25 @@ void pipeRead(int id, char * address, int bytes){
     }
 }
 
+void pipeStates(){
+    if(num_pipes == 0){
+        printS("No abriste ningun pipe\n");
+    }
+    for(int i=0; i< num_pipes; i++){
+        printS("Pipe: ");
+        printDec(i);
+        newline();
+        printS("Chars written: ");
+        printDec(pipes[i].nwritten);
+        newline();
+        printS("Chars read: ");
+        printDec(pipes[i].nread);
+        newline();
+        printS("--------------------------------------\n");
+    }
+}
+
+
 static void initPipe(int i){
     pipes[i].open = TRUE;
     pipes[i].lock = init_mutex();

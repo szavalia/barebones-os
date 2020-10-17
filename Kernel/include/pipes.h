@@ -30,4 +30,7 @@ void pipeWrite(int id, char * address, int bytes);
 //lee bytes desde address en un pipe con determinado id
 void pipeRead(int id, char * address, int bytes); 
 
+//muestra el estado de los pipes
+void pipeStates();
+
 #endif

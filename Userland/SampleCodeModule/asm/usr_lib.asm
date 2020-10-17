@@ -28,6 +28,7 @@ GLOBAL pipeWrite
 GLOBAL pipeRead
 GLOBAL pipeOpen
 GLOBAL pipeClose
+GLOBAL callPipe
 
 
 ;Acá vamos a poner los llamados al SO para interactuar con el hardware
@@ -564,6 +565,21 @@ pipeClose:
     push r12
 
     mov r12, 27
+    int 80h
+
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+    callPipe:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+
+    mov r12, 28
     int 80h
 
     pop r12
