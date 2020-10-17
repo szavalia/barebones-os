@@ -60,7 +60,7 @@ int int80_handler( uint64_t * stack_pointer){
             sys_launch(stack_pointer);
             break;
         case 15:
-            sys_pid();
+            sys_pid(stack_pointer);
             break;
         case 16:
             sys_loop(stack_pointer);
@@ -94,7 +94,7 @@ void sys_sem_post(){
 }
 void sys_write(uint64_t  regs[] ){
     char * buffer = (char *) regs[R13]; 
-    int size = getR15();
+    int size = regs[R15];
     print(buffer, size);
 }
  
@@ -107,19 +107,16 @@ void sys_write(uint64_t  regs[] ){
 }
 
 void sys_getReg(uint64_t  regs[]){
-    uint64_t * destination = (uint64_t *) getR13();
+    uint64_t * destination = (uint64_t *) regs[R13];
     uint64_t * regs2 =  getRegs();
     for(int i = 0; i < 16; i++){
         destination[i] = regs2[i];
     }
   
-
-
-
 }
 
 void sys_time(uint64_t  regs[]){
-    int * destination = (int *) getR13();  
+    int * destination = (int *) regs[R13];  
     int time[3];
     getTime(time);
     for(int i=0; i<3; i++){ //copio la hora!
@@ -128,16 +125,16 @@ void sys_time(uint64_t  regs[]){
 }
 
 void sys_getMem(uint64_t  regs[]){
-    uint8_t * destination = (uint8_t *) getR13();
-    uint8_t * start = (uint8_t *) getR15();
+    uint8_t * destination = (uint8_t *) regs[R13];
+    uint8_t * start = (uint8_t *) regs[R15];
     for(int i = 0; i<32; i++){ //TODO: verificar este cambio a uint8_t
         destination[i] = memContent(start+i);
     }
 }
 
 void sys_cpuinfo(uint64_t  regs[]){
-    char * rtaVendor = (char *) getR13();
-    char * rtaBrand = (char *) getR15();
+    char * rtaVendor = (char *) regs[R13];
+    char * rtaBrand = (char *) regs[R15];
     char buffer1[13], buffer2[49];
     cpuVendor(buffer1);
     cpuBrand(buffer2);
@@ -153,12 +150,12 @@ void sys_cpuinfo(uint64_t  regs[]){
 }
 
 void sys_temp(uint64_t  regs[]){
-    uint64_t * rta = (uint64_t *) getR13();
+    uint64_t * rta = (uint64_t *) regs[R13];
     rta[0] = cpuTemperature();
 }
 
 void sys_context(uint64_t  regs[]){
-    int * rta = (int *) getR13();
+    int * rta = (int *) regs[R13];
     *rta = getContext();
 }
 
@@ -167,14 +164,14 @@ void sys_update_context(uint64_t  regs[]){
 }
 
 void sys_malloc(uint64_t  regs[]){
-    int size = (int) getR13();
-    void ** location = (void **) getR15();
+    int size = (int) regs[R13];
+    void ** location = (void **) regs[R15];
     void * res = ltmalloc(size);
     memcpy(location, &res, sizeof(void *));
 }
 
 void sys_free(uint64_t  regs[]){
-    void * pointer = (void *) getR13();
+    void * pointer = (void *) regs[R13];
     ltmfree(pointer);
 }
 
@@ -187,19 +184,19 @@ void sys_ps(uint64_t  regs[]){
 }
 
 void sys_kill(uint64_t  regs[]){
-    int pid = (int) getR13();
+    int pid = (int) regs[R13];
     processKill(pid);
 }
 
-void sys_launch(uint64_t stack_pointer){
-    void * process = (void *) getR13();
-    int argc = (int) getR15();
-    char ** argv = (char**) getRBX();
-    launchProcess(process, argc, argv, stack_pointer);
+void sys_launch(uint64_t  regs[]){
+    void * process = (void *) regs[R13];
+    int argc = (int) regs[R15];
+    char ** argv = (char**) regs[RBX];
+    launchProcess(process, argc, argv, regs);
 }
 
-void sys_pid(){
-    int * pid = getR13();
+void sys_pid(uint64_t  regs[]){
+    int * pid = (int *) regs[R13];
     *pid=getPID();
 }
 

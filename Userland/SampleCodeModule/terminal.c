@@ -164,6 +164,7 @@ void parse_command(){
 	
 	puts("No existe tal funcion\n");
 		
+		
 }
 
 void sh(int argc, char ** argv){ 

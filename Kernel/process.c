@@ -5,6 +5,8 @@
 #include "reg_t.h"
 #include "video_driver.h"
 #include "mem_manager.h"
+#include "cola.h"
+
 #define STACK_SIZE ( 32 * 1024 + 8 )
 #define MAXPROCESOS 50
 #define BASE_PRIORITY 0
@@ -26,6 +28,7 @@ int current_proc = 0, foreground_proc = -1;
 extern int side, context;
 char kernelName[] = "Kernel";
 char unnamed[] = "Unnamed";
+
 extern void prepareProcess( int PID , uint64_t stackPointer , int argc , char * argv[] , void * main);
 extern void switchProcess( uint64_t stackPointer);
 extern void prepareProcessForked(uint64_t stack_pointer , uint64_t basePointerParent , uint64_t basePointerChild );
