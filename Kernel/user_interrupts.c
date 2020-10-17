@@ -83,6 +83,9 @@ int int80_handler( uint64_t * stack_pointer){
         case 22:
             sys_block(stack_pointer);
             break;
+        case 23: 
+            sys_nice(stack_pointer);
+            break;
 
     }
     return 1;
@@ -219,6 +222,12 @@ void sys_renounce(uint64_t regs[]){
 }
 
 void sys_block(uint64_t regs[]){
-    int pid = getR13();
+    int pid = regs[R13];
     blockProcess(pid);
+}
+
+void sys_nice(uint64_t regs[]){
+   int pid = (int) regs[R13];
+   int new_prio = (int) regs[R15];
+   processNice(pid, new_prio); 
 }

@@ -23,6 +23,7 @@ void sys_pid(uint64_t regs[]);
 void sys_exit(uint64_t  regs[]);
 void sys_renounce(uint64_t  regs[]);
 void sys_block(uint64_t regs[]);
+void sys_nice(uint64_t regs[]);
 
 extern uint_least64_t cpuTemperature();
 extern uint8_t memContent(uint8_t * i);

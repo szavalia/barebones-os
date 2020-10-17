@@ -9,7 +9,7 @@
 
 #define STACK_SIZE ( 32 * 1024 + 8 )
 #define MAXPROCESOS 50
-#define BASE_PRIORITY 1
+#define BASE_PRIORITY 2
 #define MAX_PRIORITY 4
 #define STACK_ALING(number)  number & -32 
 #define NULL 0 
@@ -53,26 +53,26 @@ void processBlock( int pid){
 }
 
 void printState( int i ){
-    printS("State: ");
+    printS("\nState: ");
     switch (i)
     {
     case READY:
-        printS("READY\n");
+        printS("READY");
         break;
     
     case BLOCKED:
-        printS("BLOCKED\n");
+        printS("BLOCKED");
         break;
     case KILLED:
-        printS("KILLED\n");
+        printS("KILLED");
         break;
     default:
-        printS("UNDEFINED\n");
+        printS("UNDEFINED");
         break;
     }
 }
 
-void processNice(int pid, int new_prio){ //TODO:
+void processNice(int pid, int new_prio){ 
     if(new_prio < BASE_PRIORITY){
         return;
     }
@@ -80,9 +80,14 @@ void processNice(int pid, int new_prio){ //TODO:
         new_prio = MAX_PRIORITY;
     }
     for(int i = 0; i < process_count; i++){
-        if(procesos[i].PID = pid){
+        if(procesos[i].PID == pid){
             procesos[i].priority = new_prio;
             procesos[i].ticks_left = new_prio-1;
+            printS("PID: ");
+            printDec(procesos[i].PID);
+            newline();
+            printS("PRIORITY: ");
+            printDec(procesos[i].priority);
             return;
         }
     }
@@ -98,10 +103,11 @@ void processDump(){
         printS("\nPID:");
         printDec(procesos[i].PID);
         printS("\nPriority: ");
-        printHex(procesos[i].priority);
-        printS("\n");
+        printDec(procesos[i].priority);
+        printS("\nTicks left: ");
+        printDec(procesos[i].ticks_left);
         printState(procesos[i].state);
-        printS("Foreground: ");
+        printS("\nForeground: ");
         if( procesos[i].PID == foreground_proc){
             printS("yes");
         }
@@ -186,13 +192,14 @@ void launchProcess( void * process , int argc , char **argv , uint64_t stack_poi
 
 
 uint64_t scheduler (uint64_t current_rsp){
-
+    procesos[current_proc].stack_pointer = current_rsp; 
+    
     if(procesos[current_proc].ticks_left > 0){ //para procesos con prioridades mayores a 1
         procesos[current_proc].ticks_left--;
         return procesos[current_proc].stack_pointer;
     }
-    procesos[current_proc].ticks_left = procesos[current_proc].priority-1;
-    procesos[current_proc].stack_pointer = current_rsp;
+
+    procesos[current_proc].ticks_left = procesos[current_proc].priority-1;    
     int i = current_proc;
     int aux = 0;
     do{

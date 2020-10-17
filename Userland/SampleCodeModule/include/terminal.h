@@ -28,6 +28,7 @@
     void sh(int argc, char ** argv); //lanza la terminal
 
     void ps(int argc, char ** argv);
+    void nice(int argc, char ** argv);
     void kill(int argc, char ** argv);
     void cat(int argc, char ** argv);
     void wc(int argc, char ** argv);

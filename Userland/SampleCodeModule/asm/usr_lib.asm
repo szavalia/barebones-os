@@ -12,6 +12,7 @@ GLOBAL callFree
 GLOBAL codeError
 GLOBAL mem
 GLOBAL callPs
+GLOBAL callNice
 GLOBAL callKill
 GLOBAL callLaunch
 GLOBAL callLoop
@@ -276,6 +277,7 @@ callPs:
     pop rbp
     ret
 
+
 callKill:
     push rbp
     mov rbp, rsp 
@@ -392,6 +394,28 @@ blockProcess:
     mov r13, rdi
     int 80h
 
+    pop r13
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+
+callNice:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+    push r13 ;primer param, pid
+    push r15 ;segundo param, new_prio
+
+    mov r12, 23
+    mov r13, rdi
+    mov r15, rsi
+    int 80h
+
+    pop r15
     pop r13
     pop r12
 

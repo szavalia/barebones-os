@@ -8,9 +8,9 @@ typedef struct command_t{
 
 static command_t commands[MAX_COMMANDS];
 static int buffer_initialized=0;
-static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "mata el proceso que le indiques\n", "lista los procesos\n", "Imprime stdin a pantalla\n", "Cuenta cantidad de lineas de stdin\n","Filtra vocales de stdin\n", "Finaliza el proceso actual\n", "Cambia el estado de un proceso entre bloqueado y listo dado su ID\n", NULL};
-static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, printTemp, divError, codeError, inforeg, printmem, mem, kill,ps, cat, wc, filter, exit, block, NULL};
-static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "cat", "wc","filter", "exit", "block", NULL};
+static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "mata el proceso que le indiques\n", "lista los procesos\n", "Imprime stdin a pantalla\n", "Cuenta cantidad de lineas de stdin\n","Filtra vocales de stdin\n", "Finaliza el proceso actual\n", "Cambia el estado de un proceso entre bloqueado y listo dado su ID\n", "Cambia la prioridad del proceso (parametros: PID y new_prio)\n", NULL};
+static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, printTemp, divError, codeError, inforeg, printmem, mem, kill,ps, cat, wc, filter, exit, block, nice, NULL};
+static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "cat", "wc","filter", "exit", "block", "nice", NULL};
 
 static command_t processes[MAX_PROCESSES];
 static char * process_names[] = {"loop", "sh", "pid", NULL};
@@ -96,8 +96,17 @@ void printTemp(int argc, char ** argv){
 	newline();
 }
 
-void ps(int argc, char ** argv){ //FIXME: wrapper al pedo
+void ps(int argc, char ** argv){ 
 	callPs();
+}
+
+void nice(int argc, char ** argv){
+	if(argc != 3){
+		return;
+	}
+	int pid = stringToNum(argv[1]);
+	int new_prio = stringToNum(argv[2]);
+	callNice(pid, new_prio);
 }
 
 void kill(int argc, char ** argv){

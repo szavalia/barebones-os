@@ -35,6 +35,7 @@
    extern void callLaunch( void * process , int argc , char * argv[] );
    extern void callLoop();
    extern void callExit();
+   extern void callNice(int pid, int priority);
    extern void getTemp(uint64_t *temp);
    extern void getPID(int * destination); 
    extern void renounceCPU();
