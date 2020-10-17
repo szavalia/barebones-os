@@ -9,7 +9,8 @@
 
 #define STACK_SIZE ( 32 * 1024 + 8 )
 #define MAXPROCESOS 50
-#define BASE_PRIORITY 0
+#define BASE_PRIORITY 1
+#define MAX_PRIORITY 4
 #define STACK_ALING(number)  number & -32 
 #define NULL 0 
 #define NOT_CREATED 0
@@ -71,8 +72,20 @@ void printState( int i ){
     }
 }
 
-void processNice(){ //TODO:
-    printS("Unused");
+void processNice(int pid, int new_prio){ //TODO:
+    if(new_prio < BASE_PRIORITY){
+        return;
+    }
+    if(new_prio > MAX_PRIORITY){
+        new_prio = MAX_PRIORITY;
+    }
+    for(int i = 0; i < process_count; i++){
+        if(procesos[i].PID = pid){
+            procesos[i].priority = new_prio;
+            procesos[i].ticks_left = new_prio-1;
+            return;
+        }
+    }
 }
 void processDump(){
     int i;
@@ -157,7 +170,8 @@ void launchProcess( void * process , int argc , char **argv , uint64_t stack_poi
         procesos[pid].name = unnamed;
     }
     procesos[pid].state = READY;
-    procesos[pid].priority = 0;
+    procesos[pid].priority = BASE_PRIORITY;
+    procesos[pid].ticks_left = BASE_PRIORITY-1;
     procesos[pid].stack_start = requestStack(); 
     procesos[pid].base_pointer = getBasePointer(procesos[pid].stack_start);
     procesos[pid].stack_pointer = procesos[pid].base_pointer;
@@ -172,6 +186,12 @@ void launchProcess( void * process , int argc , char **argv , uint64_t stack_poi
 
 
 uint64_t scheduler (uint64_t current_rsp){
+
+    if(procesos[current_proc].ticks_left > 0){ //para procesos con prioridades mayores a 1
+        procesos[current_proc].ticks_left--;
+        return procesos[current_proc].stack_pointer;
+    }
+    procesos[current_proc].ticks_left = procesos[current_proc].priority-1;
     procesos[current_proc].stack_pointer = current_rsp;
     int i = current_proc;
     int aux = 0;
