@@ -17,6 +17,10 @@ static char * process_names[] = {"loop", "sh", NULL};
 static char * process_descriptions[] = {"Imprime el PID actual junto con un saludo\n", "lanza la terminal\n", NULL};
 static void (*process_functions[])(int, char **) = {loop, sh, NULL};
 
+
+static uint64_t regs[16];
+static char * regNames[] = {"RAX","RBX","RCX","RDX","RSI","RDI","RBP","RSP","R8","R9","R10","R11","R12","R13","R14","R15"};
+
 static void setupCalls(){
 	for(int i=0; names[i] != NULL; i++){
 		commands[i].name = names[i];
@@ -44,8 +48,6 @@ void printTime(int argc, char ** argv){
 }
 
 void inforeg(int argc, char ** argv){ 
-	uint64_t regs[16];
-	char * regNames[] = {"RAX","RBX","RCX","RDX","RSI","RDI","RBP","RSP","R8","R9","R10","R11","R12","R13","R14","R15"};
 	getReg(regs);
 	for(int i=0; i<16;i++){
 		puts(regNames[i]);

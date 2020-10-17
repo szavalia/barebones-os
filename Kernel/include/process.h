@@ -25,4 +25,5 @@ int fork( uint64_t stack_pointer ); //legacy
 int processIsInForeground();
 void printGreeting();
 int getProcessCount();
+void exitProcess();
 #endif
