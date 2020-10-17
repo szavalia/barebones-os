@@ -11,7 +11,7 @@ static void int_20( uint64_t stack_pointer);
 static void int_21();
 static int int_80(uint64_t stack_pointer);
 
-int irqDispatcher(uint64_t irq , uint64_t stack_pointer) {
+int irqDispatcher(uint64_t irq , uint64_t * stack_pointer) {
 	switch (irq) {
 		case 0:
 			int_20(stack_pointer); //TimerTick

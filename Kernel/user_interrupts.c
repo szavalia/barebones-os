@@ -9,17 +9,17 @@
 #include "mem_manager.h"
 #include "process.h"
 #include "lib.h"
-#include "semaphore.h"
+//#include "semaphore.h"
+#include "reg_t.h"
 
-
-int int80_handler( uint64_t stack_pointer){
-    int option = getR12();
+int int80_handler( uint64_t *stack_pointer){
+    int option = stack_pointer[R12];
     switch(option){
         case 0:
-            sys_read();
+            sys_read(stack_pointer);
             break;
         case 1:
-            sys_write();
+            sys_write(stack_pointer);
             break;
         case 2:
             sys_getReg();
@@ -69,21 +69,21 @@ int int80_handler( uint64_t stack_pointer){
         case 17:
             sys_exit();
             break;
-        case 18:
-            sys_sem_init();
+        /*case 18:
+            sys_sem_init(stack_pointer);
             break;
         case 19:
             sys_sem_wait();
             break;
         case 20:
             sys_sem_post();
-            break;
+            break;*/
 
     }
     return 1;
 }
-
-void sys_sem_init(){
+/*
+void sys_sem_init(uint64_t * regs){
     semaphore_t ** sem = (semaphore_t **) getR13();
     int value = getR15();
     *sem = sem_init(value);
@@ -99,16 +99,16 @@ void sys_sem_post(){
     semaphore_t * sem = (semaphore_t*) getR13();
     sem_post(sem);
     return;
-}
-void sys_write(){
-    char * buffer = (char *) getR13();
+}*/
+void sys_write(uint64_t * regs){
+    char * buffer = (char *) regs[R13];
     int size = getR15();
     print(buffer, size);
 }
  
 
- void sys_read(){
-    char * c = (char *) getR13();
+ void sys_read( uint64_t  * regs){
+    char * c = (char *) regs[R13];
     if(processIsInForeground()){
         *c = readChar(); //si no hay nada en el buffer, te retorna un 0    
     }

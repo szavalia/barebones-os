@@ -7,7 +7,7 @@
 #include "process.h"
 static unsigned long ticks = 0;
 
-void timer_handler( uint64_t stack_pointer) {
+void timer_handler( uint64_t * stack_pointer) {
 	ticks++;
 	if( getProcessCount() > 0  ){
 		switchProcess(scheduler(stack_pointer));
