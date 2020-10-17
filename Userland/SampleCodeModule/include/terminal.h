@@ -29,10 +29,10 @@
 
     void ps(int argc, char ** argv);
     void kill(int argc, char ** argv);
-    void cat();
-    void wc();
-    void filter();
-    
-    extern void codeERROR(int argc, char ** argv);
-    void error(int argc, char ** argv);
+    void cat(int argc, char ** argv);
+    void wc(int argc, char ** argv);
+    void filter(int argc, char ** argv);
+    void block(int argc, char ** argv);
+    extern void codeError(int argc, char ** argv);
+    void divError(int argc, char ** argv);
 #endif

@@ -257,3 +257,19 @@ int getPID(){
     return procesos[current_proc].PID;
 }
 
+void blockProcess(int pid){
+    if(pid < 0 || pid > MAXPROCESOS){
+        printS("Error en el PID\n");
+        return;
+    }
+    int state = procesos[pid].state;
+    if(procesos[pid].state == BLOCKED){
+        procesos[pid].state = READY;
+    }
+    else if( procesos[pid].state == READY){
+        procesos[pid].state = BLOCKED;
+    }
+    return;
+}
+
+

@@ -77,6 +77,12 @@ int int80_handler( uint64_t * stack_pointer){
         case 20:
             sys_sem_post(stack_pointer);
             break;
+        case 21:
+            sys_renounce(stack_pointer);
+            break;
+        case 22:
+            sys_block(stack_pointer);
+            break;
 
     }
     return 1;
@@ -206,4 +212,13 @@ void sys_loop(uint64_t  regs[]){
 
 void sys_exit(uint64_t  regs[]){
     exitProcess();
+}
+
+void sys_renounce(uint64_t regs[]){
+    renounce();
+}
+
+void sys_block(uint64_t regs[]){
+    int pid = getR13();
+    blockProcess(pid);
 }

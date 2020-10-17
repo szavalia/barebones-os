@@ -19,11 +19,13 @@ void sys_kill(uint64_t  regs[]);
 void sys_ps(uint64_t  regs[]);
 void sys_loop(uint64_t  regs[]);
 void sys_launch(uint64_t  regs[]);
+void sys_pid(uint64_t regs[]);
 void sys_exit(uint64_t  regs[]);
-void sys_pid(uint64_t  regs[]);
-
+void sys_renounce(uint64_t  regs[]);
+void sys_block(uint64_t regs[]);
 
 extern uint_least64_t cpuTemperature();
 extern uint8_t memContent(uint8_t * i);
+extern void renounce();
 
 #endif

@@ -37,6 +37,8 @@
    extern void callExit();
    extern void getTemp(uint64_t *temp);
    extern void getPID(int * destination); 
+   extern void renounceCPU();
+   extern void blockProcess(int pid);
 
 #endif
 

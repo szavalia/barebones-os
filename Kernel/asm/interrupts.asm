@@ -17,8 +17,9 @@ GLOBAL _irq60Handler
 
 GLOBAL _exception0Handler
 GLOBAL _exception6Handler
-GLOBAL getRIP
-GLOBAL saveInitRegs
+GLOBAL getRIP ;FIXME: CACAC0DE
+GLOBAL saveInitRegs ;FIXME: CACAC0DE	
+GLOBAL renounce
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
@@ -251,6 +252,10 @@ saveInitRegs:
 	mov [initRegs+24] , r12
 	mov [initRegs+32], r13
 	mov [initRegs+48], r15
+	ret
+
+renounce:
+	int 20h
 	ret
 
 SECTION .bss
