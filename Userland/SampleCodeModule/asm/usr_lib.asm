@@ -24,6 +24,13 @@ GLOBAL callSemInit
 GLOBAL callSemPost
 GLOBAL callSemWait
 
+GLOBAL pipeWrite
+GLOBAL pipeRead
+GLOBAL pipeOpen
+GLOBAL pipeClose
+GLOBAL callPipe
+
+
 ;Acá vamos a poner los llamados al SO para interactuar con el hardware
 section .text
 
@@ -482,6 +489,99 @@ callNice:
 
     pop r15
     pop r13
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+pipeWrite:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+    push r13
+    push r15
+    push rbx
+
+    mov r12, 24
+    mov r13, rdi
+    mov r15, rsi
+    mov rbx, rdx
+    int 80h
+
+    pop rbx 
+    pop r15
+    pop r13
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+pipeRead:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+    push r13 ;primer param, size
+    push r15 ;segundo param, el void *
+    push rbx
+
+    mov r12, 25
+    mov r13, rdi
+    mov r15, rsi
+    mov rbx, rdx
+    int 80h
+
+    pop rbx 
+    pop r15
+    pop r13
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+pipeOpen:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+
+    mov r12, 26
+    int 80h
+
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+pipeClose:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+
+    mov r12, 27
+    int 80h
+
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+    callPipe:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+
+    mov r12, 28
+    int 80h
+
     pop r12
 
     mov rsp, rbp

@@ -36,13 +36,7 @@ void exit(int argc, char **argv){
 	callExit();
 }
 
-void pid(int argc, char **argv){
-	int * aux;
-	getPID(aux);
-	printDec(*aux);
-	newline();
-	callExit();
-}
+
 
 
 

@@ -28,19 +28,18 @@ static char * descriptions[] = { "te muestra opciones de ayuda\n", //help
 "Cambia el estado de un proceso entre bloqueado y listo dado su ID\n", //block
 "Cambia la prioridad del proceso (parametros: PID y new_prio)\n", //nice
 "Realiza un testeo\n",  //test
+"Muestra el estado de los pipes\n", //pipe
 NULL };
 
 
-static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, printTemp, divError, codeError, inforeg, printmem, mem, kill,ps, cat, wc, filter, exit, block, nice, test , NULL};
-
-
-
-static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "cat", "wc","filter", "exit", "block", "nice", "test" , NULL};
+static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, printTemp, divError, codeError, inforeg, printmem, mem, kill,ps, cat, wc, filter, exit, block, nice, test, pipe , NULL};
+static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "cat", "wc","filter", "exit", "block", "nice", "test", "pipe", NULL};
 
 static command_t processes[MAX_PROCESSES];
-static char * process_names[] = {"loop", "sh", "pid", NULL};
-static char * process_descriptions[] = {"Imprime el PID actual junto con un saludo\n", "lanza la terminal\n", "muestra el ID del proceso actual", NULL};
-static void (*process_functions[])(int, char **) = {loop, sh, pid, NULL};
+static char * process_descriptions[] = {"Imprime el PID actual junto con un saludo\n", "lanza la terminal\n", NULL};
+static void (*process_functions[])(int, char **) = {loop, sh, NULL};
+static char * process_names[] = {"loop", "sh",  NULL};
+
 
 
 static uint64_t regs[16];
@@ -247,6 +246,13 @@ void block(int argc, char **argv){
 	int pid = stringToNum(argv[1]);
 	blockProcess(pid);
 }
+
+void pipe(int argc, char **argv){
+	callPipe();
+	return;
+}
+
+
 
 
 
