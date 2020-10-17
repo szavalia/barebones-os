@@ -20,6 +20,9 @@ GLOBAL getPID
 GLOBAL callExit
 GLOBAL renounceCPU
 GLOBAL blockProcess
+GLOBAL callSemInit
+GLOBAL callSemPost
+GLOBAL callSemWait
 
 ;Acá vamos a poner los llamados al SO para interactuar con el hardware
 section .text
@@ -368,6 +371,68 @@ callExit:
     pop rbp
     ret
 
+callSemInit:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+    push r13
+    push r15
+
+    mov r12, 18
+    mov r13, rdi ; sem pointer pointer
+    mov r15, rsi ; value
+    int 80h
+
+    pop r15
+    pop r13
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+callSemWait:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+    push r13
+
+    mov r12, 19
+    mov r13 , rdi
+    int 80h
+
+    pop r13
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+
+
+
+ callSemPost:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+    push r13
+
+
+    mov r12, 20
+    mov r13 , rdi
+
+    int 80h
+
+    pop r13
+    pop r12
+
+
+    mov rsp, rbp
+    pop rbp
+    ret
 renounceCPU:
     push rbp
     mov rbp, rsp 

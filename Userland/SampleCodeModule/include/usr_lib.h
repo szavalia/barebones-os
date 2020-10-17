@@ -3,6 +3,7 @@
    #include <stdint.h>
    #include "usr_strings.h"
    #include "usr_math.h"
+   #include "usr_sem.h"
 
    #define NULL (void *) 0 //FIXME: esto no debería estar incluido de algún lado?
    #define BUFFER_SIZE 1024
