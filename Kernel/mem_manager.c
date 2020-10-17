@@ -157,9 +157,9 @@ void printMemList(){
     }
     else{
         Node * iterator = mem_list.first;
-        while(iterator->address != mem_list.last->address){
+        while(iterator->next != NULL){        
             for(uint8_t i = 0; i < iterator->size; i++){
-                printS("Direccion 0x");
+                printS("0x");
                 printHex( (uint64_t) iterator->address+i);
                 printS(": ");
                 printHex( memContent((uint8_t *)iterator->address+i) );

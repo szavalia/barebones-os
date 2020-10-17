@@ -26,4 +26,5 @@ int getPID();
 void printGreeting();
 int getProcessCount();
 void exitProcess();
+void blockProcess(int pid);
 #endif

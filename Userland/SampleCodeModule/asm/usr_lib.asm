@@ -9,7 +9,7 @@ GLOBAL getContext
 GLOBAL callMalloc
 GLOBAL changeContext
 GLOBAL callFree
-GLOBAL codeERROR
+GLOBAL codeError
 GLOBAL mem
 GLOBAL callPs
 GLOBAL callKill
@@ -17,13 +17,15 @@ GLOBAL callLaunch
 GLOBAL callLoop
 GLOBAL getPID
 GLOBAL callExit
+GLOBAL renounceCPU
+GLOBAL blockProcess
 
 ;Acá vamos a poner los llamados al SO para interactuar con el hardware
 section .text
 
 
 ;invalid opcode
-codeERROR: 
+codeError: 
         UD2
        
 
@@ -358,6 +360,39 @@ callExit:
     mov r12, 17
     int 80h
 
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+renounceCPU:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+
+    mov r12, 21
+    int 80h
+
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+blockProcess:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+    push r13
+
+    mov r12, 22
+    mov r13, rdi
+    int 80h
+
+    pop r13
     pop r12
 
     mov rsp, rbp

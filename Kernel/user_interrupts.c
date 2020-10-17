@@ -60,7 +60,7 @@ int int80_handler( uint64_t * stack_pointer){
             sys_launch(stack_pointer);
             break;
         case 15:
-            sys_pid();
+            sys_pid(stack_pointer);
             break;
         case 16:
             sys_loop(stack_pointer);
@@ -76,6 +76,12 @@ int int80_handler( uint64_t * stack_pointer){
             break;
         case 20:
             sys_sem_post(stack_pointer);
+            break;
+        case 21:
+            sys_renounce(stack_pointer);
+            break;
+        case 22:
+            sys_block(stack_pointer);
             break;
 
     }
@@ -191,14 +197,14 @@ void sys_kill(uint64_t  regs[]){
     processKill(pid);
 }
 
-void sys_launch(uint64_t stack_pointer){
+void sys_launch(uint64_t stack_pointer){ //FIXME: en el switch le paso un uint64_t *
     void * process = (void *) getR13();
     int argc = (int) getR15();
     char ** argv = (char**) getRBX();
     launchProcess(process, argc, argv, stack_pointer);
 }
 
-void sys_pid(){
+void sys_pid(uint64_t regs[]){
     int * pid = getR13();
     *pid=getPID();
 }
@@ -209,4 +215,13 @@ void sys_loop(uint64_t  regs[]){
 
 void sys_exit(uint64_t  regs[]){
     exitProcess();
+}
+
+void sys_renounce(uint64_t regs[]){
+    renounce();
+}
+
+void sys_block(uint64_t regs[]){
+    int pid = getR13();
+    blockProcess(pid);
 }

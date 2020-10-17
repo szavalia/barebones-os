@@ -8,9 +8,9 @@ typedef struct command_t{
 
 static command_t commands[MAX_COMMANDS];
 static int buffer_initialized=0;
-static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "mata el proceso que le indiques\n", "lista los procesos\n", "Imprime stdin a pantalla\n", "Cuenta cantidad de lineas de stdin\n","Filtra vocales de stdin\n", "Finaliza el proceso actual\n", NULL};
-static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, printTemp, error, codeERROR, inforeg, printmem, mem, kill,ps, cat, wc, filter, exit, NULL};
-static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "cat", "wc","filter", "exit", NULL};
+static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "mata el proceso que le indiques\n", "lista los procesos\n", "Imprime stdin a pantalla\n", "Cuenta cantidad de lineas de stdin\n","Filtra vocales de stdin\n", "Finaliza el proceso actual\n", "Cambia el estado de un proceso entre bloqueado y listo dado su ID\n", NULL};
+static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, printTemp, divError, codeError, inforeg, printmem, mem, kill,ps, cat, wc, filter, exit, block, NULL};
+static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "cat", "wc","filter", "exit", "block", NULL};
 
 static command_t processes[MAX_PROCESSES];
 static char * process_names[] = {"loop", "sh", "pid", NULL};
@@ -126,7 +126,7 @@ void help(int argc, char ** argv){
 	return;
 }
 
-void error(int argc, char ** argv){
+void divError(int argc, char ** argv){
 	int aux = 2/0;
 }
 
@@ -172,18 +172,19 @@ void sh(int argc, char ** argv){
 		buffer_initialized = TRUE;
 	}
 	while(1){
-		parse_command();		
+		parse_command();
+		
 	}
 	return;
 }
 
-void cat(){
+void cat(int argc, char ** argv){
 	char usr_command[COMMAND_BUFFER_SIZE];
 	scanf_for_cat(usr_command, BUFFER_SIZE, 0); 
 	newline();
 }
 
-void wc(){
+void wc(int argc, char ** argv){
 	char usr_command[COMMAND_BUFFER_SIZE];
 	int count = scanf_for_cat(usr_command, BUFFER_SIZE, 1); 
 	newline();
@@ -192,10 +193,20 @@ void wc(){
 	newline();
 }
 
-void filter(){
+void filter(int argc, char ** argv){
 	char usr_command[COMMAND_BUFFER_SIZE];
 	scanf_for_cat(usr_command, BUFFER_SIZE, 2); 
 	newline();
+}
+
+//alterna entre bloqueado y listo para un dado pid
+void block(int argc, char **argv){
+	if(argc != 2){
+		puts("Error de parametro\n");
+		return;
+	}
+	int pid = stringToNum(argv[1]);
+	blockProcess(pid);
 }
 
 
