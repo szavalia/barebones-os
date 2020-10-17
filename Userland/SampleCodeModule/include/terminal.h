@@ -5,7 +5,7 @@
     #include "usr_strings.h"
     #include "usr_math.h"
 
-    #define NULL (void *) 0 //FIXME: esto no debería estar incluido de algún lado?
+    #define NULL (void *) 0 
     #define BUFFER_SIZE 1024
     #define COMMAND_BUFFER_SIZE 50
     #define MAX_ARGS 5
@@ -25,15 +25,25 @@
     void printTemp(int argc, char ** argv);
 
     void help(int argc, char ** argv);
+
     void sh(int argc, char ** argv); //lanza la terminal
 
     void ps(int argc, char ** argv);
+
     void nice(int argc, char ** argv);
+
     void kill(int argc, char ** argv);
+
     void cat(int argc, char ** argv);
+
     void wc(int argc, char ** argv);
+
     void filter(int argc, char ** argv);
+
     void block(int argc, char ** argv);
+
     extern void codeError(int argc, char ** argv);
+
     void divError(int argc, char ** argv);
+
 #endif

@@ -10,95 +10,53 @@
 #include "process.h"
 #include "lib.h"
 #include "reg_t.h"
+#include "pipes.h"
+
+static void (*syscalls[])(uint64_t *) = {
+    sys_read,
+    sys_write,
+    sys_getReg,
+    sys_time,
+    sys_getMem,
+    sys_cpuinfo,
+    sys_temp,
+    sys_context,
+    sys_update_context,
+    sys_malloc,
+    sys_free,
+    sys_mem,
+    sys_ps,
+    sys_kill,
+    sys_launch,
+    sys_pid,
+    sys_loop,
+    sys_exit,
+    sys_sem_init,
+    sys_sem_wait,
+    sys_sem_post,
+    sys_renounce,
+    sys_block,
+    sys_nice,
+    sys_pipeWrite,
+    sys_pipeRead,
+    sys_pipeOpen,
+    sys_pipeClose
+};
 
 int int80_handler( uint64_t * stack_pointer){
     int option = stack_pointer[R12];
-    switch(option){
-        case 0:
-            sys_read( stack_pointer);
-            break;
-        case 1:
-            sys_write(stack_pointer);
-            break;
-        case 2:
-            sys_getReg(stack_pointer);
-            break;
-        case 3:
-            sys_time(stack_pointer);
-            break;
-        case 4:
-            sys_getMem(stack_pointer);
-            break;
-        case 5:
-            sys_cpuinfo(stack_pointer);
-            break;
-        case 6:
-            sys_temp(stack_pointer);
-            break;
-        case 7:
-            sys_context(stack_pointer);
-            break;
-        case 8:
-            sys_update_context(stack_pointer);
-            break;
-        case 9:
-            sys_malloc(stack_pointer);
-            break;
-        case 10:
-            sys_free(stack_pointer);
-            break;
-        case 11:
-            sys_mem(stack_pointer);
-            break;
-        case 12:
-            sys_ps(stack_pointer);
-            break;
-        case 13:
-            sys_kill(stack_pointer);
-            break;
-        case 14:
-            sys_launch(stack_pointer);
-            break;
-        case 15:
-            sys_pid(stack_pointer);
-            break;
-        case 16:
-            sys_loop(stack_pointer);
-            break;
-        case 17:
-            sys_exit(stack_pointer);
-            break;
-        case 18:
-            sys_sem_init(stack_pointer);
-            break;
-        case 19:
-            sys_sem_wait(stack_pointer);
-            break;
-        case 20:
-            sys_sem_post(stack_pointer);
-            break;
-        case 21:
-            sys_renounce(stack_pointer);
-            break;
-        case 22:
-            sys_block(stack_pointer);
-            break;
-        case 23: 
-            sys_nice(stack_pointer);
-            break;
-
-    }
+    (*(syscalls[option]))(stack_pointer);
     return 1;
 }
 
-void sys_sem_init(){
+void sys_sem_init(uint64_t * stack_pointer){
     return;
 }
 
-void sys_sem_wait(){
+void sys_sem_wait(uint64_t * stack_pointer){
     return;
 }
-void sys_sem_post(){
+void sys_sem_post(uint64_t * stack_pointer){
     return;
 }
 void sys_write(uint64_t  regs[] ){
@@ -230,4 +188,28 @@ void sys_nice(uint64_t regs[]){
    int pid = (int) regs[R13];
    int new_prio = (int) regs[R15];
    processNice(pid, new_prio); 
+}
+
+void sys_pipeWrite(uint64_t regs[]){
+    int id = (int) regs[R13];
+    char * address = (char *) regs[R15];
+    int bytes = (int) regs[RBX];
+    pipeWrite(id, address, bytes);
+}
+
+void sys_pipeRead(uint64_t regs[]){
+    int id = (int) regs[R13];
+    char * address = (char *) regs[R15];
+    int bytes = (int) regs[RBX];
+    pipeRead(id, address, bytes);
+}
+
+void sys_pipeOpen(uint64_t regs[]){
+    int * id = (int *) regs[R13];
+    *id = pipeOpen();
+}
+
+void sys_pipeClose(uint64_t regs[]){
+    int id = (int) regs[R13];
+    pipeClose(id);
 }
