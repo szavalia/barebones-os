@@ -21,7 +21,7 @@ long process_count = 0;
 int actual = 1;
 int initialized = FALSE;
 void * entryPoint;
-process_t procesos[MAXPROCESOS];
+static process_t procesos[MAXPROCESOS];
 int current_proc = 0, foreground_proc = -1;
 extern int side, context;
 char kernelName[] = "Kernel";
@@ -38,35 +38,6 @@ int getProcessCount(){
 void * requestStack(){
     return ltmalloc( STACK_SIZE );
 }
-
-//fork
-int fork( uint64_t stack_pointer ){
-    //un fork es agarrar un proceso, ponerle un pid y copiar el resto de los otros.
-    int pid = createPID();
-    if ( pid == -1 ){
-        //TODO: error
-    }
-    //procesos[pid].state= READY;
-    procesos[pid].PID = pid;
-    printS("fork: ");
-    printDec(pid);
-    newline();
-    procesos[pid].stack_start = ltmalloc(STACK_SIZE);
-    memcpy(procesos[pid].stack_start, procesos[current_proc].stack_start, STACK_SIZE);
-    procesos[pid].priority= procesos[current_proc].priority;
-    procesos[pid].base_pointer = getBasePointer(procesos[pid].stack_start);
-
-    procesos[pid].stack_pointer =  procesos[pid].base_pointer - ( procesos[current_proc].base_pointer - stack_pointer);
-
-    prepareProcessForked(procesos[pid].stack_pointer , procesos[current_proc].base_pointer , procesos[pid].base_pointer);
-
-    procesos[pid].stack_pointer-=8; // tiene un push mas
-    printS("StackPointer:");
-    printHex(procesos[pid].stack_pointer);
-
-    return pid;
-}
-
 
 void processBlock( int pid){
     if (  procesos[pid].state == READY){
@@ -108,7 +79,7 @@ void processDump(){
         printS("---------------------------------------------\n");
         printS("proceso: ");
         printS(procesos[i].name);
-        printS("\n PID:");
+        printS("\nPID:");
         printDec(procesos[i].PID);
         printS("\nPriority: ");
         printHex(procesos[i].priority);
@@ -145,6 +116,7 @@ int createPID(){
     return process_count;
 }
 void restart_kernel(){
+    printS("[ Restarting Kernel ]\n");
       for ( int i = 0 ; i < MAXPROCESOS ; i++){
           if (procesos[i].state != NOT_CREATED){
               ltmfree(procesos[i].stack_start);
@@ -156,7 +128,7 @@ void restart_kernel(){
 }
 
 //execvec
-void launchProcess( void * process , int argc , char * argv[] , uint64_t stack_pointer ){
+void launchProcess( void * process , int argc , char **argv , uint64_t stack_pointer ){
 
     //Deberia ser como un execve esto, el void* del procesos seria onda (entryPoint);
     //Igual siento que esto tendria que usarse el conjunto el fork en userland, porque pisaria el 
@@ -174,7 +146,8 @@ void launchProcess( void * process , int argc , char * argv[] , uint64_t stack_p
     current_proc = pid;
     procesos[pid].PID= pid;
     if ( argc != 0 ){
-        procesos[pid].name = argv[0];
+        //strcopy(procesos[pid].name, *argv);
+        procesos[pid].name = *argv;
     }
     else
     {
@@ -210,15 +183,26 @@ uint64_t scheduler (uint64_t current_rsp){
     while(procesos[i].state != READY );
     
     current_proc = i;
+
+    if(foreground_proc == -1){
+        foreground_proc = current_proc;
+    }
     
     return procesos[i].stack_pointer;
 }
 
 void exitProcess(){
-    printS("Exiting: ");
-    printDec(current_proc);
     procesos[current_proc].state = NOT_CREATED;
     ltmfree(procesos[current_proc].stack_start);
+    process_count -= 1;
+    if(process_count==0){
+        restart_kernel();
+    }
+    if(foreground_proc == current_proc){
+        foreground_proc = -1;
+    }
+    switchProcess(scheduler(procesos[current_proc].stack_pointer));
+    
 }
 
 void processKill( int pid){
@@ -226,9 +210,12 @@ void processKill( int pid){
     if(foreground_proc == pid){
         foreground_proc = -1;
     }
-
+    if(pid ==procesos[current_proc].PID){
+        exitProcess();
+    }
     if (  procesos[pid].state == READY || procesos[pid].state == BLOCKED){
         procesos[pid].state = KILLED;
+        ltmfree(procesos[pid].stack_start);
         process_count--;
         if ( process_count == 0){
             restart_kernel();
@@ -248,7 +235,7 @@ void exceptionKill(){
     if ( process_count == 1 ){
         restart_kernel();
     }else{
-        //ltmfree(procesos[current_proc].stack_start);
+        //ltmfree(procesos[current_proc].stack_start); //FIXME: por qué no liberamos?
         procesos[current_proc].state = KILLED;
     }
 }
@@ -261,5 +248,9 @@ void printGreeting(){
     printS("Hola! Soy el proceso con PID ");
     printDec(procesos[current_proc].PID);
     newline();       
+}
+
+int getPID(){
+    return procesos[current_proc].PID;
 }
 

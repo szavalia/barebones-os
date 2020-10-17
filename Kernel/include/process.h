@@ -21,8 +21,8 @@ void processKill( int pid);
 void processDump();
 void exceptionKill();
 uint64_t getBasePointer( void * start);
-int fork( uint64_t stack_pointer ); //legacy
 int processIsInForeground();
+int getPID();
 void printGreeting();
 int getProcessCount();
 void exitProcess();

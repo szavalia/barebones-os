@@ -13,9 +13,9 @@ static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, print
 static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "cat", "wc","filter", "exit", NULL};
 
 static command_t processes[MAX_PROCESSES];
-static char * process_names[] = {"loop", "sh", NULL};
-static char * process_descriptions[] = {"Imprime el PID actual junto con un saludo\n", "lanza la terminal\n", NULL};
-static void (*process_functions[])(int, char **) = {loop, sh, NULL};
+static char * process_names[] = {"loop", "sh", "pid", NULL};
+static char * process_descriptions[] = {"Imprime el PID actual junto con un saludo\n", "lanza la terminal\n", "muestra el ID del proceso actual", NULL};
+static void (*process_functions[])(int, char **) = {loop, sh, pid, NULL};
 
 
 static uint64_t regs[16];
@@ -122,6 +122,7 @@ void help(int argc, char ** argv){
 		puts(": ");
 		puts(processes[j].desc);
 	}
+	newline();
 	return;
 }
 
@@ -129,7 +130,7 @@ void error(int argc, char ** argv){
 	int aux = 2/0;
 }
 
-void parse_command(){ //TODO: bring her death
+void parse_command(){ 
 	char usr_command[COMMAND_BUFFER_SIZE];
 	puts("$ ");
 	show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE);
@@ -147,22 +148,22 @@ void parse_command(){ //TODO: bring her death
 
 	for(int j=0; names[j] != NULL; j++){
 		if(strequals(*argv, commands[j].name)){
+			*argv = commands[j].name;
 			(*(commands[j].func))(argc, argv);	
 			return;
 		}
 	}	
 
 	for(int j=0; process_names[j] != NULL; j++){ //si es un proceso, lanzá uno nuevo
-		if(strequals(*argv, processes[j].name)){		
+		if(strequals(*argv, processes[j].name)){
+			*argv = processes[j].name;
 			callLaunch(processes[j].func, argc, argv);
 			return;
 		}
-	}
-					
+	}			
 	
 	puts("No existe tal funcion\n");
-	
-	
+		
 }
 
 void sh(int argc, char ** argv){ 
