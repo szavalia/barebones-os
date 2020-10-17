@@ -9,10 +9,9 @@
     #define BUFFER_SIZE 1024
     #define COMMAND_BUFFER_SIZE 50
     #define MAX_ARGS 5
-    #define MAX_COMMANDS 20
     #define TRUE 1
     #define FALSE 0
-
+    #define MAX_COMMANDS 20
     
     void printTime(int argc, char ** argv);
 
@@ -26,7 +25,7 @@
 
     void help(int argc, char ** argv);
     void sh(int argc, char ** argv); //lanza la terminal
-
+    void test(int argc, char **argv);
     void ps(int argc, char ** argv);
     void nice(int argc, char ** argv);
     void kill(int argc, char ** argv);
@@ -34,6 +33,6 @@
     void wc(int argc, char ** argv);
     void filter(int argc, char ** argv);
     void block(int argc, char ** argv);
-    extern void codeError(int argc, char ** argv);
+    void codeError(int argc, char ** argv);
     void divError(int argc, char ** argv);
 #endif

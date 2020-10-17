@@ -83,15 +83,19 @@ void processNice(int pid, int new_prio){
         if(procesos[i].PID == pid){
             procesos[i].priority = new_prio;
             procesos[i].ticks_left = new_prio-1;
-            printS("PID: ");
-            printDec(procesos[i].PID);
-            newline();
-            printS("PRIORITY: ");
-            printDec(procesos[i].priority);
+           //printS("PID: ");
+           // printDec(procesos[i].PID);
+           // newline();
+           // printS("PRIORITY: ");
+           // printDec(procesos[i].priority);
             return;
         }
     }
 }
+void myNice(int new_prio){
+    processNice(current_proc, new_prio);
+}
+
 void processDump(){
     int i;
     printS("Procesos Activos:\n");
@@ -129,7 +133,9 @@ uint64_t getBasePointer( void * start){
     stack+= STACK_SIZE; // llevo el pointer al final, la cantidad de stack seguro es de 32kb;
     return stack;
 }
-
+int currentPID(){
+    return current_proc;
+}
 int createPID(){
     if ( process_count >= MAXPROCESOS ){
         return -1;
@@ -193,12 +199,12 @@ void launchProcess( void * process , int argc , char **argv , uint64_t stack_poi
 
 uint64_t scheduler (uint64_t current_rsp){
     procesos[current_proc].stack_pointer = current_rsp; 
-    
-    if(procesos[current_proc].ticks_left > 0){ //para procesos con prioridades mayores a 1
-        procesos[current_proc].ticks_left--;
-        return procesos[current_proc].stack_pointer;
+    if( procesos[current_proc].state != NOT_CREATED){
+        if(procesos[current_proc].ticks_left > 0){ //para procesos con prioridades mayores a 1
+            procesos[current_proc].ticks_left--;
+            return procesos[current_proc].stack_pointer;
+        }
     }
-
     procesos[current_proc].ticks_left = procesos[current_proc].priority-1;    
     int i = current_proc;
     int aux = 0;
@@ -222,6 +228,11 @@ uint64_t scheduler (uint64_t current_rsp){
 }
 
 void exitProcess(){
+    printS("Cerrando: ");
+    printS( procesos[current_proc].name);
+    printS(" de PID: ");
+    printDec(current_proc);
+    newline();
     procesos[current_proc].state = NOT_CREATED;
     ltmfree(procesos[current_proc].stack_start);
     process_count -= 1;

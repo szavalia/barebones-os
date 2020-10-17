@@ -1,5 +1,5 @@
 #include "terminal.h"
-
+#include "test_sync.h"
 typedef struct command_t{
 	void (*func)(int, char **);
 	char * name;
@@ -8,9 +8,34 @@ typedef struct command_t{
 
 static command_t commands[MAX_COMMANDS];
 static int buffer_initialized=0;
-static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "mata el proceso que le indiques\n", "lista los procesos\n", "Imprime stdin a pantalla\n", "Cuenta cantidad de lineas de stdin\n","Filtra vocales de stdin\n", "Finaliza el proceso actual\n", "Cambia el estado de un proceso entre bloqueado y listo dado su ID\n", "Cambia la prioridad del proceso (parametros: PID y new_prio)\n", NULL};
-static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, printTemp, divError, codeError, inforeg, printmem, mem, kill,ps, cat, wc, filter, exit, block, nice, NULL};
-static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "cat", "wc","filter", "exit", "block", "nice", NULL};
+
+
+static char * descriptions[] = { "te muestra opciones de ayuda\n", //help
+"muestra la hora del sistema en formato HH:MM:SS\n",  //printTime
+"muestra la marca y modelo de la cpu\n", 	//printCPUInfo
+"muestra la temperatura del procesador\n",  //printTemp
+"excepcion de division por 0\n", 	//divError
+"excepcion de operacion invalida\n", //codeError
+"imprime registros, guardar con Alt+R\n", //inforeg
+"printea 32 bytes a partir de una direccion\n", //printmem
+"imprime memoria dinamicamente asignada\n", //mem
+"mata el proceso que le indiques\n", //kill
+"lista los procesos\n", //ps 
+"Imprime stdin a pantalla\n", //cat 
+"Cuenta cantidad de lineas de stdin\n", //wc
+"Filtra vocales de stdin\n",  //filter
+"Finaliza el proceso actual\n", //exit
+"Cambia el estado de un proceso entre bloqueado y listo dado su ID\n", //block
+"Cambia la prioridad del proceso (parametros: PID y new_prio)\n", //nice
+"Realiza un testeo\n",  //test
+NULL };
+
+
+static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, printTemp, divError, codeError, inforeg, printmem, mem, kill,ps, cat, wc, filter, exit, block, nice, test , NULL};
+
+
+
+static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "cat", "wc","filter", "exit", "block", "nice", "test" , NULL};
 
 static command_t processes[MAX_PROCESSES];
 static char * process_names[] = {"loop", "sh", "pid", NULL};
@@ -21,6 +46,10 @@ static void (*process_functions[])(int, char **) = {loop, sh, pid, NULL};
 static uint64_t regs[16];
 static char * regNames[] = {"RAX","RBX","RCX","RDX","RSI","RDI","RBP","RSP","R8","R9","R10","R11","R12","R13","R14","R15"};
 
+void test( int argc , char **argv){
+	test_no_sync();
+	//test_sync();
+}
 static void setupCalls(){
 	for(int i=0; names[i] != NULL; i++){
 		commands[i].name = names[i];

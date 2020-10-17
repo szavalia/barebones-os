@@ -10,6 +10,7 @@
 #include "process.h"
 #include "lib.h"
 #include "reg_t.h"
+#include "semaphore.h"
 
 int int80_handler( uint64_t * stack_pointer){
     int option = stack_pointer[R12];
@@ -91,14 +92,18 @@ int int80_handler( uint64_t * stack_pointer){
     return 1;
 }
 
-void sys_sem_init(){
+void sys_sem_init(uint64_t  regs[] ){
+    void ** sem_pointer = regs[R13];
+    *sem_pointer = sem_init(regs[R15]);
     return;
 }
 
-void sys_sem_wait(){
+void sys_sem_wait(uint64_t  regs[] ){
+    sem_wait(regs[R13]);
     return;
 }
-void sys_sem_post(){
+void sys_sem_post(uint64_t  regs[] ){
+     sem_post(regs[R13]);
     return;
 }
 void sys_write(uint64_t  regs[] ){
