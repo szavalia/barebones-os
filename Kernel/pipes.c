@@ -1,6 +1,6 @@
 #include "pipes.h"
 
-static pipe_t pipes[MAX_PIPES]; //cada pipe tiene un id, le pongo -1 si fue cerrado
+static pipe_t pipes[MAX_PIPES]; 
 static int num_pipes = 0; //numero de pipes inicializados, pueden haber algunos cerrados
 
 static void initPipe(int i);
@@ -11,13 +11,15 @@ int pipeOpen(){
     for(int i=0; i < num_pipes; i++){ //busco un pipe vacante
         if(!pipes[i].open){//está vacante
             initPipe(i);
+            return i;
         }
     }
+
     return createPipe();
 }
 
 void pipeClose(int id){
-    if(id >= num_pipes){
+    if(id >= num_pipes || id < 0){
         printS("No hay tal pipe\n");
         return;
     }
@@ -33,7 +35,7 @@ void pipeWrite(int id, char * address, int bytes){
     for(int i = 0; i < bytes; i++){
         while(1){
             lock(pipes[id].lock);
-            if(pipes[i].nwritten < pipes[id].nread){
+            if(pipes[i].nwritten < pipes[i].nread + PIPESIZE){
                 break;
             }
             unlock(pipes[id].lock);
@@ -72,6 +74,8 @@ void pipeStates(){
         printS("Pipe: ");
         printDec(i);
         newline();
+        printS("Status: ");
+        pipes[i].open? printS("OPEN\n") : printS("CLOSED\n");
         printS("Chars written: ");
         printDec(pipes[i].nwritten);
         newline();
