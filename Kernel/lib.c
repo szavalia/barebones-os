@@ -53,3 +53,18 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 
 	return destination;
 }
+
+char * strcopy(char *destination, char *source)
+{
+    char *start = destination;
+
+    while(*source != '\0')
+    {
+        *destination = *source;
+        destination++;
+        source++;
+    }
+
+    *destination = '\0'; // add '\0' at the end
+    return start;
+}

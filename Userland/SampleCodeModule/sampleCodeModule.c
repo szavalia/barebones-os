@@ -1,23 +1,21 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 /* sampleCodeModule.c */
-#include "usr_lib.h"
+#include "terminal.h"
 #include "calculadora.h"
 
 
 static int context[1];
 int main() 
 {
-	bootMsg();
-
 	do{
 	
 		getContext(context);
 		if(*context==0){
-			sh();
+			sh(0, NULL);
 		}
 		else if(*context == 1){
-			sh();
+			sh(0, NULL);
 		}	
 		changeContext();
 

@@ -9,7 +9,7 @@
 #define DIVISION 3
 #define OPEN 4
 #define CLOSE 5
-#define NULL 0
+#define NULL (void *) 0
 #define EPSILON 0.000000000001
 
 static char presedencia[5][6]={{ 1 , 1 , 0 , 0 , 0 , 1 },

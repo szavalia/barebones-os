@@ -1,10 +1,19 @@
 #include "usr_strings.h"
 #include "usr_lib.h"
 #define BUFFER_SIZE 1024
-static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
 //static char * charBuffer;
 //static int buffer_initialized=0; 
 extern void codeERROR();
+
+#define A 0x61
+#define E 0x65
+#define I 0x69
+#define O 0x6F
+#define U 0x75
+
+#define EsVocal(c) (c=='A'||c=='a' || c=='E' || c=='e' ||c=='i' ||c=='I' || c=='O' || c=='o' || c=='U' || c=='u')
+
+
 
 static char * strtokPointer = NULL;
 static int strtokPosition = 0;
@@ -19,7 +28,8 @@ static void initializeCharBuffer(){
 //FIXME: scanf con código repetido
 void scanf(char * buffer, int size){
     int  current = 0;
-	char * charBuffer = ltmalloc(BUFFER_SIZE);
+	char character;
+	char * charBuffer = &character;
     *charBuffer = 0;
     while( *charBuffer != '\n'){
         scanChar(charBuffer);
@@ -28,13 +38,13 @@ void scanf(char * buffer, int size){
         }        
     }
 	buffer[current]='\0';
-	ltmfree(charBuffer);
 	return;
 }
 
 void show_scanf(char * buffer, int size){
     int  current = 0, deletes=0;
-	char * charBuffer = ltmalloc(BUFFER_SIZE);
+	char character;
+	char * charBuffer = &character;
 	*charBuffer = 0;
     while( *charBuffer != '\n' ){
         scanChar(charBuffer);
@@ -49,13 +59,13 @@ void show_scanf(char * buffer, int size){
         }        
     }
 	buffer[current]='\0';
-	ltmfree(charBuffer);
 	return;
 }
 
 void show_processed_scanf(char * buffer, int size){
 	int  current = 0;
-	char * charBuffer = ltmalloc(BUFFER_SIZE);
+	char character;
+	char * charBuffer = &character;
 	*charBuffer = 0;
     while( *charBuffer != '\n' ){
         scanChar(charBuffer);
@@ -79,13 +89,60 @@ void show_processed_scanf(char * buffer, int size){
         }        
     }
 	buffer[current]='\0';
-	ltmfree(charBuffer);
 	return;
+}
+
+int scanf_for_cat(char * buffer, int size, int mode){
+	int  current = 0;
+	char character;
+	char * charBuffer = &character;
+	*charBuffer = 0;
+	int count = 0;
+    while( *charBuffer != 3 ){
+        scanChar(charBuffer);
+        if(*charBuffer != 0 && current < size && *charBuffer != 3){
+
+			if(*charBuffer == '\n'){
+				count++;
+				newline();
+			}
+			if(*charBuffer == 3){
+				putChar('c');
+				return 0;
+			}
+			else if(' ' <= *charBuffer && *charBuffer < 127 ){ //es una letra, número o signo de puntuación, '\b' = 127
+				//if(mode != 2 || (*charBuffer != A && *charBuffer != E && *charBuffer != I && *charBuffer != O && *charBuffer != U)){
+				if(mode != 2 ||! EsVocal(*charBuffer)){
+					putChar(*charBuffer);
+					buffer[current++] = *charBuffer;
+				}
+			}
+			else if(*charBuffer == '\t'){
+				for(int i=0; i<5;i++){
+					buffer[current++] = ' ';
+				}
+			}
+			else if(*charBuffer == '\b'){
+				if(current>0){ //para no borrar cosas anteriores
+					current--;
+					putChar(*charBuffer);
+				}
+			}
+        }        
+    }
+	//putChar(' ');
+	buffer[current]='\0';
+	if(mode == 1){
+		return count;
+	}
+	else
+		return;
 }
 
 void scanf_for_calculator(char * buffer, int size){
 	int  current = 0;
-	char * charBuffer = ltmalloc(BUFFER_SIZE);
+	char character;
+	char * charBuffer = &character;
 	*charBuffer = 0;
     while( *charBuffer != '=' ){
         scanChar(charBuffer);
@@ -109,15 +166,14 @@ void scanf_for_calculator(char * buffer, int size){
         }        
     }
 	buffer[current-1]='\0';
-	ltmfree(charBuffer);
 	return;
 }
 
 void show_numeric_scanf(char * buffer, int size){
 	int  current = 0;
-	char * charBuffer = ltmalloc(BUFFER_SIZE);
+	char character;
+	char * charBuffer = &character;
 	*charBuffer = 0;
-	
     while( *charBuffer != '\n' ){
         scanChar(charBuffer);
         if(*charBuffer != 0 && current < size){	
@@ -134,7 +190,6 @@ void show_numeric_scanf(char * buffer, int size){
         }        
     }
 	buffer[current]='\0';
-	ltmfree(charBuffer);
 	return;
 }
 

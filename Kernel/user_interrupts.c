@@ -9,121 +9,131 @@
 #include "mem_manager.h"
 #include "process.h"
 #include "lib.h"
-//#include "semaphore.h"
 #include "reg_t.h"
+#include "semaphore.h"
 
-int int80_handler( uint64_t *stack_pointer){
+int int80_handler( uint64_t * stack_pointer){
     int option = stack_pointer[R12];
     switch(option){
         case 0:
-            sys_read(stack_pointer);
+            sys_read( stack_pointer);
             break;
         case 1:
             sys_write(stack_pointer);
             break;
         case 2:
-            sys_getReg();
+            sys_getReg(stack_pointer);
             break;
         case 3:
-            sys_time();
+            sys_time(stack_pointer);
             break;
         case 4:
-            sys_getMem();
+            sys_getMem(stack_pointer);
             break;
         case 5:
-            sys_cpuinfo();
+            sys_cpuinfo(stack_pointer);
             break;
         case 6:
-            sys_temp();
+            sys_temp(stack_pointer);
             break;
         case 7:
-            sys_context();
+            sys_context(stack_pointer);
             break;
         case 8:
-            sys_update_context();
+            sys_update_context(stack_pointer);
             break;
         case 9:
-            sys_malloc();
+            sys_malloc(stack_pointer);
             break;
         case 10:
-            sys_free();
+            sys_free(stack_pointer);
             break;
         case 11:
-            sys_mem();
+            sys_mem(stack_pointer);
             break;
         case 12:
-            sys_ps();
+            sys_ps(stack_pointer);
             break;
         case 13:
-            sys_kill();
+            sys_kill(stack_pointer);
             break;
         case 14:
             sys_launch(stack_pointer);
             break;
         case 15:
-            return sys_fork(stack_pointer);
+            sys_pid(stack_pointer);
             break;
         case 16:
-            sys_loop();
+            sys_loop(stack_pointer);
             break;
         case 17:
-            sys_exit();
+            sys_exit(stack_pointer);
             break;
-        /*case 18:
+        case 18:
             sys_sem_init(stack_pointer);
             break;
         case 19:
-            sys_sem_wait();
+            sys_sem_wait(stack_pointer);
             break;
         case 20:
-            sys_sem_post();
-            break;*/
+            sys_sem_post(stack_pointer);
+            break;
+        case 21:
+            sys_renounce(stack_pointer);
+            break;
+        case 22:
+            sys_block(stack_pointer);
+            break;
+        case 23: 
+            sys_nice(stack_pointer);
+            break;
 
     }
     return 1;
 }
-/*
-void sys_sem_init(uint64_t * regs){
-    semaphore_t ** sem = (semaphore_t **) getR13();
-    int value = getR15();
-    *sem = sem_init(value);
+
+void sys_sem_init(uint64_t  regs[] ){
+    void ** sem_pointer = regs[R13];
+    *sem_pointer = sem_init(regs[R15]);
     return;
 }
 
-void sys_sem_wait(){
-    semaphore_t * sem = (semaphore_t*) getR13();
-    sem_wait(sem);
+void sys_sem_wait(uint64_t  regs[] ){
+    sem_wait(regs[R13]);
     return;
 }
-void sys_sem_post(){
-    semaphore_t * sem = (semaphore_t*) getR13();
-    sem_post(sem);
+void sys_sem_post(uint64_t  regs[] ){
+     sem_post(regs[R13]);
     return;
-}*/
-void sys_write(uint64_t * regs){
-    char * buffer = (char *) regs[R13];
-    int size = getR15();
+}
+void sys_sem_state(uint64_t regs[]){
+
+}
+void sys_write(uint64_t  regs[] ){
+    char * buffer = (char *) regs[R13]; 
+    int size = regs[R15];
     print(buffer, size);
 }
  
 
- void sys_read( uint64_t  * regs){
+ void sys_read(uint64_t  regs[]){
     char * c = (char *) regs[R13];
     if(processIsInForeground()){
         *c = readChar(); //si no hay nada en el buffer, te retorna un 0    
     }
 }
 
-void sys_getReg(){
-    uint64_t * destination = (uint64_t *) getR13();
-    uint64_t * regs =  getRegs();
+void sys_getReg(uint64_t  regs[]){
+    uint64_t * destination = (uint64_t *) regs[R13];
+    uint64_t * regs2 =  getRegs();
     for(int i = 0; i < 16; i++){
-        destination[i] = regs[i];
+        destination[i] = regs2[i];
     }
+  
 }
 
-void sys_time(){
-    int * destination = (int *) getR13();  
+void sys_time(uint64_t  regs[]){
+    int * destination = (int *) regs[R13];  
     int time[3];
     getTime(time);
     for(int i=0; i<3; i++){ //copio la hora!
@@ -131,17 +141,17 @@ void sys_time(){
     }
 }
 
-void sys_getMem(){
-    uint8_t * destination = (uint8_t *) getR13();
-    uint8_t * start = (uint8_t *) getR15();
+void sys_getMem(uint64_t  regs[]){
+    uint8_t * destination = (uint8_t *) regs[R13];
+    uint8_t * start = (uint8_t *) regs[R15];
     for(int i = 0; i<32; i++){ //TODO: verificar este cambio a uint8_t
         destination[i] = memContent(start+i);
     }
 }
 
-void sys_cpuinfo(){
-    char * rtaVendor = (char *) getR13();
-    char * rtaBrand = (char *) getR15();
+void sys_cpuinfo(uint64_t  regs[]){
+    char * rtaVendor = (char *) regs[R13];
+    char * rtaBrand = (char *) regs[R15];
     char buffer1[13], buffer2[49];
     cpuVendor(buffer1);
     cpuBrand(buffer2);
@@ -156,60 +166,103 @@ void sys_cpuinfo(){
 
 }
 
-void sys_temp(){
-    uint64_t * rta = (uint64_t *) getR13();
+void sys_temp(uint64_t  regs[]){
+    uint64_t * rta = (uint64_t *) regs[R13];
     rta[0] = cpuTemperature();
 }
 
-void sys_context(){
-    int * rta = (int *) getR13();
+void sys_context(uint64_t  regs[]){
+    int * rta = (int *) regs[R13];
     *rta = getContext();
 }
 
-void sys_update_context(){
+void sys_update_context(uint64_t  regs[]){
     changeContext();
 }
 
-void sys_malloc(){
-    int size = (int) getR13();
-    void ** location = (void **) getR15();
+void sys_malloc(uint64_t  regs[]){
+    int size = (int) regs[R13];
+    void ** location = (void **) regs[R15];
     void * res = ltmalloc(size);
     memcpy(location, &res, sizeof(void *));
 }
 
-void sys_free(){
-    void * pointer = (void *) getR13();
+void sys_free(uint64_t  regs[]){
+    void * pointer = (void *) regs[R13];
     ltmfree(pointer);
 }
 
-void sys_mem(){
+void sys_mem(uint64_t  regs[]){
     printMemList();
 }
 
-void sys_ps(){
+void sys_ps(uint64_t  regs[]){
     processDump();
 }
 
-void sys_kill(){
-    int pid = (int) getR13();
+void sys_kill(uint64_t  regs[]){
+    int pid = (int) regs[R13];
     processKill(pid);
 }
 
-void sys_launch(uint64_t stack_pointer){
-    void * process = (void *) getR13();
-    int argc = (int) getR15();
-    char ** argv = (char**) getRBX();
-    launchProcess(process, argc, argv, stack_pointer);
+void sys_launch(uint64_t  regs[]){
+    void * process = (void *) regs[R13];
+    int argc = (int) regs[R15];
+    char ** argv = (char**) regs[RBX];
+    launchProcess(process, argc, argv, regs);
 }
 
-int sys_fork(uint64_t stack_pointer){
-    return fork(stack_pointer);
+void sys_pid(uint64_t  regs[]){
+    int * pid = (int *) regs[R13];
+    *pid=getPID();
 }
 
-void sys_loop(){
+void sys_loop(uint64_t  regs[]){
     printGreeting();
 }
 
-void sys_exit(){
+void sys_exit(uint64_t  regs[]){
     exitProcess();
+}
+
+void sys_renounce(uint64_t regs[]){
+    renounce();
+}
+
+void sys_block(uint64_t regs[]){
+    int pid = regs[R13];
+    blockProcess(pid);
+}
+
+void sys_nice(uint64_t regs[]){
+   int pid = (int) regs[R13];
+   int new_prio = (int) regs[R15];
+   processNice(pid, new_prio); 
+}
+void sys_pipe_write(uint64_t regs[]){
+    int id = (int) regs[R13];
+    char * address = (char *) regs[R15];
+    int bytes = (int) regs[RBX];
+    pipeWrite(id, address, bytes);
+}
+
+void sys_pipe_read(uint64_t regs[]){
+    int id = (int) regs[R13];
+    char * address = (char *) regs[R15];
+    int bytes = (int) regs[RBX];
+    pipeRead(id, address, bytes);
+}
+
+void sys_pipe_open(uint64_t regs[]){
+    int * id = (int *) regs[R13];
+    *id = pipeOpen();
+}
+
+void sys_pipe_close(uint64_t regs[]){
+    int id = (int) regs[R13];
+    pipeClose(id);
+}
+
+void sys_pipe_states(uint64_t regs[]){
+    pipeStates();
 }

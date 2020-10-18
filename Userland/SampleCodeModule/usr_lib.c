@@ -2,91 +2,6 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "usr_lib.h"
 
-#define NUM_COMMANDS 15
-
-extern void callMalloc(int size, void ** location);
-extern void callFree(void * pointer);
-extern void callPs();
-extern void callKill(int pid);
-extern void callLaunch( void * process , int argc , char * argv[] );
-extern int fork();
-extern void callLoop();
-extern void callExit();
-
-typedef struct command_t{
-	void (*func)(void);
-	char * name;
-	char * desc;
-} command_t;
-
-//static char * usr_command;
-static command_t commands[NUM_COMMANDS];
-static int buffer_initialized=0;
-static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","launch","kill","ps","sh","loop", "exit"};
-static char * descriptions[] = {"te muestra opciones de ayuda\n","muestra la hora del sistema en formato HH:MM:SS\n", "muestra la marca y modelo de la cpu\n", "muestra la temperatura del procesador\n", "excepcion de division por 0\n", "excepcion de operacion invalida\n", "imprime registros, guardar con Alt+R\n", "printea 32 bytes a partir de una direccion\n", "imprime memoria dinamicamente asignada\n", "lanza un proceso\n", "mata el proceso que le indiques\n", "lista los procesos\n", "lanza la terminal\n", "Imprime el PID actual junto con un saludo\n", "Finaliza el proceso actual\n"};
-static void (*functions[])(void) = {help, printTime, printCPUInfo, printTemp, error, codeERROR, inforeg, printmemWrapper, mem, launchProcess, kill,ps,sh, loop, exit};
-
-void initializeCommandVector(){
-	for(int i=0; i<NUM_COMMANDS; i++){
-		commands[i].name = names[i];
-		commands[i].desc = descriptions[i];
-		commands[i].func = functions[i];
-	}
-}
-
-uint64_t stringToNum(char * string){
-	uint64_t result = 0;
-	int length = strlen(string);
-	for(int i=0; i<length; i++){
-		result = result * 10 + ( string[i] - '0' );
-	}
-	return result;
-}
-
-void printTime(){
-    int time[3];
-	getTime(time);
-	printDec(time[0]); //horas
-	putChar(':');
-	printDec(time[1]); //minutos
-	putChar(':');
-	printDec(time[2]); //segundos
-	putChar('\n');
-	return;
-}
-
-void inforeg(){ 
-	uint64_t regs[16];
-	char * regNames[] = {"RAX","RBX","RCX","RDX","RSI","RDI","RBP","RSP","R8","R9","R10","R11","R12","R13","R14","R15"};
-	getReg(regs);
-	for(int i=0; i<16;i++){
-		puts(regNames[i]);
-		putChar(':');
-		printReg((uint64_t)regs[i]);	
-		putChar('\n');
-	}
-}
-
-//toma una dirección de memoria en hexa y devuelve los proximos 32 bytes
-void printmem(char * hexDir){ 
-	int dir = hexadecimalToDecimal( hexDir); 
-	uint8_t bytes[32];
-	getMem((uint8_t *)dir, bytes); //FIXME: casteos raros
-	putChar('\n');
-	for(int i = 0; i < 32; i++){
-		printHex((long) dir+i );
-		putChar(':');
-		printHex(bytes[i]);
-		putChar('\n');
-	}
-
-}
-void printmemWrapper(){
-	char memory[NUM_BUFFER_SIZE] = { 0 };
-	puts("Inserte direccion de memoria (en hexa):\n");
-	show_processed_scanf(memory, NUM_BUFFER_SIZE); 
-	printmem(memory);	
-}
 
 void * ltmalloc(int size){
 	
@@ -103,55 +18,22 @@ void ltmfree(void * pointer){
 	callFree(pointer);
 }
 
-void printCPUInfo(){
-	char vendor[13], brand[49];
-	getCPUInfo(vendor, brand);
-	puts("CPU Vendor: ");
-	puts(vendor);
+void loop(int argc, char **argv){
+	int i=1, greets = 0;
 	newline();
-
-	puts("CPU Brand: ");
-	puts(brand);
-	newline();
-
-}
-
-void printTemp(){
-	uint64_t temp;
-	getTemp(&temp);
-	printDec(temp);
-	newline();
-}
-
-void ps(){
-	callPs();
-}
-
-void kill(int pid){
-	char usr_command[NUM_BUFFER_SIZE];
-	show_numeric_scanf(usr_command, NUM_BUFFER_SIZE);
-	callKill(stringToNum(usr_command));
-}
-
-void loop(){
-	int i=1;
 	callLoop();
-	while(i++>0){
-		if(i % 100000000 == 0)
+	while(i++>0 && greets <= 3){
+		if(i % 100000000 == 0){
+			newline();
 			callLoop();
+			greets++;
+		}
 	}
+	callExit();
 }	
 
-void bootMsg(){
-	if(!buffer_initialized){
-			//initializeCommandBuffer();
-			initializeCommandVector();
-			buffer_initialized = TRUE;
-	}
-	newline();
-	puts("Estos son los comandos disponibles:\n");
-	help();
-	return;
+void exit(int argc, char **argv){
+	callExit();
 }
 
 void * getFunction( char * name){

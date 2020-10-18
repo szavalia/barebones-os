@@ -5,9 +5,12 @@
 #include "reg_t.h"
 #include "video_driver.h"
 #include "mem_manager.h"
+#include "cola.h"
+
 #define STACK_SIZE ( 32 * 1024 + 8 )
 #define MAXPROCESOS 50
-#define BASE_PRIORITY 0
+#define BASE_PRIORITY 2
+#define MAX_PRIORITY 4
 #define STACK_ALING(number)  number & -32 
 #define NULL 0 
 #define NOT_CREATED 0
@@ -21,11 +24,12 @@ long process_count = 0;
 int actual = 1;
 int initialized = FALSE;
 void * entryPoint;
-process_t procesos[MAXPROCESOS];
+static process_t procesos[MAXPROCESOS];
 int current_proc = 0, foreground_proc = -1;
 extern int side, context;
 char kernelName[] = "Kernel";
 char unnamed[] = "Unnamed";
+
 extern void prepareProcess( int PID , uint64_t stackPointer , int argc , char * argv[] , void * main);
 extern void switchProcess( uint64_t stackPointer);
 extern void prepareProcessForked(uint64_t stack_pointer , uint64_t basePointerParent , uint64_t basePointerChild );
@@ -39,35 +43,6 @@ void * requestStack(){
     return ltmalloc( STACK_SIZE );
 }
 
-//fork
-int fork( uint64_t stack_pointer ){
-    //un fork es agarrar un proceso, ponerle un pid y copiar el resto de los otros.
-    int pid = createPID();
-    if ( pid == -1 ){
-        //TODO: error
-    }
-    //procesos[pid].state= READY;
-    procesos[pid].PID = pid;
-    printS("fork: ");
-    printDec(pid);
-    newline();
-    procesos[pid].stack_start = ltmalloc(STACK_SIZE);
-    memcpy(procesos[pid].stack_start, procesos[current_proc].stack_start, STACK_SIZE);
-    procesos[pid].priority= procesos[current_proc].priority;
-    procesos[pid].base_pointer = getBasePointer(procesos[pid].stack_start);
-
-    procesos[pid].stack_pointer =  procesos[pid].base_pointer - ( procesos[current_proc].base_pointer - stack_pointer);
-
-    prepareProcessForked(procesos[pid].stack_pointer , procesos[current_proc].base_pointer , procesos[pid].base_pointer);
-
-    procesos[pid].stack_pointer-=8; // tiene un push mas
-    printS("StackPointer:");
-    printHex(procesos[pid].stack_pointer);
-
-    return pid;
-}
-
-
 void processBlock( int pid){
     if (  procesos[pid].state == READY){
         procesos[pid].state = BLOCKED;
@@ -78,28 +53,49 @@ void processBlock( int pid){
     
 }
 void printState( int i ){
-    printS("State: ");
+    printS("\nState: ");
     switch (i)
     {
     case READY:
-        printS("READY\n");
+        printS("READY");
         break;
     
     case BLOCKED:
-        printS("BLOCKED\n");
+        printS("BLOCKED");
         break;
     case KILLED:
-        printS("KILLED\n");
+        printS("KILLED");
         break;
     default:
-        printS("UNDEFINED\n");
+        printS("UNDEFINED");
         break;
     }
 }
 
-void processNice(){
-    printS("Unused");
+void processNice(int pid, int new_prio){ 
+    if(new_prio < BASE_PRIORITY){
+        return;
+    }
+    if(new_prio > MAX_PRIORITY){
+        new_prio = MAX_PRIORITY;
+    }
+    for(int i = 0; i < process_count; i++){
+        if(procesos[i].PID == pid){
+            procesos[i].priority = new_prio;
+            procesos[i].ticks_left = new_prio-1;
+           //printS("PID: ");
+           // printDec(procesos[i].PID);
+           // newline();
+           // printS("PRIORITY: ");
+           // printDec(procesos[i].priority);
+            return;
+        }
+    }
 }
+void myNice(int new_prio){
+    processNice(current_proc, new_prio);
+}
+
 void processDump(){
     int i;
     printS("Procesos Activos:\n");
@@ -108,13 +104,14 @@ void processDump(){
         printS("---------------------------------------------\n");
         printS("proceso: ");
         printS(procesos[i].name);
-        printS("\n PID:");
+        printS("\nPID:");
         printDec(procesos[i].PID);
         printS("\nPriority: ");
-        printHex(procesos[i].priority);
-        printS("\n");
+        printDec(procesos[i].priority);
+        printS("\nTicks left: ");
+        printDec(procesos[i].ticks_left);
         printState(procesos[i].state);
-        printS("Foreground: ");
+        printS("\nForeground: ");
         if( procesos[i].PID == foreground_proc){
             printS("yes");
         }
@@ -145,6 +142,7 @@ int createPID(){
     return process_count;
 }
 void restart_kernel(){
+    printS("[ Restarting Kernel ]\n");
       for ( int i = 0 ; i < MAXPROCESOS ; i++){
           if (procesos[i].state != NOT_CREATED){
               ltmfree(procesos[i].stack_start);
@@ -156,7 +154,7 @@ void restart_kernel(){
 }
 
 //execvec
-void launchProcess( void * process , int argc , char * argv[] , uint64_t stack_pointer ){
+void launchProcess( void * process , int argc , char **argv , uint64_t stack_pointer ){
 
     //Deberia ser como un execve esto, el void* del procesos seria onda (entryPoint);
     //Igual siento que esto tendria que usarse el conjunto el fork en userland, porque pisaria el 
@@ -174,13 +172,16 @@ void launchProcess( void * process , int argc , char * argv[] , uint64_t stack_p
     current_proc = pid;
     procesos[pid].PID= pid;
     if ( argc != 0 ){
-        procesos[pid].name = argv[0];
+        //strcopy(procesos[pid].name, *argv);
+        procesos[pid].name = *argv;
     }
     else
     {
         procesos[pid].name = unnamed;
     }
     procesos[pid].state = READY;
+    procesos[pid].priority = BASE_PRIORITY;
+    procesos[pid].ticks_left = BASE_PRIORITY-1;
     procesos[pid].stack_start = requestStack(); 
     procesos[pid].base_pointer = getBasePointer(procesos[pid].stack_start);
     procesos[pid].stack_pointer = procesos[pid].base_pointer;
@@ -195,7 +196,14 @@ void launchProcess( void * process , int argc , char * argv[] , uint64_t stack_p
 
 
 uint64_t scheduler (uint64_t current_rsp){
-    procesos[current_proc].stack_pointer = current_rsp;
+    procesos[current_proc].stack_pointer = current_rsp; 
+    if( procesos[current_proc].state != NOT_CREATED){
+        if(procesos[current_proc].ticks_left > 0){ //para procesos con prioridades mayores a 1
+            procesos[current_proc].ticks_left--;
+            return procesos[current_proc].stack_pointer;
+        }
+    }
+    procesos[current_proc].ticks_left = procesos[current_proc].priority-1;    
     int i = current_proc;
     int aux = 0;
     do{
@@ -209,15 +217,31 @@ uint64_t scheduler (uint64_t current_rsp){
     while(procesos[i].state != READY );
     
     current_proc = i;
+
+    if(foreground_proc == -1){
+        foreground_proc = current_proc;
+    }
     
     return procesos[i].stack_pointer;
 }
 
 void exitProcess(){
-    printS("Exiting: ");
+    printS("Cerrando: ");
+    printS( procesos[current_proc].name);
+    printS(" de PID: ");
     printDec(current_proc);
+    newline();
     procesos[current_proc].state = NOT_CREATED;
     ltmfree(procesos[current_proc].stack_start);
+    process_count -= 1;
+    if(process_count==0){
+        restart_kernel();
+    }
+    if(foreground_proc == current_proc){
+        foreground_proc = -1;
+    }
+    switchProcess(scheduler(procesos[current_proc].stack_pointer));
+    
 }
 
 void processKill( int pid){
@@ -225,9 +249,12 @@ void processKill( int pid){
     if(foreground_proc == pid){
         foreground_proc = -1;
     }
-
+    if(pid ==procesos[current_proc].PID){
+        exitProcess();
+    }
     if (  procesos[pid].state == READY || procesos[pid].state == BLOCKED){
         procesos[pid].state = KILLED;
+        ltmfree(procesos[pid].stack_start);
         process_count--;
         if ( process_count == 0){
             restart_kernel();
@@ -247,7 +274,7 @@ void exceptionKill(){
     if ( process_count == 1 ){
         restart_kernel();
     }else{
-        //ltmfree(procesos[current_proc].stack_start);
+        //ltmfree(procesos[current_proc].stack_start); //FIXME: por qué no liberamos?
         procesos[current_proc].state = KILLED;
     }
 }
@@ -262,3 +289,31 @@ void printGreeting(){
     newline();       
 }
 
+int getPID(){
+    return procesos[current_proc].PID;
+}
+
+void blockProcess(int pid){
+    if(pid < 0 || pid > MAXPROCESOS){
+        printS("Error en el PID\n");
+        return;
+    }
+    int state = procesos[pid].state;
+    if(procesos[pid].state == BLOCKED){
+        procesos[pid].state = READY;
+    }
+    else if( procesos[pid].state == READY){
+        procesos[pid].state = BLOCKED;
+    }
+    return;
+}
+
+
+void unblockByQueue( queueADT queue){
+    int aux;
+    while (( aux=dequeue(queue)) > 0 ){
+        if ( procesos[aux].state == BLOCKED){
+            procesos[aux].state = READY;
+        }
+    }
+}
