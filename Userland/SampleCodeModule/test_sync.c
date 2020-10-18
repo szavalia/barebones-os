@@ -56,12 +56,13 @@ void slowInc(int64_t *p, int64_t inc){
 }
 
 void inc1(){
-  int value = 1;
+  int value = 2;
   uint64_t i;
 
   
   for (i = 0; i < N; i++){
     if (sem) my_sem_wait(SEM_ID);
+    renounceCPU();
     slowInc(&global, value);
     if (sem) my_sem_post(SEM_ID);
   }
@@ -72,6 +73,8 @@ void inc1(){
   puts("Adios SUM\n");
   callExit();
 }
+
+
 void inc2(){
   int value = -1;
   uint64_t i;  
@@ -79,6 +82,7 @@ void inc2(){
     if (sem) my_sem_wait(SEM_ID);
     slowInc(&global, value);
     if (sem) my_sem_post(SEM_ID);
+    renounceCPU();
   }
 
   

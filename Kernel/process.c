@@ -9,7 +9,7 @@
 
 #define STACK_SIZE ( 32 * 1024 + 8 )
 #define MAXPROCESOS 50
-#define BASE_PRIORITY 2
+#define BASE_PRIORITY 1
 #define MAX_PRIORITY 4
 #define STACK_ALING(number)  number & -32 
 #define NULL 0 
@@ -44,6 +44,8 @@ void * requestStack(){
 }
 
 void processBlock( int pid){
+   // printS("blocking");
+   // printDec((long)pid);
     if (  procesos[pid].state == READY){
         procesos[pid].state = BLOCKED;
     }else
@@ -51,6 +53,21 @@ void processBlock( int pid){
         printS("No such process \n");
     }    
 }
+
+void blockProcess(int pid){
+    if(pid < 0 || pid > MAXPROCESOS){
+        printS("Error en el PID\n");
+        return;
+    }
+    if(procesos[pid].state == BLOCKED){
+        procesos[pid].state = READY;
+    }
+    else if( procesos[pid].state == READY){
+        procesos[pid].state = BLOCKED;
+    }
+    return;
+}
+
 
 void printState( int i ){
     printS("\nState: ");
@@ -79,7 +96,7 @@ void processNice(int pid, int new_prio){
     if(new_prio > MAX_PRIORITY){
         new_prio = MAX_PRIORITY;
     }
-    for(int i = 0; i < process_count; i++){
+    for(int i = 0; i <= process_count; i++){
         if(procesos[i].PID == pid){
             procesos[i].priority = new_prio;
             procesos[i].ticks_left = new_prio-1;
@@ -197,7 +214,7 @@ void launchProcess( void * process , int argc , char **argv , uint64_t stack_poi
 
 uint64_t scheduler (uint64_t current_rsp){
     procesos[current_proc].stack_pointer = current_rsp; 
-    if( procesos[current_proc].state != NOT_CREATED){
+    if( procesos[current_proc].state == READY){
         if(procesos[current_proc].ticks_left > 0){ //para procesos con prioridades mayores a 1
             procesos[current_proc].ticks_left--;
             return procesos[current_proc].stack_pointer;
@@ -293,21 +310,6 @@ int getPID(){
     return procesos[current_proc].PID;
 }
 
-void blockProcess(int pid){
-    if(pid < 0 || pid > MAXPROCESOS){
-        printS("Error en el PID\n");
-        return;
-    }
-    int state = procesos[pid].state;
-    if(procesos[pid].state == BLOCKED){
-        procesos[pid].state = READY;
-    }
-    else if( procesos[pid].state == READY){
-        procesos[pid].state = BLOCKED;
-    }
-    return;
-}
-
 
 void unblockByQueue( queueADT queue){
     int aux;
@@ -315,9 +317,9 @@ void unblockByQueue( queueADT queue){
     /*printS("unblocking by: ");
     printDec(current_proc);
     printS("\n");
-    printS("this PIDS :");*/
-    //peekAll(queue,&vec);
-    //newline();
+    printS("this PIDS :");
+    peekAll(queue,&vec);
+    newline();*/
     while (( aux=dequeue(queue)) > 0 ){
         
         if ( procesos[aux].state == BLOCKED){
