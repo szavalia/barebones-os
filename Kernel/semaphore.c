@@ -155,13 +155,3 @@ int sem_validacion( semaphore_t * sem){
     }
     return 0;
 }
-
-void printAllqueue(){
-    int aux ;
-    printS("Freeded sems: ");
-    while( (aux= dequeue(freeded_sems)) >= 0  ){
-        printDec((long)aux);
-        printS(" ");
-    }
-    newline();
-}
