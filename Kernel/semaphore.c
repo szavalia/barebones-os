@@ -119,8 +119,8 @@ void sem_post( semaphore_t * sem){
 //Es de kernel
 void sem_close_index(int index){
     if ( peek(semaphores[index].queue)>0){
-    semaphores[index].flag = SEM_CLOSED;
-    queue(freeded_sems, index);
+        semaphores[index].flag = SEM_CLOSED;
+        queue(freeded_sems, index);
     }else
     {
         printS("El semaforo tiene cosas en espera, falló el cerrado");
