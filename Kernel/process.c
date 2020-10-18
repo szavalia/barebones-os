@@ -90,7 +90,6 @@ void printState( int i ){
 }
 
 void processNice(int pid, int new_prio){ 
-    printS("AAAAAAAAA NICE");
     if(new_prio < BASE_PRIORITY){
         return;
     }
@@ -98,12 +97,8 @@ void processNice(int pid, int new_prio){
         new_prio = MAX_PRIORITY;
     }
     for(int i = 0; i <= process_count; i++){
-        printS("LOOP");
         if(procesos[i].PID == pid){
-            printS("FOUND");
             procesos[i].priority = new_prio;
-            printS("Valor nuevo: ");
-            printDec(procesos[i].priority);
             procesos[i].ticks_left = new_prio-1;
            //printS("PID: ");
            // printDec(procesos[i].PID);
