@@ -28,16 +28,22 @@ void init_sems(){
 
 void block_me(queueADT q){
     int pid = getPID();
-    printDec(pid);
-    printS("queued \n");
+   // printDec(pid);
+   // printS("queued \n");
     queue(q, pid);
-    blockProcess(pid);
+    //printDec(pid);
+    processBlock(pid);
 }
 
 void next_process( queueADT queue){
     block_me(queue);
-    next_round(); 
+   // printDec((long)getPID());
+   // printS(" "),
+    next_round();
+    //printDec((long)getPID()); 
     stop_interrupts(); //--> kernel
+   // printS(".");
+    //sem_state();
 }
 
 //Funciones de mutex 
@@ -52,7 +58,7 @@ mutex_t * init_mutex(){
 void lock( mutex_t * mutex){
     while( mutex->value <=0){   
         //myNice(1);
-        printS("block mutex :");
+       // printS("block mutex :");
         next_process( mutex->queue);
     }
    // myNice(2);
@@ -85,15 +91,18 @@ semaphore_t * sem_init( int value ){
     }
     semaphores[aux_index].value = value; 
     semaphores[aux_index].flag = SEM_OPENED;
-    mutexes[aux_index].value = 1;
-    mutexes[aux_index].flag = MUT_OPENED;
     semaphores[aux_index].mutex = &mutexes[aux_index];
     semaphores[aux_index].queue = create_queue();
+
+    mutexes[aux_index].value = 1;
+    mutexes[aux_index].flag = MUT_OPENED;
+    mutexes[aux_index].queue = create_queue();
+
     printDec(semaphores[aux_index].queue);
     newline();
-    mutexes[aux_index].queue = create_queue();
     printDec( mutexes[aux_index].queue);
     newline();
+
     return &(semaphores[aux_index]);
 }
 
@@ -105,7 +114,7 @@ void sem_wait( semaphore_t * sem){
     lock(sem->mutex);
     while(sem->value<=0){
         unlock(sem->mutex);
-        printS("block sem :");
+       // printS("block sem :");
         next_process(sem->queue);
         lock(sem->mutex);
     }
@@ -117,22 +126,24 @@ void sem_post( semaphore_t * sem){
     if (sem_validacion(sem) < 0 ){
         return;
     }
-
     lock(sem->mutex);
+
     atomix_add(1, &(sem->value) );
-    sem_state();
+
+    //processDump();
     unblockByQueue(sem->queue);
-    sem_state();
+    //sem_state();
+    //processDump();
     unlock(sem->mutex);
+    //sem_state();
 }
 //Es de kernel
 void sem_close_index(int index){
-    if ( peek(semaphores[index].queue)>0){
+    if ( peek(semaphores[index].queue) >0 ){
         semaphores[index].flag = SEM_CLOSED;
         queue(freeded_sems, index);
-    }else
-    {
-        printS("El semaforo tiene cosas en espera, falló el cerrado");
+    }else{
+        printS("El semaforo tiene cosas en espera, fallo el cerrado");
     }
     
 }
