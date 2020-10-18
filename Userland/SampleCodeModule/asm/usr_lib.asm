@@ -548,10 +548,13 @@ pipeOpen:
     mov rbp, rsp 
 
     push r12
+    push r13
 
     mov r12, 26
+    mov r13, rdi
     int 80h
 
+    pop r13
     pop r12
 
     mov rsp, rbp
@@ -563,17 +566,20 @@ pipeClose:
     mov rbp, rsp 
 
     push r12
+    push r13
 
     mov r12, 27
+    mov r13, rdi
     int 80h
 
+    pop r13
     pop r12
 
     mov rsp, rbp
     pop rbp
     ret
 
-    callPipe:
+callPipe:
     push rbp
     mov rbp, rsp 
 

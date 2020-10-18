@@ -27,13 +27,13 @@ static char * descriptions[] = { "te muestra opciones de ayuda\n", //help
 "Finaliza el proceso actual\n", //exit
 "Cambia el estado de un proceso entre bloqueado y listo dado su ID\n", //block
 "Cambia la prioridad del proceso (parametros: PID y new_prio)\n", //nice
-"Realiza un testeo\n",  //test
+"Realiza un testeo de los semaforos\n",  //test
 "Muestra el estado de los pipes\n", //pipe
 NULL };
 
 
 static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, printTemp, divError, codeError, inforeg, printmem, mem, kill,ps, cat, wc, filter, exit, block, nice, test, pipe , NULL};
-static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "cat", "wc","filter", "exit", "block", "nice", "test", "pipe", NULL};
+static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "cat", "wc","filter", "exit", "block", "nice", "sem_test", "pipe", NULL};
 
 static command_t processes[MAX_PROCESSES];
 static char * process_descriptions[] = {"Imprime el PID actual junto con un saludo\n", "lanza la terminal\n", NULL};
@@ -148,13 +148,13 @@ void kill(int argc, char ** argv){
 
 void help(int argc, char ** argv){
 	for(int i=0; commands[i].name != NULL ; i++){
-		puts("\t- ");
+		puts("- ");
 		puts(commands[i].name);
 		puts(": ");
 		puts(commands[i].desc);
 	}
 	for(int j=0; processes[j].name != NULL; j++){
-		puts("\t- ");
+		puts("- ");
 		puts(processes[j].name);
 		puts(": ");
 		puts(processes[j].desc);
@@ -210,8 +210,7 @@ void sh(int argc, char ** argv){
 		buffer_initialized = TRUE;
 	}
 	while(1){
-		parse_command();
-		
+		parse_command();		
 	}
 	return;
 }
