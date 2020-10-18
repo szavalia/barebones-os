@@ -11,6 +11,7 @@
 #include "time.h"
 #include "keyboard.h"
 #include "process.h"
+#include "semaphore.h"
 extern uint8_t text;
 extern uint8_t rodata;
 extern uint8_t data;
@@ -112,10 +113,18 @@ int main()
 	side = 1;
 	clear();
 	bokitaPrint();
-
 	context = 0;
 	side = 0;
 	clear();
+	init_sems();
+	for( int i = 0 ; i < 20 ; i++){
+		sem_init(i);
+	}
+	for( int i = 0 ; i < 20 ; i+=2){
+		sem_close_index(i);
+	}
+	clear();
+	sem_state();
 	saveInitRegs(stackBase);
 	char * argv[2];
 	argv[0] = name;

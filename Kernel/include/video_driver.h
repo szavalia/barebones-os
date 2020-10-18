@@ -29,6 +29,7 @@ void printBase(uint64_t value, uint32_t base);
 void printDec(uint64_t value);
 void printHex(uint64_t value);
 void printBin(uint64_t value);
-
+#define printFullLine()   printS("_______________________________________________________________");
+                        
 
 #endif
