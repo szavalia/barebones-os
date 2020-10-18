@@ -4,6 +4,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "time.h"
 #include "keyboard.h"
+#include "process.h"
 #include <stdint.h>
 #include "user_interrupts.h"
 
@@ -31,7 +32,8 @@ void int_20( uint64_t stack_pointer) {
 }
 
 void int_21(){
-	keyboard_handler();
+	if(processIsInForeground()) 
+		keyboard_handler();
 }
 
 int int_80(uint64_t stack_pointer){

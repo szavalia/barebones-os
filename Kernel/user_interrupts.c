@@ -87,9 +87,20 @@ int int80_handler( uint64_t * stack_pointer){
         case 23: 
             sys_nice(stack_pointer);
             break;
-
-
-
+        case 24:
+            sys_pipe_write(stack_pointer);
+            break;
+        case 25:
+            sys_pipe_read(stack_pointer);
+            break;
+        case 26:
+            sys_pipe_open(stack_pointer);
+            break;
+        case 27:
+            sys_pipe_close(stack_pointer);
+            break;
+        case 28:
+            sys_pipe_states(stack_pointer);
         case 29:
             sys_sem_state(stack_pointer);
             break;    
@@ -126,7 +137,7 @@ void sys_write(uint64_t  regs[] ){
  void sys_read(uint64_t  regs[]){
     char * c = (char *) regs[R13];
     if(processIsInForeground()){
-        *c = readChar(); //si no hay nada en el buffer, te retorna un 0    
+        *c = readChar(); //si no hay nada en el buffer, te retorna un 0   
     }
 }
 

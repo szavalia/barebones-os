@@ -41,7 +41,7 @@ codeError:
        
 
 ;void scanChar(char * destination); 
- scanChar:
+scanChar:
     push rbp
     mov rbp, rsp
     

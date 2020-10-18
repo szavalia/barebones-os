@@ -100,7 +100,7 @@ void bokitaPrint();
 void elMbeh();
 
 
-void pre_launch(){
+int pre_launch(){
 	context = 1;
 	side = 1;
 	clear();
@@ -108,16 +108,23 @@ void pre_launch(){
 	context = 0;
 	side = 0;
 	clear();
-	init_sems();/*
+	init_sems();
+	int status = init_keyboard();
+	if(status < 0){
+		printS("Error fatal: falla al inicializar teclado\n");
+		return -1;
+	}
+	/*
 	for( int i = 0 ; i < 20 ; i++){
 		sem_init(i);
 	}
 	for( int i = 0 ; i < 20 ; i+=2){
 		sem_close_index(i);
 	}*/
-	clear();
+	//clear();
 	//sem_state();
 	saveInitRegs(stackBase);
+	return 0;
 } 
 
 int main()
@@ -130,6 +137,10 @@ int main()
 	newline();
 	printS("  Calling the sample code module returned: ");
 	clear();
+	int status = pre_launch();
+	if(status < 0){ //error en la inicializacion
+		return -1;
+	}
 	char * argv[2];
 	argv[0] = name;
 	argv[1] = NULL;
