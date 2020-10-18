@@ -71,5 +71,14 @@ int peek( queueADT head){
     }else{
         return head->first->value;
     }
-    
+}
+
+void peekAll( queueADT head , int **vector ){
+    *vector = ltmalloc(sizeof(int)*(head->size) + 1);
+    Node * aux = head->first;
+    int i;
+    for ( i = 0; aux != NULL ; i++){
+        vector[i] = aux->value;
+    }
+    vector[i] = -1;
 }

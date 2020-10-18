@@ -133,9 +133,7 @@ uint64_t getBasePointer( void * start){
     stack+= STACK_SIZE; // llevo el pointer al final, la cantidad de stack seguro es de 32kb;
     return stack;
 }
-int currentPID(){
-    return current_proc;
-}
+
 int createPID(){
     if ( process_count >= MAXPROCESOS ){
         return -1;
@@ -311,3 +309,11 @@ void blockProcess(int pid){
 }
 
 
+void unblockByQueue( queueADT queue){
+    int aux;
+    while (( aux=dequeue(queue)) > 0 ){
+        if ( procesos[aux].state == BLOCKED){
+            procesos[aux].state = READY;
+        }
+    }
+}
