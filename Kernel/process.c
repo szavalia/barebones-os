@@ -9,7 +9,7 @@
 
 #define STACK_SIZE ( 32 * 1024 + 8 )
 #define MAXPROCESOS 50
-#define BASE_PRIORITY 2
+#define BASE_PRIORITY 1
 #define MAX_PRIORITY 4
 #define STACK_ALING(number)  number & -32 
 #define NULL 0 
@@ -90,15 +90,20 @@ void printState( int i ){
 }
 
 void processNice(int pid, int new_prio){ 
+    printS("AAAAAAAAA NICE");
     if(new_prio < BASE_PRIORITY){
         return;
     }
     if(new_prio > MAX_PRIORITY){
         new_prio = MAX_PRIORITY;
     }
-    for(int i = 0; i < process_count; i++){
+    for(int i = 0; i <= process_count; i++){
+        printS("LOOP");
         if(procesos[i].PID == pid){
+            printS("FOUND");
             procesos[i].priority = new_prio;
+            printS("Valor nuevo: ");
+            printDec(procesos[i].priority);
             procesos[i].ticks_left = new_prio-1;
            //printS("PID: ");
            // printDec(procesos[i].PID);
