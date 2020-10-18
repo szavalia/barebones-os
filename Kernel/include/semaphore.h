@@ -10,6 +10,10 @@ typedef struct mutex_t{
 }mutex_t;
 #define MUT_OPENED 1
 #define MUT_CLOSED 0
+
+
+
+
 typedef struct semaphore_t{
     int flag;
     int index;

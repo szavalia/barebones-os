@@ -23,7 +23,7 @@ GLOBAL blockProcess
 GLOBAL callSemInit
 GLOBAL callSemPost
 GLOBAL callSemWait
-
+GLOBAL callSemState
 GLOBAL pipeWrite
 GLOBAL pipeRead
 GLOBAL pipeOpen
@@ -586,6 +586,21 @@ callPipe:
     push r12
 
     mov r12, 28
+    int 80h
+
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+callSemState:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+
+    mov r12, 29
     int 80h
 
     pop r12

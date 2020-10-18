@@ -29,11 +29,12 @@ static char * descriptions[] = { "te muestra opciones de ayuda\n", //help
 "Cambia la prioridad del proceso (parametros: PID y new_prio)\n", //nice
 "Realiza un testeo de los semaforos\n",  //test
 "Muestra el estado de los pipes\n", //pipe
+"Consulta el estado de los semaforos", //semstate
 NULL };
 
 
-static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, printTemp, divError, codeError, inforeg, printmem, mem, kill,ps, cat, wc, filter, exit, block, nice, test, pipe , NULL};
-static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "cat", "wc","filter", "exit", "block", "nice", "sem_test", "pipe", NULL};
+static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, printTemp, divError, codeError, inforeg, printmem, mem, kill,ps, cat, wc, filter, exit, block, nice, test, pipe , sem_state ,NULL};
+static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "cat", "wc","filter", "exit", "block", "nice", "semtest", "pipe", "semstate" ,NULL};
 
 static command_t processes[MAX_PROCESSES];
 static char * process_descriptions[] = {"Imprime el PID actual junto con un saludo\n", "lanza la terminal\n", NULL};
@@ -46,8 +47,8 @@ static uint64_t regs[16];
 static char * regNames[] = {"RAX","RBX","RCX","RDX","RSI","RDI","RBP","RSP","R8","R9","R10","R11","R12","R13","R14","R15"};
 
 void test( int argc , char **argv){
-	test_no_sync();
-	//test_sync();
+	//test_no_sync();
+	test_sync();
 }
 static void setupCalls(){
 	for(int i=0; names[i] != NULL; i++){

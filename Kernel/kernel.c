@@ -99,6 +99,27 @@ void * initializeKernelBinary()
 void bokitaPrint();
 void elMbeh();
 
+
+void pre_launch(){
+	context = 1;
+	side = 1;
+	clear();
+	bokitaPrint();
+	context = 0;
+	side = 0;
+	clear();
+	init_sems();/*
+	for( int i = 0 ; i < 20 ; i++){
+		sem_init(i);
+	}
+	for( int i = 0 ; i < 20 ; i+=2){
+		sem_close_index(i);
+	}*/
+	clear();
+	//sem_state();
+	saveInitRegs(stackBase);
+} 
+
 int main()
 {
 	load_idt();
@@ -108,24 +129,7 @@ int main()
 	printHex((uint64_t)sampleCodeModuleAddress);
 	newline();
 	printS("  Calling the sample code module returned: ");
-	//clear();
-	context = 1;
-	side = 1;
 	clear();
-	bokitaPrint();
-	context = 0;
-	side = 0;
-	clear();
-	init_sems();
-	for( int i = 0 ; i < 20 ; i++){
-		sem_init(i);
-	}
-	for( int i = 0 ; i < 20 ; i+=2){
-		sem_close_index(i);
-	}
-	clear();
-	sem_state();
-	saveInitRegs(stackBase);
 	char * argv[2];
 	argv[0] = name;
 	argv[1] = NULL;

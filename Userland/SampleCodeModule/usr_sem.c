@@ -11,3 +11,7 @@ void sem_post( void * sem){
 void sem_wait( void * sem){
 	callSemWait(sem);
 }
+
+void sem_state(){
+	callSemState();
+}

@@ -24,11 +24,12 @@ void init_sems(){
         mutexes[i].index = i;
         mutexes[i].flag = MUT_CLOSED;
     }
-
 }
 
 void block_me(queueADT q){
     int pid = getPID();
+    printDec(pid);
+    printS("queued \n");
     queue(q, pid);
     blockProcess(pid);
 }
@@ -44,13 +45,14 @@ void next_process( queueADT queue){
 mutex_t * init_mutex(){
     mutexes[index_mutex].value = 1;
     mutexes[index_mutex].flag = MUT_OPENED;
-    mutexes[index_mutex].queue = create_queue;
+    mutexes[index_mutex].queue = create_queue();
     return &mutexes[index_mutex++];
 }
 
 void lock( mutex_t * mutex){
     while( mutex->value <=0){   
         //myNice(1);
+        printS("block mutex :");
         next_process( mutex->queue);
     }
    // myNice(2);
@@ -87,8 +89,12 @@ semaphore_t * sem_init( int value ){
     mutexes[aux_index].flag = MUT_OPENED;
     semaphores[aux_index].mutex = &mutexes[aux_index];
     semaphores[aux_index].queue = create_queue();
+    printDec(semaphores[aux_index].queue);
+    newline();
     mutexes[aux_index].queue = create_queue();
-    return &semaphores[aux_index];
+    printDec( mutexes[aux_index].queue);
+    newline();
+    return &(semaphores[aux_index]);
 }
 
 void sem_wait( semaphore_t * sem){
@@ -99,6 +105,7 @@ void sem_wait( semaphore_t * sem){
     lock(sem->mutex);
     while(sem->value<=0){
         unlock(sem->mutex);
+        printS("block sem :");
         next_process(sem->queue);
         lock(sem->mutex);
     }
@@ -113,8 +120,10 @@ void sem_post( semaphore_t * sem){
 
     lock(sem->mutex);
     atomix_add(1, &(sem->value) );
-    unlock(sem->mutex);
+    sem_state();
     unblockByQueue(sem->queue);
+    sem_state();
+    unlock(sem->mutex);
 }
 //Es de kernel
 void sem_close_index(int index){
@@ -145,9 +154,9 @@ void sem_close(semaphore_t *sem){
 void sem_state(){
     int **vector;
     printFullLine();
-    printS("Estado de los semaforos:");
+    printS("Estado de los semaforos\n");
     printFullLine();
-    int j;
+    //int j;
     for( int i= 0 ; i < MAX_SEMS; i++){
         if( semaphores[i].flag == SEM_OPENED){
             printS("Semaforo nro: ");
@@ -157,14 +166,24 @@ void sem_state(){
             printDec(semaphores[i].value);
             newline();
             if ( peek(semaphores[i].queue) >= 0 ){
-                printS("Con los siguientes procesos en cola:");
+                printS("Con los siguientes procesos en cola del sem:");
                 peekAll(semaphores[i].queue, vector);
-                j=0;
+                /*j=0;
                 while((*vector)[j] != -1){
                     printDec((long)(*vector)[j++]);
                     printS(" ");
                 }
-                ltmfree(*vector);
+                ltmfree(*vector);*/
+            }
+            if ( peek(semaphores[i].mutex->queue) >= 0 ){
+                printS("Con los siguientes procesos en cola del mutex:");
+                peekAll(semaphores[i].mutex->queue, vector);
+                /*j=0;
+                while((*vector)[j] != -1){
+                    printDec((long)(*vector)[j++]);
+                    printS(" ");
+                }
+                ltmfree(*vector);*/
             }
             printFullLine();
         }else if( i < index_sem){
@@ -178,17 +197,25 @@ void sem_state(){
 }
 
 int sem_validacion( semaphore_t * sem){
+    int error=0;
+    void * sem1 = &semaphores[1];
+    void * sem2 = &semaphores[2];
     if ( (sem - semaphores) < 0 ){
-        return -2;
+        printS("pointer too small");
+        error= -2;
+    }else if ( ((long)sem - (long)&(semaphores[MAX_SEMS-1])) > 0 ){
+        printS("pointer too big");
+        error=-2;
+    } else if ( ((long)sem - (long)semaphores) % sizeof(semaphore_t) != 0 ){
+            printDec(sizeof(semaphore_t));
+            newline();
+            printDec(((long)sem - (long)semaphores) % sizeof(semaphore_t) );
+            printS("NO ES UNO\n");
+            error = -2;
+    }else if ( sem->flag == SEM_CLOSED){
+        printS("Sem closed");
+        error = -1;
     }
-    if ( (sem - &(semaphores[MAX_SEMS-1])) > 0 ){
-        return -2;
-    } 
-    if ( (sem - semaphores) % sizeof(semaphores) != 0 ){
-        return -2;
-    }
-    if ( sem->flag == SEM_CLOSED){
-        return -1;
-    }
-    return 0;
+   
+    return error;
 }

@@ -24,9 +24,13 @@ void queue( queueADT head , int value ){
     if ( value < 0 ){
         return;
     }
+    printS("queuing: ");
+    printDec(value);
+    printS(" ");
     Node *newNode = (Node *) ltmalloc(sizeof(Node));
     newNode->value = value;
     newNode->next = NULL;
+    head->size+=1;
     if ( head->first == NULL){
         head->first = newNode;
     }else{
@@ -44,6 +48,7 @@ int dequeue(queueADT head){
         return -1;
     }
     int value = head->first->value;
+    head->size-=1;
     head->first = head->first->next;
     return value;
 }
@@ -74,11 +79,15 @@ int peek( queueADT head){
 }
 
 void peekAll( queueADT head , int **vector ){
-    *vector = ltmalloc(sizeof(int)*(head->size) + 1);
+    //*vector = ltmalloc(sizeof(int)*(head->size) + 1);
     Node * aux = head->first;
+    printDec((long)head->size);
+    printS(" ");
     int i;
     for ( i = 0; aux != NULL ; i++){
-        vector[i] = aux->value;
+        printDec((long)aux->value);
+        printS(" ");
+        aux = aux->next;
     }
-    vector[i] = -1;
+    newline();
 }

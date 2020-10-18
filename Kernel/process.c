@@ -311,7 +311,15 @@ void blockProcess(int pid){
 
 void unblockByQueue( queueADT queue){
     int aux;
+    int *vec;
+    printS("unblocking by: ");
+    printDec(current_proc);
+    printS("\n");
+    printS("this PIDS :");
+    peekAll(queue,&vec);
+    newline();
     while (( aux=dequeue(queue)) > 0 ){
+        
         if ( procesos[aux].state == BLOCKED){
             procesos[aux].state = READY;
         }

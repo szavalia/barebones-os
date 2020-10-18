@@ -88,6 +88,12 @@ int int80_handler( uint64_t * stack_pointer){
             sys_nice(stack_pointer);
             break;
 
+
+
+        case 29:
+            sys_sem_state(stack_pointer);
+            break;    
+
     }
     return 1;
 }
@@ -107,7 +113,8 @@ void sys_sem_post(uint64_t  regs[] ){
     return;
 }
 void sys_sem_state(uint64_t regs[]){
-
+    sem_state();
+    return;
 }
 void sys_write(uint64_t  regs[] ){
     char * buffer = (char *) regs[R13]; 
