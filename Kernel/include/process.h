@@ -29,4 +29,6 @@ void printGreeting();
 int getProcessCount();
 void exitProcess();
 void blockProcess(int pid);
+int currentPID();
+void unblockByQueue( queueADT queue);
 #endif

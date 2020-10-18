@@ -1,16 +1,21 @@
 #ifndef _SEMAPHORE_H_
 #define _SEMAPHORE_H_
-
+#include "cola.h"
 
 typedef struct mutex_t{
     int value;
+    int flag;
+    int index;
+    queueADT queue;
 }mutex_t;
-
+#define MUT_OPENED 1
+#define MUT_CLOSED 0
 typedef struct semaphore_t{
     int flag;
     int index;
     int value;
     mutex_t * mutex;
+    queueADT queue;
 }semaphore_t;
 
 #define SEM_OPENED 1

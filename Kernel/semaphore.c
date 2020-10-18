@@ -2,9 +2,9 @@
 #include "semaphore.h"
 #include "video_driver.h"
 #include "cola.h"
+#include "mem_manager.h"
 #define MAX_SEMS 250
 #define MAX_MUTEX MAX_SEMS + 50
-
 
 static semaphore_t semaphores[MAX_SEMS];
 static queueADT freeded_sems;
@@ -21,24 +21,37 @@ void init_sems(){
     for( int i = 0 ; i<MAX_SEMS; i++){
         semaphores[i].index = 1;
         semaphores[i].flag = SEM_CLOSED;
+        mutexes[i].index = i;
+        mutexes[i].flag = MUT_CLOSED;
     }
+
 }
 
-void next_process(){
+void block_me(queueADT queue){
+    int pid = getPID();
+    queue(queue, pid);
+    block(pid);
+}
+
+void next_process( queueADT queue){
+    block_me(queue);
     next_round(); 
     stop_interrupts(); //--> kernel
 }
 
-//Funciones de mutex
+//Funciones de mutex 
+
 mutex_t * init_mutex(){
     mutexes[index_mutex].value = 1;
+    mutexes[index_mutex].flag = MUT_OPENED;
+    mutexes[index_mutex].queue = create_queue;
     return &mutexes[index_mutex++];
 }
 
 void lock( mutex_t * mutex){
     while( mutex->value <=0){   
         //myNice(1);
-        next_process();
+        next_process( mutex->queue);
     }
    // myNice(2);
     atomix_add( -1 , &(mutex->value));
@@ -46,6 +59,7 @@ void lock( mutex_t * mutex){
 
 void unlock( mutex_t * mutex){
     atomix_add( 1 , &(mutex->value));
+    unblockByQueue(mutex->queue);
 }
 
 //Funciones de semáforo
@@ -70,8 +84,10 @@ semaphore_t * sem_init( int value ){
     semaphores[aux_index].value = value; 
     semaphores[aux_index].flag = SEM_OPENED;
     mutexes[aux_index].value = 1;
+    mutexes[aux_index].flag = MUT_OPENED;
     semaphores[aux_index].mutex = &mutexes[aux_index];
-   // semaphores[aux_index].queue = create_queue();
+    semaphores[aux_index].queue = create_queue();
+    mutexes[aux_index].queue = create_queue();
     return &semaphores[aux_index];
 }
 
@@ -83,11 +99,9 @@ void sem_wait( semaphore_t * sem){
     lock(sem->mutex);
     while(sem->value<=0){
         unlock(sem->mutex);
-        //myNice(1);
-        next_process();
+        next_process(sem->queue);
         lock(sem->mutex);
     }
-    //myNice(2);
     atomix_add(-1 , &(sem->value) );
     unlock(sem->mutex);
 }
@@ -100,15 +114,26 @@ void sem_post( semaphore_t * sem){
     lock(sem->mutex);
     atomix_add(1, &(sem->value) );
     unlock(sem->mutex);
+    unblockByQueue(sem->queue);
 }
 //Es de kernel
 void sem_close_index(int index){
+    if ( peek(semaphores[index].queue)>0){
     semaphores[index].flag = SEM_CLOSED;
     queue(freeded_sems, index);
+    }else
+    {
+        printS("El semaforo tiene cosas en espera, falló el cerrado");
+    }
+    
 }
 //
 void sem_close(semaphore_t *sem){
      if (sem_validacion(sem) < 0 ){
+        return;
+    }
+    if( peek(sem->queue) < 0 ){
+        printS("El semaforo tiene cosas en espera, falló el cerrado");
         return;
     }
     sem->flag = SEM_CLOSED;
@@ -118,9 +143,11 @@ void sem_close(semaphore_t *sem){
 //-------------------------//
 
 void sem_state(){
+    int **vector;
     printFullLine();
     printS("Estado de los semaforos:");
-    printFullLine();
+    printFullLine();¨
+    int j;
     for( int i= 0 ; i < MAX_SEMS; i++){
         if( semaphores[i].flag == SEM_OPENED){
             printS("Semaforo nro: ");
@@ -129,6 +156,16 @@ void sem_state(){
             printS("Value: ");
             printDec(semaphores[i].value);
             newline();
+            if ( peek(semaphores[i].queue) >= 0 ){
+                printS("Con los siguientes procesos en cola:");
+                peekAll(semaphores[i].queue, vector);
+                j=0;
+                while((*vector)[j] != -1){
+                    printDec((long)(*vector)[j++]);
+                    printS(" ");
+                }
+                ltmfree(*vector);
+            }
             printFullLine();
         }else if( i < index_sem){
             printS("Semaforo nro: ");

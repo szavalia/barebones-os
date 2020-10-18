@@ -64,3 +64,12 @@ void freeQueue(queueADT head){
         ltmfree(aux2);
     }
 }
+
+int peek( queueADT head){
+    if(head->first == NULL){
+        return -1;
+    }else{
+        return head->first->value;
+    }
+    
+}
