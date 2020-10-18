@@ -12,7 +12,7 @@ static mutex_t mutexes[MAX_MUTEX];
 int index_mutex=MAX_SEMS;
 int index_sem=0;
 
-
+int sem_validacion( semaphore_t * sem);
 extern int atomix_add(int value , void * place );
 extern void next_round();
 extern void stop_interrupts();
@@ -27,10 +27,10 @@ void init_sems(){
 
 }
 
-void block_me(queueADT queue){
+void block_me(queueADT q){
     int pid = getPID();
-    queue(queue, pid);
-    block(pid);
+    queue(q, pid);
+    blockProcess(pid);
 }
 
 void next_process( queueADT queue){
@@ -146,7 +146,7 @@ void sem_state(){
     int **vector;
     printFullLine();
     printS("Estado de los semaforos:");
-    printFullLine();¨
+    printFullLine();
     int j;
     for( int i= 0 ; i < MAX_SEMS; i++){
         if( semaphores[i].flag == SEM_OPENED){

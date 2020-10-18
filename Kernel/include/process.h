@@ -2,7 +2,7 @@
 #define _PROCESS_H_
 #include <stdint.h>
 #include "reg_t.h"
-
+#include "cola.h"
 
 typedef struct process_t{
     char * name;
