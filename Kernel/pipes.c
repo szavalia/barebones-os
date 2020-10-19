@@ -109,7 +109,7 @@ static int verify(int id, int bytes){
         return 0;
     }
     if(id < 0 || id >=num_pipes || !pipes[id].open){
-        printS("Error: no hay tal pipe\n");
+        printS("Error: no se puede acceder al pipe\n");
         return 0;
     }
     return 1;

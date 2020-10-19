@@ -214,7 +214,6 @@ void sh(int argc, char ** argv){
 		setupCalls();
 		buffer_initialized = TRUE;
 	}
-	//ps(0, NULL);
 	while(1){
 		parse_command();		
 	}
