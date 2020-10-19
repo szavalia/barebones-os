@@ -27,23 +27,16 @@ void init_sems(){
 }
 
 void block_me(queueADT q){
-    int pid = getPID();
-   // printDec(pid);
-   // printS("queued \n");
+    int pid = getPID();   
     queue(q, pid);
-    //printDec(pid);
     processBlock(pid);
 }
 
 void next_process( queueADT queue){
     block_me(queue);
-   // printDec((long)getPID());
-   // printS(" "),
     next_round();
-    //printDec((long)getPID()); 
-    stop_interrupts(); //--> kernel
-   // printS(".");
-    //sem_state();
+    stop_interrupts(); 
+   
 }
 
 //Funciones de mutex 
@@ -77,9 +70,6 @@ semaphore_t * sem_init( int value ){
     if ( value < 0 ){
         value =-value; 
     }
-    printS("New sem with value:");
-    printDec((long)value);
-    newline();
     if( MAX_SEMS > index_sem){
         aux_index = index_sem++;
     }else{
@@ -97,11 +87,6 @@ semaphore_t * sem_init( int value ){
     mutexes[aux_index].value = 1;
     mutexes[aux_index].flag = MUT_OPENED;
     mutexes[aux_index].queue = create_queue();
-
-    printDec(semaphores[aux_index].queue);
-    newline();
-    printDec( mutexes[aux_index].queue);
-    newline();
 
     return &(semaphores[aux_index]);
 }
@@ -130,12 +115,10 @@ void sem_post( semaphore_t * sem){
 
     atomix_add(1, &(sem->value) );
 
-    //processDump();
+    
     unblockByQueue(sem->queue);
-    //sem_state();
-    //processDump();
     unlock(sem->mutex);
-    //sem_state();
+  
 }
 //Es de kernel
 void sem_close_index(int index){

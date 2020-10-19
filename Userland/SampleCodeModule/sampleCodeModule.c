@@ -3,27 +3,31 @@
 /* sampleCodeModule.c */
 #include "terminal.h"
 #include "calculadora.h"
+#include "usr_lib.h"
+char * name = "BareUwUones terminal by LTM";
+
+void launch(){
+ char *argv[2];
+	argv[0] = name;
+	argv[1] = NULL;
+	puts("Lanzando terminal\n");
+	callLaunch( sh , 1 , argv);	
+	return;	
+}
 
 
-static int context[1];
+void inactivity(){
+	int i=0;
+	while(1){
+		renounceCPU();
+	}
+}
+
 int main() 
 {
-	do{
+	launch();
+	inactivity();
 	
-		getContext(context);
-		if(*context==0){
-			sh(0, NULL);
-		}
-		else if(*context == 1){
-			sh(0, NULL);
-		}	
-		changeContext();
-
-	}
-	while(1);
-
-	
-	//puts("I have decided that I want to die\n");
 	return 0xDEADC0DE;
 }
 

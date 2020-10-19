@@ -21,7 +21,7 @@
 #define FALSE 0
 
 long process_count = 0; 
-int actual = 1;
+int actual = 0;
 int initialized = FALSE;
 void * entryPoint;
 static process_t procesos[MAXPROCESOS];
@@ -43,19 +43,8 @@ void * requestStack(){
     return ltmalloc( STACK_SIZE );
 }
 
-void processBlock( int pid){
-   // printS("blocking");
-   // printDec((long)pid);
-    if (  procesos[pid].state == READY){
-        procesos[pid].state = BLOCKED;
-    }else
-    {
-        printS("No such process \n");
-    }    
-}
-
-void blockProcess(int pid){
-    if(pid < 0 || pid > MAXPROCESOS){
+void processBlock(int pid){
+    if(pid <= 0 || pid > MAXPROCESOS){
         printS("Error en el PID\n");
         return;
     }
@@ -100,11 +89,7 @@ void processNice(int pid, int new_prio){
         if(procesos[i].PID == pid){
             procesos[i].priority = new_prio;
             procesos[i].ticks_left = new_prio-1;
-           //printS("PID: ");
-           // printDec(procesos[i].PID);
-           // newline();
-           // printS("PRIORITY: ");
-           // printDec(procesos[i].priority);
+           
             return;
         }
     }
@@ -118,7 +103,7 @@ void processDump(){
     printS("Procesos Activos:\n");
     for( i = 0 ; i < MAXPROCESOS ; i++){
         if( procesos[i].state != NOT_CREATED ){
-        printS("---------------------------------------------\n");
+        printFullLine();
         printS("proceso: ");
         printS(procesos[i].name);
         printS("\nPID:");
@@ -142,7 +127,7 @@ void processDump(){
         newline();
         }
     }
-    printS("---------------------------------------------\n");
+    printFullLine();
 }
 
 uint64_t getBasePointer( void * start){
@@ -155,8 +140,7 @@ int createPID(){
     if ( process_count >= MAXPROCESOS ){
         return -1;
     }
-    process_count+=1;
-    return process_count;
+    return process_count++;
 }
 void restart_kernel(){
     printS("[ Restarting Kernel ]\n");
@@ -183,9 +167,8 @@ void launchProcess( void * process , int argc , char **argv , uint64_t stack_poi
         }
         entryPoint = process;
         initialized = 1;
-    }else if ( current_proc != 0 ){
-        procesos[current_proc].stack_pointer = stack_pointer;
     }
+    procesos[current_proc].stack_pointer = stack_pointer;
     current_proc = pid;
     procesos[pid].PID= pid;
     if ( argc != 0 ){
@@ -197,15 +180,21 @@ void launchProcess( void * process , int argc , char **argv , uint64_t stack_poi
         procesos[pid].name = unnamed;
     }
     procesos[pid].state = READY;
-    procesos[pid].priority = BASE_PRIORITY;
-    procesos[pid].ticks_left = BASE_PRIORITY-1;
+
+    if( pid != 0){
+        if(foreground_proc < 0){ //si no hay nadie en foreground, tomalo
+            foreground_proc = current_proc;
+        }
+        procesos[pid].priority = BASE_PRIORITY;
+        procesos[pid].ticks_left = BASE_PRIORITY-1;
+    }else{
+        procesos[pid].priority = 1;
+        procesos[pid].ticks_left = 1;
+    }
+
     procesos[pid].stack_start = requestStack(); 
     procesos[pid].base_pointer = getBasePointer(procesos[pid].stack_start);
-    procesos[pid].stack_pointer = procesos[pid].base_pointer;
-
-    if(foreground_proc < 0){ //si no hay nadie en foreground, tomalo
-        foreground_proc = current_proc;
-    }
+    procesos[pid].stack_pointer = procesos[pid].base_pointer;    
 
     prepareProcess(pid , procesos[pid].base_pointer , argc , argv , process);
 }
@@ -222,19 +211,14 @@ uint64_t scheduler (uint64_t current_rsp){
     }
     procesos[current_proc].ticks_left = procesos[current_proc].priority-1;    
     int i = current_proc;
-    int aux = 0;
     do{
         i++;
-        if(i ==MAXPROCESOS){
+        if(i == MAXPROCESOS){
             i = 0;
-            aux++;
-        }
-        
+        }        
     }
     while(procesos[i].state != READY );
-    
     current_proc = i;
-
     if(foreground_proc == -1){
         foreground_proc = current_proc;
     }
@@ -283,19 +267,6 @@ void processKill( int pid){
     
 }
 
-void exceptionKill(){
-    if(foreground_proc == current_proc){
-        foreground_proc = -1;
-    }
-
-    if ( process_count == 1 ){
-        restart_kernel();
-    }else{
-        //ltmfree(procesos[current_proc].stack_start); //FIXME: por qué no liberamos?
-        procesos[current_proc].state = KILLED;
-    }
-}
-
 int processIsInForeground(){
     return current_proc == foreground_proc;
 }
@@ -314,12 +285,6 @@ int getPID(){
 void unblockByQueue( queueADT queue){
     int aux;
     int *vec;
-    /*printS("unblocking by: ");
-    printDec(current_proc);
-    printS("\n");
-    printS("this PIDS :");
-    peekAll(queue,&vec);
-    newline();*/
     while (( aux=dequeue(queue)) > 0 ){
         
         if ( procesos[aux].state == BLOCKED){

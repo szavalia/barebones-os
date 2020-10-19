@@ -38,6 +38,6 @@ void sys_sem_post(uint64_t * stack_pointer);
 
 extern uint_least64_t cpuTemperature();
 extern uint8_t memContent(uint8_t * i);
-extern void renounce();
+
 
 #endif

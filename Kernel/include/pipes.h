@@ -13,6 +13,8 @@
 typedef struct pipe_t{
     int open;
     mutex_t * lock;
+    semaphore_t * semWrite;
+    semaphore_t * semRead;
     char data[PIPESIZE];
     unsigned int nwritten;
     unsigned int nread;

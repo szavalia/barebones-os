@@ -44,10 +44,6 @@ int init_keyboard(){
 
 
 void keyboard_handler(){
-    /*if(!is_initialized){
-        init_keyboard();
-        is_initialized=1;
-    }*/
     int scanCode = getKeyboardScancode();
     char keyPress; 
     if(scanCode<59 && 0<=scanCode){ 
@@ -78,15 +74,13 @@ void keyboard_handler(){
         }
         else if(scanCode == D && ctrl){
             ctrl = 0;
-            //buffer[buffer_size++] = 3;
             keyPress = 3;
             pipeWrite(pipeID, &keyPress, 1);
             return 0;
         }
         
         else if(keyPress != 0){ //para que no imprima las keys no mappeadas
-            //buffer[buffer_size++] = keyPress;
-            printChar('-');
+            
             pipeWrite(pipeID, &keyPress, 1);
         }
     }

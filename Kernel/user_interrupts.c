@@ -101,6 +101,7 @@ int int80_handler( uint64_t * stack_pointer){
             break;
         case 28:
             sys_pipe_states(stack_pointer);
+            break;
         case 29:
             sys_sem_state(stack_pointer);
             break;    
@@ -249,7 +250,7 @@ void sys_renounce(uint64_t regs[]){
 
 void sys_block(uint64_t regs[]){
     int pid = regs[R13];
-    blockProcess(pid);
+    processBlock(pid);
 }
 
 void sys_nice(uint64_t regs[]){

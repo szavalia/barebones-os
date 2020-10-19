@@ -32,8 +32,7 @@ void int_20( uint64_t stack_pointer) {
 }
 
 void int_21(){
-	if(processIsInForeground()) 
-		keyboard_handler();
+	keyboard_handler();
 }
 
 int int_80(uint64_t stack_pointer){

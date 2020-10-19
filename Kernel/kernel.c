@@ -27,9 +27,10 @@ static const uint64_t PageSize = 0x1000;
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
 typedef int (*EntryPoint)();
-char * name = "BareUwUones terminal by LTM";
-extern void saveInitRegs( uint64_t rsp);
 
+char * name_inactivity = "Procrastinator";
+extern void saveInitRegs( uint64_t rsp);
+static flag = 0;
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
 {
@@ -99,7 +100,6 @@ void * initializeKernelBinary()
 void bokitaPrint();
 void elMbeh();
 
-
 int pre_launch(){
 	context = 1;
 	side = 1;
@@ -114,15 +114,7 @@ int pre_launch(){
 		printS("Error fatal: falla al inicializar teclado\n");
 		return -1;
 	}
-	/*
-	for( int i = 0 ; i < 20 ; i++){
-		sem_init(i);
-	}
-	for( int i = 0 ; i < 20 ; i+=2){
-		sem_close_index(i);
-	}*/
-	//clear();
-	//sem_state();
+
 	saveInitRegs(stackBase);
 	return 0;
 } 
@@ -142,7 +134,7 @@ int main()
 		return -1;
 	}
 	char * argv[2];
-	argv[0] = name;
+	argv[0] = name_inactivity;
 	argv[1] = NULL;
 	launchProcess( sampleCodeModuleAddress , 1 , argv , NULL);
 	//printHex(((EntryPoint)sampleCodeModuleAddress)()); //acá llamo a main de userland
