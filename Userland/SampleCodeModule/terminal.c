@@ -47,9 +47,9 @@ static uint64_t regs[16];
 static char * regNames[] = {"RAX","RBX","RCX","RDX","RSI","RDI","RBP","RSP","R8","R9","R10","R11","R12","R13","R14","R15"};
 
 void test( int argc , char **argv){
-	puts("Test sin sincronizacion\n");
-	test_no_sync();
-	newline();
+	//puts("Test sin sincronizacion\n");
+	//test_no_sync();
+	//newline();
 	puts("Test con sincronizacion\n");
 	test_sync();
 	newline();

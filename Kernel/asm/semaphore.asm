@@ -1,7 +1,7 @@
 GLOBAL atomix_add 
 GLOBAL next_round
 GLOBAL stop_interrupts
-
+GLOBAL xchange
 
 
 section .text
@@ -13,6 +13,11 @@ atomix_add:
     lock xadd [rsi] , eax
     ret
 ;extern void next_round()
+
+xchange:
+    mov rax , rdi ;// value
+    lock xchg [rsi] , eax
+    ret
 next_round:
     
     mov al, 20h

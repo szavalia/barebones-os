@@ -19,6 +19,7 @@ int index_mutex=MAX_SEMS; //Los primeros mutexes corresponden a semaforos
 
 int sem_validacion( semaphore_t * sem);
 extern int atomix_add(int value , void * place );
+extern int xchange( int value , void * place);
 extern void next_round();
 extern void stop_interrupts();
 
@@ -71,7 +72,7 @@ void lock( mutex_t * mutex){
     if ( mutex_validacion(mutex) < 0 ){
         return;
     }
-    while( mutex->value <=0){   
+    while( xchange(0 , &(mutex->value)) <=0){   
         next_process( mutex->queue);
     }
     atomix_add( -1 , &(mutex->value));
@@ -81,7 +82,7 @@ void unlock( mutex_t * mutex){
     if ( mutex_validacion(mutex) < 0 ){
         return;
     }
-    atomix_add( 1 , &(mutex->value));
+    xchange( 1 , &(mutex->value));
     unblockByQueue(mutex->queue);
 }
 
