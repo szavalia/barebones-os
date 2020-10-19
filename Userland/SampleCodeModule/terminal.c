@@ -173,16 +173,55 @@ void parse_command(){
 	puts("$ ");
 	show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE);
 	newline();
-	char *argv[MAX_ARGS];
+	char *argv1[MAX_ARGS];
 	char * token;
-	*argv = strtok(usr_command, ' ');
+	*argv1 = strtok(usr_command, ' ');
 	int i=1;
+	int is_pipe = 0;
 	do{	
 		token = strtok(NULL, ' ');
-		argv[i++] = token;
+		argv1[i++] = token;
 	}
-	while(token != NULL && i < MAX_ARGS);
-	int argc=i-1;
+	while(token != NULL && i < MAX_ARGS && token[0] != '|');
+	int argc1;
+	if(token[0] != '|'){
+		argc1=i-1;
+		search_for_run(argv1, argc1, 0);
+	}
+	else{
+		puts("En el else!");
+		argc1= i-1; //no quiero que cuente el token que es el pipe!
+		char *argv2[MAX_ARGS];
+		int j=0, argc2;
+		do{	
+		token = strtok(NULL, ' ');
+		argv2[j++] = token;
+		}
+		while(token != NULL && j < MAX_ARGS);
+		argc2=j;
+		int pipeID;
+		puts("vamo a imprimir");
+		for(int a = 0; a < argc1; a++){
+			puts(argv1[a]);
+			newline();
+		}
+		newline();
+		for(int a = 0; a < argc2; a++){
+			puts(argv2[a]);
+			newline();
+		}
+
+		search_for_run(argv1, argc1, 1);
+		search_for_run(argv2, argc2, 2);
+	}
+	
+}
+
+void search_for_run(char * argv[], int argc, int type /*, int* pipeLoc*/){
+
+	if(type==1){
+		//pipeOpen(pipeLoc);
+	}
 
 	for(int j=0; names[j] != NULL; j++){
 		if(strequals(*argv, commands[j].name)){
@@ -198,11 +237,8 @@ void parse_command(){
 			callLaunch(processes[j].func, argc, argv);
 			return;
 		}
-	}			
-	
+	}
 	puts("No existe tal funcion\n");
-		
-		
 }
 
 void sh(int argc, char ** argv){ 
