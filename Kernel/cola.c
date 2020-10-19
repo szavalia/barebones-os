@@ -80,8 +80,7 @@ int peek( queueADT head){
     }
 }
 
-void peekAll( queueADT head , int **vector ){
-    //*vector = ltmalloc(sizeof(int)*(head->size) + 1);
+void peekAll( queueADT head ){
     Node * aux = head->first;
     printDec((long)head->size);
     printS(" ");

@@ -3,14 +3,7 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "user_interrupts.h"
-#include "video_driver.h"
-#include "keyboard.h"
-#include "time.h"
-#include "mem_manager.h"
-#include "process.h"
-#include "lib.h"
-#include "reg_t.h"
-#include "semaphore.h"
+
 
 int int80_handler( uint64_t * stack_pointer){
     int option = stack_pointer[R12];
@@ -117,17 +110,17 @@ int int80_handler( uint64_t * stack_pointer){
 }
 
 void sys_sem_init(uint64_t  regs[] ){
-    void ** sem_pointer = regs[R13];
+    void ** sem_pointer = (void **) regs[R13];
     *sem_pointer = sem_init(regs[R15]);
     return;
 }
 
 void sys_sem_wait(uint64_t  regs[] ){
-    sem_wait(regs[R13]);
+    sem_wait((semaphore_t *) regs[R13]);
     return;
 }
 void sys_sem_post(uint64_t  regs[] ){
-     sem_post(regs[R13]);
+     sem_post((semaphore_t *)regs[R13]);
     return;
 }
 void sys_sem_state(uint64_t regs[]){
@@ -137,15 +130,29 @@ void sys_sem_state(uint64_t regs[]){
 void sys_write(uint64_t  regs[] ){
     char * buffer = (char *) regs[R13]; 
     int size = regs[R15];
-    print(buffer, size);
+    int writeID = getWritePipe();
+    
+    if(writeID == STDOUT){
+        print(buffer, size);
+    }
+    else{
+        pipeWrite(writeID, buffer, size); 
+    }
 }
  
 
- void sys_read(uint64_t  regs[]){
+void sys_read(uint64_t  regs[]){
     char * c = (char *) regs[R13];
-    if(processIsInForeground()){
-        *c = readChar(); //si no hay nada en el buffer, te retorna un 0   
-    }
+    int readID = getReadPipe(), fg = processIsInForeground();
+    
+    if(fg && readID == STDIN)
+        pipeRead(readID, c, 1);
+    else if(!fg && readID == STDIN)
+        return; //no te toca leer, bloqueate
+    else if(!fg && readID != STDIN)
+        pipeRead(readID, c, 1);
+    else if(fg && readID != STDIN)
+        return; //algo salió mal acá 
 }
 
 void sys_getReg(uint64_t  regs[]){
@@ -281,7 +288,7 @@ void sys_pipe_read(uint64_t regs[]){
 
 void sys_pipe_open(uint64_t regs[]){
     int * id = (int *) regs[R13];
-    *id = pipeOpen();
+    pipeOpen(id);
 }
 
 void sys_pipe_close(uint64_t regs[]){
@@ -294,13 +301,13 @@ void sys_pipe_states(uint64_t regs[]){
 }
 
 void sys_change_input(uint64_t regs[]){
-    int pid = (int) regs[R13];
-    int pipeID = (int) regs[R15];
-    change_input(pid, pipeID);
+    int pipeID = (int) regs[R13];
+    int pid = (int) regs[R15];
+    change_input(pipeID, pid);
 }
 
 void sys_change_output(uint64_t regs[]){
-    int pid = (int) regs[R13];
-    int pipeID = (int) regs[R15];
-    change_output(pid, pipeID);
+    int pipeID = (int) regs[R13];
+    int pid = (int) regs[R15];
+    change_output(pipeID, pid);
 }

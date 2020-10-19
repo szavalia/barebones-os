@@ -1,39 +1,43 @@
 #include "pipes.h"
 
-static pipe_t pipes[MAX_PIPES]; 
+static pipe_t pipes[MAX_PIPES]; //de 0 a MAX_PIPES tenemos los puertos de lectura, para escribir sumamos un offset de MAX_PIPES 
 static int num_pipes = 0; //numero de pipes inicializados, pueden haber algunos cerrados
 
 static void initPipe(int i);
-static int createPipe();
+static void createPipe(int idDestination[2]);
 static int verify(int id, int bytes);
 
-int pipeOpen(){
+void pipeOpen(int idDestination[2]){
     for(int i=0; i < num_pipes; i++){ //busco un pipe vacante
-        if(!pipes[i].open){//está vacante
+        if(!pipes[i].openRead && !pipes[i].openWrite){//está vacante
             initPipe(i);
-            return i;
+            idDestination[0] = i;
+            idDestination[1] = i + MAX_PIPES;
+            return;
         }
     }
 
-    return createPipe();
+    createPipe(idDestination); //creo un nuevo pipe al final del vector
 }
 
 void pipeClose(int id){
-    if(id >= num_pipes || id < 0){
+    if((id < MAX_PIPES && id >= num_pipes)|| (id >= MAX_PIPES && id >= num_pipes+MAX_PIPES) || id < 0){
         printS("No hay tal pipe\n");
         return;
     }
-    pipes[id].open = FALSE;
+    (id < MAX_PIPES)? (pipes[id].openRead = FALSE) : (pipes[id].openWrite = FALSE);
     close_mutex(pipes[id].lock); 
     sem_close(pipes[id].semRead);
     sem_close(pipes[id].semWrite);
 }
 
 void pipeWrite(int id, char * address, int bytes){
-    if(!verify(id, bytes))
+    if(!verify(id, bytes) || id < MAX_PIPES)
         return;
-
-    int pos, bytesWritten=0;
+    id -= MAX_PIPES;
+    if(id >= MAX_PIPES)
+        return; 
+    int pos;
     for(int i=0; i < bytes; i++){
         sem_wait(pipes[id].semWrite); //pido lugar para escribir
         lock(pipes[id].lock);
@@ -47,7 +51,7 @@ void pipeWrite(int id, char * address, int bytes){
 }
 
 void pipeRead(int id, char * address, int bytes){
-    if(!verify(id, bytes))
+    if(!verify(id, bytes) || id >= MAX_PIPES)
         return;    
         
     int pos;
@@ -73,34 +77,45 @@ void pipeStates(){
         printDec(i);
         newline();
         printS("Status: ");
-        pipes[i].open? printS("OPEN\n") : printS("CLOSED\n");
-        printS("Chars written: ");
-        printDec(pipes[i].nwritten);
+        pipes[i].openRead? printS("OPEN\n") : printS("CLOSED\n");
+        printS("Blocked processes: ");
+        peekAll(pipes[i].semRead->queue);
         newline();
-        printS("Chars read: ");
-        printDec(pipes[i].nread);
+        printFullLine();
+    }
+    for(int i=MAX_PIPES; i < num_pipes + MAX_PIPES; i++){
+        printS("Pipe: ");
+        printDec(i);
         newline();
+        printS("Status: ");
+        pipes[i].openWrite? printS("OPEN\n") : printS("CLOSED\n");
+        printS("Blocked processes: ");
+        peekAll(pipes[i].semWrite->queue);
         printFullLine();
     }
 }
 
 
 static void initPipe(int i){
-    pipes[i].open = TRUE;
+    pipes[i].openRead = TRUE; 
+    pipes[i].openWrite = TRUE;
     pipes[i].lock = init_mutex();
     pipes[i].semWrite = sem_init(PIPESIZE);
     pipes[i].semRead = sem_init(0);
     pipes[i].nread = 0;
     pipes[i].nwritten = 0;
 }
-static int createPipe(){
+static void createPipe(int idDestination[2]){
     if(num_pipes >= MAX_PIPES){
-        return -1; //no puedo crear más pipes
+        idDestination[0] = -1; //no puedo crear más pipes
+        idDestination[1] = -1;
+        return;
     }
     int pipeToOpen = num_pipes; //voy a abrir uno en el último lugar disponible
     num_pipes++;
     initPipe(pipeToOpen);
-    return pipeToOpen;
+    idDestination[0] = pipeToOpen;
+    idDestination[1] = pipeToOpen + MAX_PIPES;
 }
 
 static int verify(int id, int bytes){
@@ -108,8 +123,10 @@ static int verify(int id, int bytes){
         printS("Error: bytes negativos\n");
         return 0;
     }
-    if(id < 0 || id >=num_pipes || !pipes[id].open){
-        printS("Error: no se puede acceder al pipe\n");
+    if(id < 0 || (id >= MAX_PIPES && !pipes[id-MAX_PIPES].openWrite) || (id < MAX_PIPES && !pipes[id].openRead)){
+        printS("Error: no se puede acceder al pipe ");
+        printDec(id);
+        newline();
         return 0;
     }
     return 1;

@@ -21,9 +21,6 @@ static char * descriptions[] = { "te muestra opciones de ayuda\n", //help
 "imprime memoria dinamicamente asignada\n", //mem
 "mata el proceso que le indiques\n", //kill
 "lista los procesos\n", //ps 
-"Imprime stdin a pantalla\n", //cat 
-"Cuenta cantidad de lineas de stdin\n", //wc
-"Filtra vocales de stdin\n",  //filter
 "Finaliza el proceso actual\n", //exit
 "Cambia el estado de un proceso entre bloqueado y listo dado su ID\n", //block
 "Cambia la prioridad del proceso (parametros: PID y new_prio)\n", //nice
@@ -33,13 +30,19 @@ static char * descriptions[] = { "te muestra opciones de ayuda\n", //help
 NULL };
 
 
-static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, printTemp, divError, codeError, inforeg, printmem, mem, kill,ps, cat, wc, filter, exit, block, nice, test, pipe , sem_state ,NULL};
-static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "cat", "wc","filter", "exit", "block", "nice", "semtest", "pipe", "semstate" ,NULL};
+static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, printTemp, divError, codeError, inforeg, printmem, mem, kill,ps, exit, block, nice, test, pipe , sem_state ,NULL};
+static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "exit", "block", "nice", "semtest", "pipe", "semstate" ,NULL};
 
 static command_t processes[MAX_PROCESSES];
-static char * process_descriptions[] = {"Imprime el PID actual junto con un saludo\n", "lanza la terminal\n", NULL};
-static void (*process_functions[])(int, char **) = {loop, sh, NULL};
-static char * process_names[] = {"loop", "sh",  NULL};
+static char * process_descriptions[] = {
+"Imprime el PID actual junto con un saludo\n",//loop
+ "lanza la terminal\n",//sh
+ "Imprime stdin a pantalla\n", //cat 
+"Cuenta cantidad de lineas de stdin\n", //wc
+"Filtra vocales de stdin\n",//filter
+NULL};  
+static void (*process_functions[])(int, char **) = {loop, sh, cat, wc, filter, NULL};
+static char * process_names[] = {"loop", "sh", "cat", "wc", "filter", NULL};
 
 
 
@@ -184,43 +187,45 @@ int processInput(char ** argv_destination, int i){
 }
 
 void parse_command(){ 
-	char usr_command[COMMAND_BUFFER_SIZE];
+	char * usr_command;
+	usr_command = ltmalloc(COMMAND_BUFFER_SIZE);
 	puts("$ ");
 	show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE);
 	newline();
 
 	char *argv1[MAX_ARGS];
 	*argv1 = strtok(usr_command, ' ');
+
 	int argc1 = processInput(argv1, 1);
 
 	char *argv2[MAX_ARGS];
 	int argc2 = processInput(argv2, 0);
 	int pipeID;
 
-/*	if(argc2 != 0){
+	if(argc2 != 0){
 		int id[2];
 		pipeOpen(id);
-		int lauchedPid1 = search_for_run(argv1, argc1);
-		int launchedPid2 = search_for_run(argv2, argc2);
+		
+		int launchedPid2 = search_for_run(argv2, argc2, usr_command);
+		change_input(id[0], launchedPid2); 
+		int launchedPid1 = search_for_run(argv1, argc1, usr_command);
+		change_output(id[1], launchedPid1);
+		
 		if(launchedPid1 < 0 || launchedPid2 < 0){
+			puts("No se puede pipear una built in\n");
 			return;
 		}
-		change_output(id[1], launchedPid1); //TODO: crear syscall
-		change_input(id[0], launchedPid2); //TODO: crear syscall
+		
+		
 	}
 	else{
-		search_for_run(argv1, argc1);
+		search_for_run(argv1, argc1, usr_command);
 	}
-*/
 
-
-	search_for_run(argv1, argc1);
-	if(argc2 != 0)
-		search_for_run(argv2, argc2);
 
 }
 
-int search_for_run(char * argv[], int argc){
+int search_for_run(char * argv[], int argc, char * usr_command){
 	for(int j=0; names[j] != NULL; j++){
 		if(strequals(*argv, commands[j].name)){
 			*argv = commands[j].name;
@@ -232,11 +237,12 @@ int search_for_run(char * argv[], int argc){
 	for(int j=0; process_names[j] != NULL; j++){ //si es un proceso, lanzá uno nuevo
 		if(strequals(*argv, processes[j].name)){
 			*argv = processes[j].name;
-			callLaunch(processes[j].func, argc, argv, &launchedPid); //TODO: modificar esta syscall
+			callLaunch(processes[j].func, argc, argv, &launchedPid); 
 			return launchedPid;
 		}
 	}
 	puts("No existe tal funcion\n");
+	ltmfree(usr_command);
 }
 
 void sh(int argc, char ** argv){ 
@@ -244,31 +250,11 @@ void sh(int argc, char ** argv){
 		setupCalls();
 		buffer_initialized = TRUE;
 	}
+
 	while(1){
 		parse_command();		
 	}
 	return;
-}
-
-void cat(int argc, char ** argv){
-	char usr_command[COMMAND_BUFFER_SIZE];
-	scanf_for_cat(usr_command, BUFFER_SIZE, 0); 
-	newline();
-}
-
-void wc(int argc, char ** argv){
-	char usr_command[COMMAND_BUFFER_SIZE];
-	int count = scanf_for_cat(usr_command, BUFFER_SIZE, 1); 
-	newline();
-	puts("cantidad de lineas:");
-	printDec(count);
-	newline();
-}
-
-void filter(int argc, char ** argv){
-	char usr_command[COMMAND_BUFFER_SIZE];
-	scanf_for_cat(usr_command, BUFFER_SIZE, 2); 
-	newline();
 }
 
 //alterna entre bloqueado y listo para un dado pid

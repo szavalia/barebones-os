@@ -7,7 +7,8 @@
 
    #define NULL (void *) 0 
    #define TRUE 1
-   #define FALSE 0   
+   #define FALSE 0
+   #define BUFFER_SIZE 1024
 
 
    
@@ -51,11 +52,15 @@
 
    extern void pipeWrite(int pipeID, char * address, int bytes);
    extern void pipeRead(int pipeID, char * address, int bytes);
-   extern void pipeOpen(int * destinationForID);
+   extern void pipeOpen(int destinationForID[2]); //devuelve los puertos de lectura y de escritura
    extern void pipeClose(int pipeID);
    extern void callPipe();
 
    extern void change_input(int id, int pid);
+
+   void cat(int argc, char ** argv);
+   void wc(int argc, char ** argv);
+   void filter(int argc, char ** argv);
 
 #endif
 

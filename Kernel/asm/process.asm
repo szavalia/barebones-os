@@ -1,6 +1,7 @@
 GLOBAL prepareProcess
 GLOBAL switchProcess
 GLOBAL prepareProcessForked
+GLOBAL renounce
 
 %macro pushState 0
 	push rax
@@ -121,3 +122,7 @@ switchProcess:
 	popState
 	
 	iretq
+
+renounce:
+	int 20h
+	ret

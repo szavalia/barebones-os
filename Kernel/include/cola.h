@@ -12,5 +12,5 @@ int dequeue(queueADT head);
 int sizeQueue(queueADT head);
 void freeQueue(queueADT head);
 int peek( queueADT head);
-void peekAll( queueADT head , int **vector );
+void peekAll( queueADT head);
 #endif

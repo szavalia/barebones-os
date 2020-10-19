@@ -136,7 +136,7 @@ int main()
 	char * argv[2];
 	argv[0] = name_inactivity;
 	argv[1] = NULL;
-	launchProcess( sampleCodeModuleAddress , 1 , argv , NULL);
+	launchProcess( sampleCodeModuleAddress , 1 , argv ,NULL, NULL);
 	//printHex(((EntryPoint)sampleCodeModuleAddress)()); //acá llamo a main de userland
 	newline();
 	newline();

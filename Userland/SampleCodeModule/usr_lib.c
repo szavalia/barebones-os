@@ -3,6 +3,7 @@
 #include "usr_lib.h"
 
 
+
 void * ltmalloc(int size){
 	
 	if(size < 0){
@@ -35,6 +36,33 @@ void loop(int argc, char **argv){
 void exit(int argc, char **argv){
 	callExit();
 }
+
+void cat(int argc, char ** argv){
+	char usr_command[BUFFER_SIZE];
+	scanf_for_cat(usr_command, BUFFER_SIZE, 0); 
+	newline();
+	callExit();
+}
+
+void wc(int argc, char ** argv){
+	char usr_command[BUFFER_SIZE];
+	int count = scanf_for_cat(usr_command, BUFFER_SIZE, 1); 
+	newline();
+	puts("cantidad de lineas:");
+	printDec(count);
+	newline();
+	callExit();
+
+}
+
+void filter(int argc, char ** argv){
+	char usr_command[BUFFER_SIZE];
+	scanf_for_cat(usr_command, BUFFER_SIZE, 2); 
+	newline();
+	callExit();
+
+}
+
 
 
 

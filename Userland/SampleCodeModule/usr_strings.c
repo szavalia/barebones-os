@@ -106,6 +106,7 @@ int scanf_for_cat(char * buffer, int size, int mode){
 				count++;
 				newline();
 			}
+			
 			if(*charBuffer == 3){
 				putChar('c');
 				return 0;
@@ -130,6 +131,7 @@ int scanf_for_cat(char * buffer, int size, int mode){
 			}
         }        
     }
+	putChar(3);
 	//putChar(' ');
 	buffer[current]='\0';
 	if(mode == 1){

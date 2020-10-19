@@ -11,13 +11,12 @@ void launch(){
 	argv[0] = name;
 	argv[1] = NULL;
 	puts("Lanzando terminal\n");
-	callLaunch( sh , 1 , argv);	
+	callLaunch( sh , 1 , argv, NULL);	
 	return;	
 }
 
 
 void inactivity(){
-	int i=0;
 	while(1){
 		renounceCPU();
 	}

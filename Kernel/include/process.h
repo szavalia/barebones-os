@@ -4,7 +4,25 @@
 #include "reg_t.h"
 #include "cola.h"
 #include "pipes.h"
+#include "lib.h"
+#include "moduleLoader.h"
+#include "video_driver.h"
+#include "mem_manager.h"
 
+#define STACK_SIZE ( 32 * 1024 + 8 )
+#define MAXPROCESOS 50
+#define BASE_PRIORITY 1
+#define MAX_PRIORITY 4
+#define STACK_ALIGN(number)  number & -32 
+#define NULL 0 
+#define NOT_CREATED 0
+#define READY 1
+#define BLOCKED 2
+#define KILLED 3
+#define TRUE 1
+#define FALSE 0
+#define STDIN 0
+#define STDOUT MAX_PIPES
 typedef struct process_t{
     char * name;
     int PID;
@@ -14,7 +32,7 @@ typedef struct process_t{
     void * stack_start;
     uint64_t base_pointer;
     uint64_t stack_pointer;
-    int pipes[2]; //pipes[0] es el pipe de lectura, piipes[1] el de escritura
+    int pipes[2]; //pipes[0] es el pipe de lectura, pipes[1] el de escritura
 }process_t;
 
 uint64_t scheduler( uint64_t stack_pointer );
@@ -33,6 +51,10 @@ void processBlock(int pid);
 int currentPID();
 void unblockByQueue( queueADT queue);
 
-void change_input(int pid, int pipeID);
-void change_output(int pid, int pipeID);
+void change_input(int pipeID, int pid);
+void change_output(int pipeID, int pid);
+int getWritePipe();
+int getReadPipe();
+
+extern void renounce();
 #endif
