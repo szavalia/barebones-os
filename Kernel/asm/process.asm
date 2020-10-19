@@ -42,7 +42,7 @@ section .text
 
 ;llena el stack de forma correcta
 ; extern void prepareProcess( int PID , uint64_t stackPointer , int argc , char * argv[] , void * main );
-; rdi -> PID , rsi -> stackPointer , rbx -> argc , rcx ->argv , r8 -> main
+; rdi -> PID , rsi -> stackPointer , rdx -> argc , rcx ->argv , r8 -> main
 prepareProcess:
     mov rbp , rsi
     mov rsp , rsi
@@ -60,21 +60,23 @@ prepareProcess:
     push r8 ; main del proceso
     
     ;push de los registros 
-    push rdi ;rax
+    push rdi ;rax                                  
     push rdi ;rbx
     push rdi ;rcx
     push rdi ;rdx
     push rbp ;rbp
-    push rbx ;rdi --> argc
+    push rdx ;rdi --> argc
     push rcx ;rsi --> argv
-    push rdi
-    push rdi
-    push rdi
-    push rdi
-    push rdi
-    push rdi
-    push rdi
-    push rdi
+    push rdi ;r8
+    push rdi ;r9
+    push rdi ;r10 
+    push rdi ;r11
+    push rdi ;r12
+    push rdi ;r13
+    push rdi ;r14
+    push rdi ;r15
+
+
 	mov al, 20h
 	out 20h, al
     popState
