@@ -24,27 +24,26 @@ void pipeClose(int id){
         return;
     }
     pipes[id].open = FALSE;
-    //close_mutex(pipes[id].lock); //TODO: implementar close_mutex
+    close_mutex(pipes[id].lock); 
+    sem_close(pipes[id].semRead);
+    sem_close(pipes[id].semWrite);
 }
 
 void pipeWrite(int id, char * address, int bytes){
     if(!verify(id, bytes))
         return;
 
-    int pos;
-    for(int i = 0; i < bytes; i++){
-        while(1){
-            lock(pipes[id].lock);
-            if(pipes[i].nwritten < pipes[i].nread + PIPESIZE){
-                break;
-            }
-            unlock(pipes[id].lock);
-        }
+    int pos, bytesWritten=0;
+    for(int i=0; i < bytes; i++){
+        sem_wait(pipes[id].semWrite); //pido lugar para escribir
+        lock(pipes[id].lock);
+
         pos = pipes[id].nwritten++;
         pipes[id].data[pos%PIPESIZE] = address[i];
-        unlock(pipes[id].lock);
-    }
-
+        sem_post(pipes[id].semRead); //agrego un lugar para leer
+        
+        unlock(pipes[id].lock);        
+    }  
 }
 
 void pipeRead(int id, char * address, int bytes){
@@ -53,15 +52,14 @@ void pipeRead(int id, char * address, int bytes){
         
     int pos;
     for(int i = 0; i<bytes; i++){
-        while(1){
-            lock(pipes[id].lock);
-            if(pipes[i].nread < pipes[id].nwritten){
-                break;
-            }
-            unlock(pipes[id].lock);
-        }
+        sem_wait(pipes[id].semRead); //pido un lugar para leer
+        
+        lock(pipes[id].lock);
+
         pos = pipes[id].nread++;
         address[i] = pipes[id].data[pos%PIPESIZE];
+        sem_post(pipes[id].semWrite); //agrego un lugar para escribir
+
         unlock(pipes[id].lock);
     }
 }
@@ -82,7 +80,7 @@ void pipeStates(){
         printS("Chars read: ");
         printDec(pipes[i].nread);
         newline();
-        printS("--------------------------------------\n");
+        printFullLine();
     }
 }
 
@@ -90,6 +88,8 @@ void pipeStates(){
 static void initPipe(int i){
     pipes[i].open = TRUE;
     pipes[i].lock = init_mutex();
+    pipes[i].semWrite = sem_init(PIPESIZE);
+    pipes[i].semRead = sem_init(0);
     pipes[i].nread = 0;
     pipes[i].nwritten = 0;
 }
@@ -109,7 +109,7 @@ static int verify(int id, int bytes){
         return 0;
     }
     if(id < 0 || id >=num_pipes || !pipes[id].open){
-        printS("Error: no hay tal pipe\n");
+        printS("Error: no se puede acceder al pipe\n");
         return 0;
     }
     return 1;

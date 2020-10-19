@@ -7,6 +7,9 @@ char readChar();
 void freebuffer(int beginning);
 int get_buffer_size();
 void saveRegs();
+int init_keyboard();
+
+
 uint64_t * getRegs();
 
 //Get registros

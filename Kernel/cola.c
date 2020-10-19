@@ -69,6 +69,7 @@ void freeQueue(queueADT head){
     if( aux2 != NULL){
         ltmfree(aux2);
     }
+    ltmfree(head);
 }
 
 int peek( queueADT head){

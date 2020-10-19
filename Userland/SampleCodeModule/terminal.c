@@ -29,7 +29,7 @@ static char * descriptions[] = { "te muestra opciones de ayuda\n", //help
 "Cambia la prioridad del proceso (parametros: PID y new_prio)\n", //nice
 "Realiza un testeo de los semaforos\n",  //test
 "Muestra el estado de los pipes\n", //pipe
-"Consulta el estado de los semaforos", //semstate
+"Consulta el estado de los semaforos\n", //semstate
 NULL };
 
 
@@ -47,8 +47,12 @@ static uint64_t regs[16];
 static char * regNames[] = {"RAX","RBX","RCX","RDX","RSI","RDI","RBP","RSP","R8","R9","R10","R11","R12","R13","R14","R15"};
 
 void test( int argc , char **argv){
-	//test_no_sync();
+	puts("Test sin sincronizacion\n");
+	test_no_sync();
+	newline();
+	puts("Test con sincronizacion\n");
 	test_sync();
+	newline();
 }
 static void setupCalls(){
 	for(int i=0; names[i] != NULL; i++){

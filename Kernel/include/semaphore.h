@@ -28,19 +28,26 @@ typedef struct semaphore_t{
 //funciones mutex
 mutex_t * init_mutex();
 
+void close_mutex(mutex_t * mutex); //TODO: no implementado
+
 void lock( mutex_t * mutex);
 
 void unlock( mutex_t * mutex);
+
 //Funciones de semáforo
 
 semaphore_t * sem_init( int value );
+
+void sem_close(semaphore_t * sem);
 
 void sem_wait( semaphore_t * sem);
 
 void sem_post( semaphore_t * sem);
 
 void sem_state();
+
 void sem_close_index(int index);
+
 void init_sems();
 
 void printAllqueue();

@@ -21,14 +21,15 @@ void launchProcess( void * process , int argc , char * argv[] , uint64_t stack_p
 void processKill( int pid);
 void processNice(int pid, int new_prio);
 void processDump();
-void exceptionKill();
 uint64_t getBasePointer( void * start);
 int processIsInForeground();
 int getPID();
 void printGreeting();
 int getProcessCount();
 void exitProcess();
-void blockProcess(int pid);
+void processBlock(int pid);
 int currentPID();
 void unblockByQueue( queueADT queue);
+
+extern void renounce();
 #endif
