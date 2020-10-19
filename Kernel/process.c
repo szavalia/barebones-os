@@ -227,11 +227,7 @@ uint64_t scheduler (uint64_t current_rsp){
 }
 
 void exitProcess(){
-    printS("Cerrando: ");
-    printS( procesos[current_proc].name);
-    printS(" de PID: ");
-    printDec(current_proc);
-    newline();
+    
     procesos[current_proc].state = NOT_CREATED;
     ltmfree(procesos[current_proc].stack_start);
     process_count -= 1;
@@ -266,6 +262,7 @@ void processKill( int pid){
     }
     
 }
+
 
 int processIsInForeground(){
     return current_proc == foreground_proc;

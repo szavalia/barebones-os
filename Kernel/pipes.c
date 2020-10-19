@@ -24,7 +24,9 @@ void pipeClose(int id){
         return;
     }
     pipes[id].open = FALSE;
-    //close_mutex(pipes[id].lock); //TODO: implementar close_mutex
+    //close_mutex(pipes[id].lock); //TODO: sacar comentario cuando esté implementado
+    sem_close(pipes[id].semRead);
+    sem_close(pipes[id].semWrite);
 }
 
 void pipeWrite(int id, char * address, int bytes){
