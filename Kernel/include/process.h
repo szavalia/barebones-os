@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "reg_t.h"
 #include "cola.h"
+#include "pipes.h"
 
 typedef struct process_t{
     char * name;
@@ -13,11 +14,12 @@ typedef struct process_t{
     void * stack_start;
     uint64_t base_pointer;
     uint64_t stack_pointer;
+    int pipes[2]; //pipes[0] es el pipe de lectura, piipes[1] el de escritura
 }process_t;
 
 uint64_t scheduler( uint64_t stack_pointer );
 void switchProcess( uint64_t stackPointer);
-void launchProcess( void * process , int argc , char * argv[] , uint64_t stack_pointer );
+void launchProcess( void * process , int argc , char * argv[], int * pid_destination , uint64_t stack_pointer );
 void processKill( int pid);
 void processNice(int pid, int new_prio);
 void processDump();
@@ -31,4 +33,7 @@ void exitProcess();
 void blockProcess(int pid);
 int currentPID();
 void unblockByQueue( queueADT queue);
+
+void change_input(int pid, int pipeID);
+void change_output(int pid, int pipeID);
 #endif

@@ -168,74 +168,68 @@ void divError(int argc, char ** argv){
 	int aux = 2/0;
 }
 
+
+int processInput(char ** argv_destination, int i){
+	char * token;
+	do{	
+		token = strtok(NULL, ' ');
+		argv_destination[i++] = token;
+	}
+	while(token != NULL && i < MAX_ARGS && *token != '|');
+	return i-1; // No quiero que cuente el token que es pipe o NULL
+}
+
 void parse_command(){ 
 	char usr_command[COMMAND_BUFFER_SIZE];
 	puts("$ ");
 	show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE);
 	newline();
+
 	char *argv1[MAX_ARGS];
-	char * token;
 	*argv1 = strtok(usr_command, ' ');
-	int i=1;
-	int is_pipe = 0;
-	do{	
-		token = strtok(NULL, ' ');
-		argv1[i++] = token;
-	}
-	while(token != NULL && i < MAX_ARGS && token[0] != '|');
-	int argc1;
-	if(token[0] != '|'){
-		argc1=i-1;
-		search_for_run(argv1, argc1, 0);
+	int argc1 = processInput(argv1, 1);
+
+	char *argv2[MAX_ARGS];
+	int argc2 = processInput(argv2, 0);
+	int pipeID;
+
+/*	if(argc2 != 0){
+		int id[2];
+		pipeOpen(id);
+		int lauchedPid1 = search_for_run(argv1, argc1);
+		int launchedPid2 = search_for_run(argv2, argc2);
+		if(launchedPid1 < 0 || launchedPid2 < 0){
+			return;
+		}
+		change_output(id[1], launchedPid1); //TODO: crear syscall
+		change_input(id[0], launchedPid2); //TODO: crear syscall
 	}
 	else{
-		puts("En el else!");
-		argc1= i-1; //no quiero que cuente el token que es el pipe!
-		char *argv2[MAX_ARGS];
-		int j=0, argc2;
-		do{	
-		token = strtok(NULL, ' ');
-		argv2[j++] = token;
-		}
-		while(token != NULL && j < MAX_ARGS);
-		argc2=j;
-		int pipeID;
-		puts("vamo a imprimir");
-		for(int a = 0; a < argc1; a++){
-			puts(argv1[a]);
-			newline();
-		}
-		newline();
-		for(int a = 0; a < argc2; a++){
-			puts(argv2[a]);
-			newline();
-		}
-
-		search_for_run(argv1, argc1, 1);
-		search_for_run(argv2, argc2, 2);
+		search_for_run(argv1, argc1);
 	}
-	
+*/
+
+
+	search_for_run(argv1, argc1);
+	if(argc2 != 0)
+		search_for_run(argv2, argc2);
+
 }
 
-void search_for_run(char * argv[], int argc, int type /*, int* pipeLoc*/){
-
-	if(type==1){
-		//pipeOpen(pipeLoc);
-	}
-
+int search_for_run(char * argv[], int argc){
 	for(int j=0; names[j] != NULL; j++){
 		if(strequals(*argv, commands[j].name)){
 			*argv = commands[j].name;
 			(*(commands[j].func))(argc, argv);	
-			return;
+			return -1;
 		}
 	}	
-
+	int launchedPid;
 	for(int j=0; process_names[j] != NULL; j++){ //si es un proceso, lanzá uno nuevo
 		if(strequals(*argv, processes[j].name)){
 			*argv = processes[j].name;
-			callLaunch(processes[j].func, argc, argv);
-			return;
+			callLaunch(processes[j].func, argc, argv, &launchedPid); //TODO: modificar esta syscall
+			return launchedPid;
 		}
 	}
 	puts("No existe tal funcion\n");

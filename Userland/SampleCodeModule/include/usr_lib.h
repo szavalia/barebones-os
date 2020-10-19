@@ -28,7 +28,7 @@
 
    extern void callPs();
    extern void callKill(int pid);
-   extern void callLaunch( void * process , int argc , char * argv[] );
+   extern void callLaunch( void * process , int argc , char * argv[], int * pid_destination );
    extern void callLoop();
    extern void callExit();
    extern void callNice(int pid, int priority);
@@ -54,6 +54,8 @@
    extern void pipeOpen(int * destinationForID);
    extern void pipeClose(int pipeID);
    extern void callPipe();
+
+   extern void change_input(int id, int pid);
 
 #endif
 

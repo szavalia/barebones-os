@@ -93,6 +93,12 @@ int int80_handler( uint64_t * stack_pointer){
         case 29:
             sys_sem_state(stack_pointer);
             break;    
+        case 30:
+            sys_change_input(stack_pointer);
+            break;
+        case 31:
+            sys_change_output(stack_pointer);
+            break;    
 
     }
     return 1;
@@ -216,7 +222,8 @@ void sys_launch(uint64_t  regs[]){
     void * process = (void *) regs[R13];
     int argc = (int) regs[R15];
     char ** argv = (char**) regs[RBX];
-    launchProcess(process, argc, argv, regs);
+    int * pid_destination = (int *) regs[R10];
+    launchProcess(process, argc, argv, pid_destination, regs);
 }
 
 void sys_pid(uint64_t  regs[]){
@@ -272,4 +279,16 @@ void sys_pipe_close(uint64_t regs[]){
 
 void sys_pipe_states(uint64_t regs[]){
     pipeStates();
+}
+
+void sys_change_input(uint64_t regs[]){
+    int pid = (int) regs[R13];
+    int pipeID = (int) regs[R15];
+    change_input(pid, pipeID);
+}
+
+void sys_change_output(uint64_t regs[]){
+    int pid = (int) regs[R13];
+    int pipeID = (int) regs[R15];
+    change_output(pid, pipeID);
 }

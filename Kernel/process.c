@@ -19,6 +19,8 @@
 #define KILLED 3
 #define TRUE 1
 #define FALSE 0
+#define STDIN 0
+#define STDOUT 250
 
 long process_count = 0; 
 int actual = 1;
@@ -170,22 +172,22 @@ void restart_kernel(){
         launchProcess(entryPoint , 0 , 0 , 0);
 }
 
-//execvec
-void launchProcess( void * process , int argc , char **argv , uint64_t stack_pointer ){
+void launchProcess( void * process , int argc , char **argv, int * pid_destination , uint64_t stack_pointer ){
 
-    //Deberia ser como un execve esto, el void* del procesos seria onda (entryPoint);
-    //Igual siento que esto tendria que usarse el conjunto el fork en userland, porque pisaria el 
     int pid = createPID();
-      if ( initialized == 0 ){
+    *pid_destination = pid;
 
-        for ( int i = 0 ; i < MAXPROCESOS ; i++){
-            procesos[i].state = NOT_CREATED;
-        }
-        entryPoint = process;
-        initialized = 1;
+    if ( initialized == 0 ){
+
+    for ( int i = 0 ; i < MAXPROCESOS ; i++){
+        procesos[i].state = NOT_CREATED;
+    }
+    entryPoint = process;
+    initialized = 1;
     }else if ( current_proc != 0 ){
         procesos[current_proc].stack_pointer = stack_pointer;
     }
+
     current_proc = pid;
     procesos[pid].PID= pid;
     if ( argc != 0 ){
@@ -205,7 +207,10 @@ void launchProcess( void * process , int argc , char **argv , uint64_t stack_poi
 
     if(foreground_proc < 0){ //si no hay nadie en foreground, tomalo
         foreground_proc = current_proc;
+        procesos[pid].pipes[0] = STDIN;
     }
+    procesos[pid].piprs[1] = STDOUT; //todos tienen como default escribir en la terminal
+    
 
     prepareProcess(pid , procesos[pid].base_pointer , argc , argv , process);
 }
@@ -326,4 +331,18 @@ void unblockByQueue( queueADT queue){
             procesos[aux].state = READY;
         }
     }
+}
+
+void change_input(int pid, int pipeID){
+    if(pid <= 0 || pid > process_count){
+        return;
+    }
+    procesos[pid].pipes[0] = pipeID;
+}
+
+void change_input(int pid, int pipeID){
+    if(pid <= 0 || pid > process_count)
+        return;
+    }
+    procesos[pid].pipes[1] = pipeID;
 }

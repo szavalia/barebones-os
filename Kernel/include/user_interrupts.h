@@ -35,6 +35,9 @@ void sys_sem_init(uint64_t * stack_pointer);
 void sys_sem_wait(uint64_t * stack_pointer);
 void sys_sem_post(uint64_t * stack_pointer);
 
+void sys_change_input(uint64_t * stack_pointer);
+void sys_change_output(uint64_t * stack_pointer);
+
 
 extern uint_least64_t cpuTemperature();
 extern uint8_t memContent(uint8_t * i);

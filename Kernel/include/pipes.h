@@ -6,7 +6,7 @@
 #include "semaphore.h"
 
 #define PIPESIZE 1024
-#define MAX_PIPES 20
+#define MAX_PIPES 50
 #define TRUE 1
 #define FALSE 0
 
