@@ -8,12 +8,12 @@
 #define MAX_MUTEX MAX_SEMS + 50
 
 static semaphore_t semaphores[MAX_SEMS];
-static queueADT freeded_sems;
+static queueADT freed_sems;
 int index_sem=0;
 
 
 static mutex_t mutexes[MAX_MUTEX];
-static queueADT freeded_mutex;
+static queueADT freed_mutex;
 int index_mutex=MAX_SEMS; //Los primeros mutexes corresponden a semaforos
 
 
@@ -24,8 +24,8 @@ extern void stop_interrupts();
 
 void init_sems(){
     int i;
-    freeded_sems = create_queue();
-    freeded_mutex = create_queue();
+    freed_sems = create_queue();
+    freed_mutex = create_queue();
     for( i = 0 ; i<MAX_SEMS; i++){
         semaphores[i].index = 1;
         semaphores[i].flag = SEM_CLOSED;
@@ -54,7 +54,7 @@ mutex_t * init_mutex(){
     if ( index_mutex < MAX_MUTEX ){
         index = index_mutex++;
     }else{
-        index = dequeue(freeded_mutex);
+        index = dequeue(freed_mutex);
         if ( index < 0 ){
             printS("No more free mutexes");
             return NULL;
@@ -93,7 +93,7 @@ void close_mutex(mutex_t * mutex){
         printS("El mutex tienecosas en espera, fallo el cerrado");
     }
     mutex->flag=MUT_CLOSED;
-    queue(freeded_mutex, mutex->index);
+    queue(freed_mutex, mutex->index);
 }
 //Funciones de semáforo
 
@@ -105,7 +105,7 @@ semaphore_t * sem_init( int value ){
     if( MAX_SEMS > index_sem){
         aux_index = index_sem++;
     }else{
-        aux_index= dequeue(freeded_sems);
+        aux_index= dequeue(freed_sems);
         if ( aux_index < 0){
             printS("No more free semaphores");
             return NULL;
@@ -155,7 +155,7 @@ void sem_post( semaphore_t * sem){
 void sem_close_index(int index){
     if ( peek(semaphores[index].queue) >0 ){
         semaphores[index].flag = SEM_CLOSED;
-        queue(freeded_sems, index);
+        queue(freed_sems, index);
     }else{
         printS("El semaforo tiene cosas en espera, fallo el cerrado");
     }
@@ -170,7 +170,7 @@ void sem_close(semaphore_t *sem){
         return;
     }
     sem->flag = SEM_CLOSED;
-    queue(freeded_sems, sem->index);
+    queue(freed_sems, sem->index);
 }
 
 //-------------------------//
