@@ -3,14 +3,19 @@
 #include "video_driver.h"
 #include "cola.h"
 #include "mem_manager.h"
-#define MAX_SEMS 250
+#include "pipes.h"
+#define MAX_SEMS MAX_PIPES * 2 + 200 // Al menos un semaforo para cada pipe, y 200 semaforos libres
 #define MAX_MUTEX MAX_SEMS + 50
 
 static semaphore_t semaphores[MAX_SEMS];
 static queueADT freeded_sems;
-static mutex_t mutexes[MAX_MUTEX];
-int index_mutex=MAX_SEMS;
 int index_sem=0;
+
+
+static mutex_t mutexes[MAX_MUTEX];
+static queueADT freeded_mutex;
+int index_mutex=MAX_SEMS; //Los primeros mutexes corresponden a semaforos
+
 
 int sem_validacion( semaphore_t * sem);
 extern int atomix_add(int value , void * place );
@@ -18,7 +23,10 @@ extern void next_round();
 extern void stop_interrupts();
 
 void init_sems(){
-    for( int i = 0 ; i<MAX_SEMS; i++){
+    int i;
+    freeded_sems = create_queue();
+    freeded_mutex = create_queue();
+    for( i = 0 ; i<MAX_SEMS; i++){
         semaphores[i].index = 1;
         semaphores[i].flag = SEM_CLOSED;
         mutexes[i].index = i;
@@ -42,27 +50,51 @@ void next_process( queueADT queue){
 //Funciones de mutex 
 
 mutex_t * init_mutex(){
-    mutexes[index_mutex].value = 1;
-    mutexes[index_mutex].flag = MUT_OPENED;
-    mutexes[index_mutex].queue = create_queue();
-    return &mutexes[index_mutex++];
+    int index;
+    if ( index_mutex < MAX_MUTEX ){
+        index = index_mutex++;
+    }else{
+        index = dequeue(freeded_mutex);
+        if ( index < 0 ){
+            printS("No more free mutexes");
+            return NULL;
+        }
+    }
+    mutexes[index].index = index;
+    mutexes[index].value = 1;
+    mutexes[index].flag = MUT_OPENED;
+    mutexes[index].queue = create_queue();
+    return &mutexes[index];
 }
 
 void lock( mutex_t * mutex){
+    if ( mutex_validacion(mutex) < 0 ){
+        return;
+    }
     while( mutex->value <=0){   
-        //myNice(1);
-       // printS("block mutex :");
         next_process( mutex->queue);
     }
-   // myNice(2);
     atomix_add( -1 , &(mutex->value));
 }
 
 void unlock( mutex_t * mutex){
+    if ( mutex_validacion(mutex) < 0 ){
+        return;
+    }
     atomix_add( 1 , &(mutex->value));
     unblockByQueue(mutex->queue);
 }
 
+void close_mutex(mutex_t * mutex){
+    if ( mutex_validacion(mutex) < 0 ){
+        return;
+    }
+    if( peek(mutex->queue)< 0 ){
+        printS("El mutex tienecosas en espera, fallo el cerrado");
+    }
+    mutex->flag=MUT_CLOSED;
+    queue(freeded_mutex, mutex->index);
+}
 //Funciones de semáforo
 
 semaphore_t * sem_init( int value ){
@@ -99,7 +131,6 @@ void sem_wait( semaphore_t * sem){
     lock(sem->mutex);
     while(sem->value<=0){
         unlock(sem->mutex);
-       // printS("block sem :");
         next_process(sem->queue);
         lock(sem->mutex);
     }
@@ -130,13 +161,12 @@ void sem_close_index(int index){
     }
     
 }
-//
 void sem_close(semaphore_t *sem){
      if (sem_validacion(sem) < 0 ){
         return;
     }
     if( peek(sem->queue) < 0 ){
-        printS("El semaforo tiene cosas en espera, falló el cerrado");
+        printS("El semaforo tiene cosas en espera, fallo el cerrado");
         return;
     }
     sem->flag = SEM_CLOSED;
@@ -190,6 +220,29 @@ void sem_state(){
     }
 }
 
+
+int mutex_validacion( mutex_t * mutex){
+    int error=0;
+    void * mut1 = mutex;
+    void * mutInitial = mutexes;
+    void * mutFinal = &(mutexes[MAX_MUTEX-1]);
+    if ( (mut1 - mutInitial) < 0 ){
+        printS("pointer too small");
+        error= -2;
+    }else if ( (mut1 - mutFinal) > 0 ){
+        printS("pointer too big");
+        error=-2;
+    } else if ( (mut1 - mutInitial) % sizeof(mutex_t) != 0 ){
+            printS("pointer not alligned\n");
+            error = -2;
+    }else if ( mutex->flag == MUT_CLOSED){
+        printS("mut closed");
+        error = -1;
+    }
+    return error;
+}
+
+
 int sem_validacion( semaphore_t * sem){
     int error=0;
     void * sem1 = &semaphores[1];
@@ -210,6 +263,5 @@ int sem_validacion( semaphore_t * sem){
         printS("Sem closed");
         error = -1;
     }
-   
     return error;
 }
