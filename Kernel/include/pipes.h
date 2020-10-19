@@ -6,12 +6,13 @@
 #include "semaphore.h"
 
 #define PIPESIZE 1024
-#define MAX_PIPES 20
+#define MAX_PIPES 250
 #define TRUE 1
 #define FALSE 0
 
 typedef struct pipe_t{
-    int open;
+    int openRead; 
+    int openWrite;
     mutex_t * lock;
     semaphore_t * semWrite;
     semaphore_t * semRead;
@@ -20,8 +21,8 @@ typedef struct pipe_t{
     unsigned int nread;
 }pipe_t;
 
-//consigo un pipe válido y devuelvo su id. Caso contrario devuelvo -1;
-int pipeOpen(); 
+//consigo pipes válidos y guardo sus ids. Caso contrario guardo -1;
+void pipeOpen(int idDestination[2]); 
 
 //cierro el pipe con ese id
 void pipeClose(int id);

@@ -28,15 +28,16 @@ static char ascode[59][2] = {
 {'\n','\n'},{0,0},{'a','A'},{'s','S'},{'d','D'},{'f','F'},{'g','G'},{'h','H'},{'j','J'},{'k','K'},{'l','L'}, {';',':'},{'\'', '\"'},{'°','~'},{0,0},{'\\','|'},
 {'z','Z'},{'x','X'},{'c','C'},{'v','V'},{'b','B'},{'n','N'},{'m','M'}, {',', '<'},{'.','>'},{'-','?'},{0,0},{0,0},{0,0},{' ',' '}, {0,0}};
 
-static int flagShift=0, flagNoCaps = 1, buffer_size = 0, left_alt = 0, ctrl=0, pipeID;
-static char buffer[BUF_SIZE]; 
+static int flagShift=0, flagNoCaps = 1, buffer_size = 0, left_alt = 0, ctrl=0;
+static int pipeID[2];
 static uint64_t regs[16];
 extern int side , context;
 static int is_initialized=0;
 
 int init_keyboard(){
-    pipeOpen(&pipeID);    
-    if(pipeID < 0){
+    pipeOpen(pipeID);
+       
+    if(pipeID[0] < 0 || pipeID[1] < 0){
         return -1;
     }
     return 0;
@@ -75,25 +76,18 @@ void keyboard_handler(){
         else if(scanCode == D && ctrl){
             ctrl = 0;
             keyPress = 3;
-            pipeWrite(pipeID, &keyPress, 1);
+            pipeWrite(pipeID[1], &keyPress, 1);
             return 0;
         }
         
         else if(keyPress != 0){ //para que no imprima las keys no mappeadas
-            
-            pipeWrite(pipeID, &keyPress, 1);
+            pipeWrite(pipeID[1], &keyPress, 1);
         }
     }
     else if(scanCode == SHIFT_RELEASE){
         flagShift = 0;
     }
 
-}
-
-char readChar(){
-    char ret;
-    pipeRead(pipeID, &ret, 1);
-    return ret;
 }
 
 void saveRegs(){

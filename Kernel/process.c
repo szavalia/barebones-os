@@ -1,24 +1,4 @@
-#include <stdint.h>
-#include <lib.h>
-#include <moduleLoader.h>
 #include "process.h"
-#include "reg_t.h"
-#include "video_driver.h"
-#include "mem_manager.h"
-#include "cola.h"
-
-#define STACK_SIZE ( 32 * 1024 + 8 )
-#define MAXPROCESOS 50
-#define BASE_PRIORITY 1
-#define MAX_PRIORITY 4
-#define STACK_ALING(number)  number & -32 
-#define NULL 0 
-#define NOT_CREATED 0
-#define READY 1
-#define BLOCKED 2
-#define KILLED 3
-#define TRUE 1
-#define FALSE 0
 
 long process_count = 0; //todos los procesos que alguna vez estuvieron activos
 int active_processes = 0; //procesos bloqueados o ready
@@ -131,7 +111,7 @@ void processDump(){
 }
 
 uint64_t getBasePointer( void * start){
-    uint64_t stack = STACK_ALING( (int) start); // 32 kb de stack --> alineado mas atras pierdo hasta 7 bytes, lo que lo compenso agregando 1 cuando pido memoria 
+    uint64_t stack = STACK_ALIGN( (int) start); // 32 kb de stack --> alineado mas atras pierdo hasta 7 bytes, lo que lo compenso agregando 1 cuando pido memoria 
     stack+= STACK_SIZE; // llevo el pointer al final, la cantidad de stack seguro es de 32kb;
     return stack;
 }
@@ -163,18 +143,18 @@ void restart_kernel(){
         freeQueue(freed_pids);
         process_count = 0;
         active_processes = 0;
-        launchProcess(entryPoint , 0 , 0 , 0);
+        launchProcess(entryPoint , 0 , 0 ,NULL, 0);
     }    
 }
 
-//execvec
-void launchProcess( void * process , int argc , char **argv , uint64_t stack_pointer ){
+void launchProcess( void * process , int argc , char **argv, int * pid_destination , uint64_t stack_pointer ){
 
-    //Deberia ser como un execve esto, el void* del procesos seria onda (entryPoint);
-    //Igual siento que esto tendria que usarse el conjunto el fork en userland, porque pisaria el 
     int pid = createPID();
-      if ( initialized == 0 ){
+    if(pid_destination != NULL){
+        *pid_destination = pid;
+    }    
 
+    if(initialized == 0){
         for ( int i = 0 ; i < MAXPROCESOS ; i++){
             procesos[i].state = NOT_CREATED;
         }
@@ -182,9 +162,12 @@ void launchProcess( void * process , int argc , char **argv , uint64_t stack_poi
         initialized = 1;
         freed_pids = create_queue();
     }
+    
+    
     procesos[current_proc].stack_pointer = stack_pointer;
     current_proc = pid;
-    procesos[pid].PID= pid;
+    procesos[pid].PID = pid;
+
     if ( argc != 0 ){
         procesos[pid].name = *argv;
     }
@@ -195,15 +178,19 @@ void launchProcess( void * process , int argc , char **argv , uint64_t stack_poi
     procesos[pid].state = READY;
 
     if( pid != 0){
-        if(foreground_proc < 0){ //si no hay nadie en foreground, tomalo
+        if(foreground_proc < 0 || *argv[argc-1] != '&'){
             foreground_proc = current_proc;
+            procesos[pid].pipes[0] = STDIN;
         }
+    
         procesos[pid].priority = BASE_PRIORITY;
         procesos[pid].ticks_left = BASE_PRIORITY-1;
     }else{
         procesos[pid].priority = 1;
         procesos[pid].ticks_left = 1;
     }
+    procesos[pid].pipes[1] = STDOUT; //todos tienen como default escribir en la terminal
+    
 
     procesos[pid].stack_start = requestStack(); 
     procesos[pid].base_pointer = getBasePointer(procesos[pid].stack_start);
@@ -222,7 +209,8 @@ uint64_t scheduler (uint64_t current_rsp){
             return procesos[current_proc].stack_pointer;
         }
     }
-    procesos[current_proc].ticks_left = procesos[current_proc].priority-1;    
+    procesos[current_proc].ticks_left = procesos[current_proc].priority-1;
+    
     int i = current_proc;
     do{
         i++;
@@ -232,7 +220,8 @@ uint64_t scheduler (uint64_t current_rsp){
     }
     while(procesos[i].state != READY );
     current_proc = i;
-    if(foreground_proc == -1){
+
+    if(foreground_proc == -1 && current_proc != 0){
         foreground_proc = current_proc;
     }
     
@@ -293,11 +282,37 @@ int getPID(){
 
 void unblockByQueue( queueADT queue){
     int aux;
-    int *vec;
     while (( aux=dequeue(queue)) > 0 ){
         
         if ( procesos[aux].state == BLOCKED){
             procesos[aux].state = READY;
         }
     }
+}
+
+void change_input(int pipeID, int pid){
+    if(pid <= 0 || pid > process_count){
+        return;
+    }
+
+    procesos[pid].pipes[0] = pipeID;
+    if(pid == foreground_proc && pipeID != 0){
+        foreground_proc = -1; //si le cambio la entrada a otro pipe, ya no es foreground
+    }
+}
+
+void change_output(int pipeID, int pid){
+    if(pid <= 0 || pid > process_count){
+        return;
+    }
+    
+    procesos[pid].pipes[1] = pipeID;
+}
+
+int getReadPipe(){
+    return procesos[current_proc].pipes[0];
+}
+
+int getWritePipe(){
+    return procesos[current_proc].pipes[1];
 }

@@ -29,6 +29,8 @@ GLOBAL pipeRead
 GLOBAL pipeOpen
 GLOBAL pipeClose
 GLOBAL callPipe
+GLOBAL change_input
+GLOBAL change_output
 
 
 ;Acá vamos a poner los llamados al SO para interactuar con el hardware
@@ -311,16 +313,18 @@ callLaunch:
     mov rbp, rsp 
 
     push r12
-    push r13 ;primer param, size
-    push r15 ;segundo param, el void *
-    push rbx
+    push r13 
+    push rbx 
+    push rcx
 
     mov r12, 14
     mov r13, rdi
     mov r15, rsi
     mov rbx, rdx
+    mov r10, rcx
     int 80h
 
+    pop rcx
     pop rbx 
     pop r15
     pop r13
@@ -608,3 +612,46 @@ callSemState:
     mov rsp, rbp
     pop rbp
     ret
+
+change_input:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+    push r13
+    push r15
+
+    mov r12, 30
+    mov r13, rdi
+    mov r15, rsi
+    int 80h
+ 
+    pop r15
+    pop r13
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+change_output:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+    push r13
+    push r15
+
+    mov r12, 31
+    mov r13, rdi
+    mov r15, rsi
+    int 80h
+ 
+    pop r15
+    pop r13
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret
+

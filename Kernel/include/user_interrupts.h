@@ -1,6 +1,14 @@
 #ifndef __USER_INTERRUPTS_H__
 #define __USER_INTERRUPTS_H__
 #include <stdint.h>
+#include "video_driver.h"
+#include "keyboard.h"
+#include "time.h"
+#include "mem_manager.h"
+#include "process.h"
+#include "lib.h"
+#include "reg_t.h"
+#include "semaphore.h"
 int int80_handler();
 
 void sys_write(uint64_t  regs[]);
@@ -29,11 +37,14 @@ void sys_pipe_write(uint64_t regs[]);
 void sys_pipe_read(uint64_t regs[]);
 void sys_pipe_open(uint64_t regs[]);
 void sys_pipe_close(uint64_t regs[]);
-void sys_pipe_states(uint64_t regs[]);
+void sys_pipe_state(uint64_t regs[]);
 
 void sys_sem_init(uint64_t * stack_pointer);
 void sys_sem_wait(uint64_t * stack_pointer);
 void sys_sem_post(uint64_t * stack_pointer);
+
+void sys_change_input(uint64_t * stack_pointer);
+void sys_change_output(uint64_t * stack_pointer);
 
 
 extern uint_least64_t cpuTemperature();
