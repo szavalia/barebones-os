@@ -37,9 +37,9 @@ static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, print
 static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "cat", "wc","filter", "exit", "block", "nice", "semtest", "pipe", "semstate" ,NULL};
 
 static command_t processes[MAX_PROCESSES];
-static char * process_descriptions[] = {"Imprime el PID actual junto con un saludo\n", "lanza la terminal\n", NULL};
-static void (*process_functions[])(int, char **) = {loop, sh, NULL};
-static char * process_names[] = {"loop", "sh",  NULL};
+static char * process_descriptions[] = {"Imprime el PID actual junto con un saludo\n", "lanza la terminal\n", "El problema de los filosofos", NULL};
+static void (*process_functions[])(int, char **) = {loop, sh, philosopher_problem , NULL};
+static char * process_names[] = {"loop", "sh", "philo" ,  NULL};
 
 
 

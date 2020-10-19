@@ -6,9 +6,9 @@
 #define HUNGRY 1 
 #define EATING 0 
 
-#define LEFT (phnum + 1 ) % N 
-#define RIGHT (phnum + N - 1 ) % N 
+#define LEFT (phnum + 1 ) % philo_count 
+#define RIGHT (phnum + philo_count - 1 ) % philo_count
 
-#define LEFT_FORK (phnum + 1) % N 
-#define RIGHT_FORK (phnum ) % N 
+#define LEFT_FORK (phnum + 1) % philo_count
+#define RIGHT_FORK (phnum ) % philo_count
 int philosopher_problem( int argc , char * argv[]);
