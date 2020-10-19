@@ -44,5 +44,5 @@ static void invalid_opcode( uint64_t rip){
 }
 
 void recover(){
-	exceptionKill();
+	processKill(getPID());
 }

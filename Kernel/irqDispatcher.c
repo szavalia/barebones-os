@@ -4,6 +4,7 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 #include "time.h"
 #include "keyboard.h"
+#include "process.h"
 #include <stdint.h>
 #include "user_interrupts.h"
 
