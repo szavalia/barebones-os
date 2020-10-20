@@ -29,7 +29,7 @@ GLOBAL pipeRead
 GLOBAL pipeOpen
 GLOBAL pipeClose
 GLOBAL callPipe
-
+GLOBAL callSemClose
 
 ;Acá vamos a poner los llamados al SO para interactuar con el hardware
 section .text
@@ -601,6 +601,22 @@ callSemState:
     push r12
 
     mov r12, 29
+    int 80h
+
+    pop r12
+
+    mov rsp, rbp
+    pop rbp
+    ret
+
+callSemClose:
+    push rbp
+    mov rbp, rsp 
+
+    push r12
+    
+    mov r13, rdi
+    mov r12, 30
     int 80h
 
     pop r12

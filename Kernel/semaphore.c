@@ -168,7 +168,7 @@ void sem_close(semaphore_t *sem){
      if (sem_validacion(sem) < 0 ){
         return;
     }
-    if( peek(sem->queue) < 0 ){
+    if( peek(sem->queue) >= 0 ){
         printS("El semaforo tiene cosas en espera, fallo el cerrado");
         return;
     }

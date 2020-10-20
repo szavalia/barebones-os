@@ -1,26 +1,31 @@
 #include "test_sync.h"
 
 #define NULL 0
+#define INC_VALUE 2
+#define DEC_VALUE -1
+#define OP_TIMES 500
+#define TOTAL_PAIR_PROCESSES 5
+#define SEM_ID sem_pointer
 
-void * sem_pointer;
+void * sem_pointer , *finishing_sem;
 int64_t global;  //shared memory
 uint64_t sem;
 int64_t value;
 uint64_t N;
-char name_inc1[] = "incSUM";
-char name_inc2[] = "incDEC";
+char name_inc[] = "semSUM";
+char name_dec[] = "semDEC";
 
-void inc1();
-void inc2();
+void inc();
+void dec();
 
 uint64_t my_create_process(void *name, int value){
   if ( value == 1){
     char * argv[2] = { name , NULL };
-    callLaunch(inc1 , 1 , argv );
+    callLaunch(inc , 1 , argv );
   }
   if ( value == 2){
     char * argv[2] = { name , NULL };
-    callLaunch(inc2 , 1 , argv );
+    callLaunch(dec , 1 , argv );
   }
   return 0;
 }
@@ -41,12 +46,10 @@ uint64_t my_sem_post(void *sem_id){
 }
 
 uint64_t my_sem_close(void *sem_id){
-  sem_wait(sem_id);
+  sem_close(sem_id);
   return 0;
 }
 
-#define TOTAL_PAIR_PROCESSES 5
-#define SEM_ID sem_pointer
 
 void slowInc(int64_t *p, int64_t inc){
   int64_t aux = *p;
@@ -55,8 +58,8 @@ void slowInc(int64_t *p, int64_t inc){
   *p = aux;
 }
 
-void inc1(){
-  int value = 2;
+void inc(){
+  int value = INC_VALUE;
   uint64_t i;
 
   
@@ -71,12 +74,14 @@ void inc1(){
   printDec(global);
   newline();
   puts("Adios SUM\n");
+  
+  sem_post(finishing_sem);
   callExit();
 }
 
 
-void inc2(){
-  int value = -1;
+void dec(){
+  int value = DEC_VALUE;
   uint64_t i;  
   for (i = 0; i < N; i++){
     if (sem) my_sem_wait(SEM_ID);
@@ -90,41 +95,79 @@ void inc2(){
   printDec(global);
   newline();
   puts("Adios DEC\n");
+  sem_post(finishing_sem);
   callExit();
 }
 
-void test_sync(){
-  uint64_t i;
-  sem = 1;
-  N=500;
-  global = 0;
-  void * ptr;
+void test_setup( int flag){
+  
+  N=OP_TIMES; // cantidad de operaciones x hijo
+  global = 0; //start value
   sem_pointer= 0;
-  my_sem_open(&ptr , 1);
-  puts("CREATING PROCESSES...(WITH SEM)\n");
-  printDec(sem_pointer);
+  finishing_sem=0;
+  my_sem_open(&finishing_sem , 0);
+  printHex(finishing_sem);
   newline();
+  if ( flag == 1){
+  sem = 1; //flag de sem
   my_sem_open(&sem_pointer , 1);
-  printDec(sem_pointer);
-  for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-    my_create_process(name_inc1, 1);
-    my_create_process(name_inc2, 2);
+  printHex(sem_pointer); 
+  newline();
+  puts("CREATING PROCESSES...(WITH SEM)\n");
+  }else{
+    sem = 0;
+  puts("CREATING PROCESSES...(WITHOUT SEM)\n");
+  }
+  
+}
+
+
+void launch_processes(){
+  for(int i = 0; i < TOTAL_PAIR_PROCESSES; i++){
+    my_create_process(name_inc, 1);
+    my_create_process(name_dec, 2);
   }
 }
 
-void test_no_sync(){
-  uint64_t i;
-  global = 0;
-  sem = 0;
-  N=1000;
-  void * ptr;
-  sem_pointer= 0;
-  my_sem_open(&ptr , 4);
-  puts("CREATING PROCESSES...(WITHOUT SEM)\n");
-  for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-    my_create_process(name_inc1 , 1);
-    puts("Segundo proc\n");
-    my_create_process(name_inc2, 2);
+void finishing(){
+   for( int i = 0 ; i < TOTAL_PAIR_PROCESSES; i++){
+    sem_wait(finishing_sem);
+    sem_wait(finishing_sem);
   }
-  puts("sali del no_\n");
+  
+   puts("Terminaron todos los hijos\n");
+}
+void check_result(){
+  int correct_result;
+  correct_result = OP_TIMES * TOTAL_PAIR_PROCESSES * (DEC_VALUE + INC_VALUE);
+  puts("El resultado tenia que ser: ");
+  printDec(correct_result);
+  puts(" Y mi resultado dio: ");
+  printDec(global);
+  newline();
+  if ( correct_result == global ){
+    puts("COMO DICE SUSANA: CORRECTO!\n");
+  }else
+  {
+    puts("ERROR EN LA SINCRONIZACION: INCORRECTO!\n");
+  }
+}
+void test_sync(){
+  test_setup(1);
+  launch_processes();
+  finishing();
+  check_result();
+  my_sem_close(finishing_sem);
+  my_sem_close(sem_pointer);
+  puts("Sems closed\n");
+}
+
+void test_no_sync(){
+  test_setup(0);
+  launch_processes();
+  finishing();
+  check_result();
+  my_sem_close(finishing_sem);
+  my_sem_close(sem_pointer);
+  
 }
