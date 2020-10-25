@@ -4,7 +4,9 @@
    #include "usr_strings.h"
    #include "usr_math.h"
    #include "usr_sem.h"
+   
    #include "test_mm.h"
+   #include "test_sync.h"
 
    #define NULL (void *) 0 
    #define TRUE 1
@@ -46,7 +48,6 @@
    extern void callMalloc(int size, void ** location);
    extern void callFree(void * pointer);
    extern void mem();
-   void memtest(int argc, char **argv);
 
    //Pipes
    #define PIPESIZE 1024
@@ -65,6 +66,9 @@
    void wc(int argc, char ** argv);
    void filter(int argc, char ** argv);
 
+   //Testing
+   void memtest(int argc, char **argv);
+   void semtest(int argc, char **argv);
 #endif
 
 
