@@ -15,3 +15,9 @@ docker.sh
 docker.sh
 docker.sh
 docker.sh
+
+Kernel/kernel.elf
+
+Userland/0000-sampleCodeModule.elf
+
+*.bash_history

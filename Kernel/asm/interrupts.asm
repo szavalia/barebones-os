@@ -17,8 +17,8 @@ GLOBAL _irq60Handler
 
 GLOBAL _exception0Handler
 GLOBAL _exception6Handler
-GLOBAL getRIP
-GLOBAL saveInitRegs
+GLOBAL getRIP ;FIXME: CACAC0DE
+GLOBAL saveInitRegs ;FIXME: CACAC0DE	
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
@@ -109,12 +109,12 @@ SECTION .text
 	mov rsi , rsp
 	call irqDispatcher
 
+	
 	; signal pic EOI (End of Interrupt)
 	mov al, 20h
 	out 20h, al
-	
+	sti
 	popState
-			
 
 	iretq
 %endmacro
@@ -200,6 +200,7 @@ _irq60Handler:
 	; signal pic EOI (End of Interrupt)
 	mov al, 20h
 	out 20h, al
+	sti
 	popState
 			
 
@@ -251,6 +252,8 @@ saveInitRegs:
 	mov [initRegs+32], r13
 	mov [initRegs+48], r15
 	ret
+
+
 
 SECTION .bss
 	aux resq 1

@@ -2,7 +2,26 @@
 #ifndef REG_T_H_
 #define REG_T_H_
 
-#define REGISTERS 19
+#define REGISTERS 18
+
+#define R15 0
+#define R14 1
+#define R13 2
+#define R12 3
+#define R11 4
+#define R10 5
+#define R9 6
+#define R8 7
+#define RSI 8
+#define RDI 9
+#define RBP 10
+#define RDX 11
+#define RCX 12
+#define RBX 13
+#define RAX 14
+#define RIP 15
+#define CS 16
+#define FLAGS 17
 
 typedef struct reg_t{
 	uint64_t r15;
@@ -20,7 +39,6 @@ typedef struct reg_t{
 	uint64_t rcx;
 	uint64_t rbx;
 	uint64_t rax;
-	uint64_t rsp;
 	uint64_t rip;
 	uint64_t cs;
 	uint64_t flags;

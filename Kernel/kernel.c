@@ -11,6 +11,7 @@
 #include "time.h"
 #include "keyboard.h"
 #include "process.h"
+#include "semaphore.h"
 extern uint8_t text;
 extern uint8_t rodata;
 extern uint8_t data;
@@ -26,9 +27,10 @@ static const uint64_t PageSize = 0x1000;
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
 typedef int (*EntryPoint)();
-char * name = "BareUwUones terminal by LTM";
-extern void saveInitRegs( uint64_t rsp);
 
+char * name_inactivity = "Procrastinator";
+extern void saveInitRegs( uint64_t rsp);
+static flag = 0;
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
 {
@@ -98,6 +100,25 @@ void * initializeKernelBinary()
 void bokitaPrint();
 void elMbeh();
 
+int pre_launch(){
+	context = 1;
+	side = 1;
+	clear();
+	bokitaPrint();
+	context = 0;
+	side = 0;
+	clear();
+	init_sems();
+	int status = init_keyboard();
+	if(status < 0){
+		printS("Error fatal: falla al inicializar teclado\n");
+		return -1;
+	}
+
+	saveInitRegs(stackBase);
+	return 0;
+} 
+
 int main()
 {
 	load_idt();
@@ -107,20 +128,15 @@ int main()
 	printHex((uint64_t)sampleCodeModuleAddress);
 	newline();
 	printS("  Calling the sample code module returned: ");
-	//clear();
-	context = 1;
-	side = 1;
 	clear();
-	bokitaPrint();
-
-	context = 0;
-	side = 0;
-	clear();
-	saveInitRegs(stackBase);
+	int status = pre_launch();
+	if(status < 0){ //error en la inicializacion
+		return -1;
+	}
 	char * argv[2];
-	argv[0] = name;
+	argv[0] = name_inactivity;
 	argv[1] = NULL;
-	launchProcess( sampleCodeModuleAddress , 1 , argv , NULL);
+	launchProcess( sampleCodeModuleAddress , 1 , argv ,NULL, NULL);
 	//printHex(((EntryPoint)sampleCodeModuleAddress)()); //acá llamo a main de userland
 	newline();
 	newline();

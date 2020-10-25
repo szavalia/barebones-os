@@ -1,31 +1,32 @@
 // This is a personal academic project. Dear PVS-Studio, please check it.
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 /* sampleCodeModule.c */
-#include "usr_lib.h"
+#include "terminal.h"
 #include "calculadora.h"
+#include "usr_lib.h"
+char * name = "BareUwUones terminal by LTM";
+
+void launch(){
+ char *argv[2];
+	argv[0] = name;
+	argv[1] = NULL;
+	puts("Lanzando terminal\n");
+	callLaunch( sh , 1 , argv, NULL);	
+	return;	
+}
 
 
-static int context[1];
+void inactivity(){
+	while(1){
+		renounceCPU();
+	}
+}
+
 int main() 
 {
-	bootMsg();
-
-	do{
+	launch();
+	inactivity();
 	
-		getContext(context);
-		if(*context==0){
-			sh();
-		}
-		else if(*context == 1){
-			sh();
-		}	
-		changeContext();
-
-	}
-	while(1);
-
-	
-	//puts("I have decided that I want to die\n");
 	return 0xDEADC0DE;
 }
 
