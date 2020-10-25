@@ -104,6 +104,9 @@ int int80_handler( uint64_t * stack_pointer){
         case 31:
             sys_change_output(stack_pointer);
             break;    
+        case 32:
+            sys_sem_close(stack_pointer);
+            break;
 
     }
     return 1;
@@ -125,6 +128,10 @@ void sys_sem_post(uint64_t  regs[] ){
 }
 void sys_sem_state(uint64_t regs[]){
     sem_state();
+    return;
+}
+void sys_sem_close(uint64_t regs[]){
+    sem_close(regs[R13]);
     return;
 }
 void sys_write(uint64_t  regs[] ){

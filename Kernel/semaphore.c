@@ -19,6 +19,7 @@ int index_mutex=MAX_SEMS; //Los primeros mutexes corresponden a semaforos
 
 int sem_validacion( semaphore_t * sem);
 extern int atomix_add(int value , void * place );
+extern int xchange( int value , void * place);
 extern void next_round();
 extern void stop_interrupts();
 
@@ -71,7 +72,7 @@ void lock( mutex_t * mutex){
     if ( mutex_validacion(mutex) < 0 ){
         return;
     }
-    while( mutex->value <=0){   
+    while( xchange(0 , &(mutex->value)) <=0){   
         next_process( mutex->queue);
     }
     atomix_add( -1 , &(mutex->value));
@@ -81,7 +82,7 @@ void unlock( mutex_t * mutex){
     if ( mutex_validacion(mutex) < 0 ){
         return;
     }
-    atomix_add( 1 , &(mutex->value));
+    xchange( 1 , &(mutex->value));
     unblockByQueue(mutex->queue);
 }
 
@@ -119,7 +120,9 @@ semaphore_t * sem_init( int value ){
     mutexes[aux_index].value = 1;
     mutexes[aux_index].flag = MUT_OPENED;
     mutexes[aux_index].queue = create_queue();
-
+    printS(" ");
+    printHex(&(semaphores[aux_index]));
+    printS(" ");
     return &(semaphores[aux_index]);
 }
 
@@ -165,7 +168,7 @@ void sem_close(semaphore_t *sem){
      if (sem_validacion(sem) < 0 ){
         return;
     }
-    if( peek(sem->queue) < 0 ){
+    if( peek(sem->queue) >= 0 ){
         printS("El semaforo tiene cosas en espera, fallo el cerrado");
         return;
     }
@@ -247,11 +250,16 @@ int sem_validacion( semaphore_t * sem){
     int error=0;
     void * sem1 = &semaphores[1];
     void * sem2 = &semaphores[2];
+    void * semInit = sem;
+    void * semMax = &(semaphores[MAX_SEMS-1]);
     if ( (sem - semaphores) < 0 ){
         printS("pointer too small");
         error= -2;
-    }else if ( ((long)sem - (long)&(semaphores[MAX_SEMS-1])) > 0 ){
-        printS("pointer too big");
+    }else if ( (semInit - semMax) > 0 ){
+        printS("pointer too big: ");
+        printHex(semInit);
+        printS(" max :");
+        printHex(semMax);
         error=-2;
     } else if ( ((long)sem - (long)semaphores) % sizeof(semaphore_t) != 0 ){
             printDec(sizeof(semaphore_t));

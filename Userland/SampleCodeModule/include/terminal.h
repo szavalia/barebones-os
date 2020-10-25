@@ -4,6 +4,7 @@
     #include "usr_lib.h"
     #include "usr_strings.h"
     #include "usr_math.h"
+    #include "philo.h"
 
     #define NULL (void *) 0 
     #define BUFFER_SIZE 1024

@@ -39,17 +39,17 @@ static char * process_descriptions[] = {
  "Imprime stdin a pantalla\n", //cat 
 "Cuenta cantidad de lineas de stdin\n", //wc
 "Filtra vocales de stdin\n",//filter
-"Realiza un testeo de los semaforos\n",  //test_synchro
+"El problema de los filosofos", //philo
+"Realiza un testeo de los semaforos\n",  //semtest
 "Testeo de memoria", //memtest
 NULL};  
-static void (*process_functions[])(int, char **) = {loop, sh, cat, wc, filter, semtest, memtest, NULL};
-static char * process_names[] = {"loop", "sh", "cat", "wc", "filter", "semtest", "memtest", NULL};
+static void (*process_functions[])(int, char **) = {loop, sh, cat, wc, filter, philosopher_problem, semtest, memtest, NULL};
+static char * process_names[] = {"loop", "sh", "cat", "wc", "filter", "philo", "semtest", "memtest", NULL};
 
 
 
 static uint64_t regs[16];
 static char * regNames[] = {"RAX","RBX","RCX","RDX","RSI","RDI","RBP","RSP","R8","R9","R10","R11","R12","R13","R14","R15"};
-
 
 
 static void setupCalls(){

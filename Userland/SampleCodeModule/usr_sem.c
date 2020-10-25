@@ -15,3 +15,7 @@ void sem_wait( void * sem){
 void sem_state(){
 	callSemState();
 }
+
+void sem_close(){
+	callSemClose();
+}
