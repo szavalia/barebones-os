@@ -40,9 +40,10 @@ static char * process_descriptions[] = {
  "Imprime stdin a pantalla\n", //cat 
 "Cuenta cantidad de lineas de stdin\n", //wc
 "Filtra vocales de stdin\n",//filter
+"Testeo de memoria",
 NULL};  
-static void (*process_functions[])(int, char **) = {loop, sh, cat, wc, filter, NULL};
-static char * process_names[] = {"loop", "sh", "cat", "wc", "filter", NULL};
+static void (*process_functions[])(int, char **) = {loop, sh, cat, wc, filter, memtest, NULL};
+static char * process_names[] = {"loop", "sh", "cat", "wc", "filter", "memtest", NULL};
 
 
 
@@ -57,6 +58,7 @@ void test( int argc , char **argv){
 	test_sync();
 	newline();
 }
+
 static void setupCalls(){
 	for(int i=0; names[i] != NULL; i++){
 		commands[i].name = names[i];

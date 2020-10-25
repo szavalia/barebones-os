@@ -60,7 +60,12 @@ void filter(int argc, char ** argv){
 	scanf_for_cat(usr_command, BUFFER_SIZE, 2); 
 	newline();
 	callExit();
+}
 
+void memtest(int argc, char **argv){
+	test_mm();
+	puts("TERMINO EL TEST\n");
+	callExit();
 }
 
 
