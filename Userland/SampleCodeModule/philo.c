@@ -5,8 +5,8 @@ int phil[N];
 int fork_state[N] = { 1 , 1 , 1 , 1 , 1};
 int hungry = N;
 
-void addPhilo();
-void removePhilo();
+void addPhilo(char * philo_argv[][3] , int children[]);
+void removePhilo( int children[]);
 
 void * mozo; 
 void * S[N]; 
@@ -160,8 +160,10 @@ void* philosopher(int argc , char * argv[]) {
         //printDec( i );
        // newline();
        // sleep(1); 
+         renounceCPU();
        for( j = 0 ;j < 10; j++){
            //thinking
+            
        }
         take_fork(i);
         printEating();
@@ -178,8 +180,6 @@ void* philosopher(int argc , char * argv[]) {
  
 void* philosopherAdded(int argc , char * argv[]) { 
     int i = (int) argv[1];
-    puts("im the number: ");
-    printDec((long) i );
     int j;
     int phnum= i;
        
@@ -187,9 +187,10 @@ void* philosopherAdded(int argc , char * argv[]) {
           testfork(RIGHT); 
     while (1) { 
       
-  
+          renounceCPU();
        for( j = 0 ;j < 10; j++){
            //thinking
+          
        }
         take_fork(i);
         printEating();
@@ -202,39 +203,55 @@ void* philosopherAdded(int argc , char * argv[]) {
 
     } 
 } 
-void listen(char * philo_argv[][3] , int childs[] ){
+void listen(char * philo_argv[][3] , int children[] ){
     char buffer[1];
     do{
         scanChar(buffer);
         switch (*buffer)
         {
         case 'a':
-            addPhilo(philo_argv);
+            if ( philo_count < N){
+                addPhilo(philo_argv , children);
+            }
             break;
         
         case 'r':
-            puts("Not implemented\n");
+            if ( philo_count > 5){
+                removePhilo(children);
+            }
             break;
         }
 
 
     }while(*buffer != 'x');
+    puts("\n");
     for( int i = 0 ; i < philo_count ; i++ ){
-        puts("killing philo");
+        puts("killing philo\n");
         printDec( (long) i );
-        callKill(childs[i]);
+        callKill(children[i]);
     }
     callExit();
 
 }
 
-void addPhilo(char * philo_argv[][3]){
-      callLaunch ( philosopherAdded, 3 , philo_argv[philo_count++], NULL );
-      puts("Philosopher "); 
-      printDec(philo_count);
-      puts(" is thinking\n");
+void addPhilo(char * philo_argv[][3] , int children[]){
+      callLaunch ( philosopherAdded, 3 , philo_argv[philo_count], &(children[philo_count]) );
+      philo_count++;
+      /*
+      puts("\nPhilosopher "); 
+      printDec(++philo_count);
+      puts(" is thinking\n");*/
 }
-
+void removePhilo( int children[]){
+    philo_count--;
+    state[philo_count] = THINKING;
+    callKill(children[philo_count]);
+    /*
+    puts("\nPhilosopher: ");
+    printDec(philo_count + 1 );
+    puts(" has decided that he wants to die\n");
+    */
+}
 
 int philosopher_problem( int argc , char * argv[]) {
     int proc_created[N];
@@ -268,10 +285,10 @@ int philosopher_problem( int argc , char * argv[]) {
         
         // create philosopher processes
         callLaunch ( philosopher, 3 , philo_argv[i] , &(proc_created[i]) ); 
-
-        puts("Philosopher "); 
+        /*
+        puts("\nPhilosopher "); 
         printDec(i+1);
-        puts(" is thinking\n");
+        puts(" is thinking\n");*/
     }
     listen(philo_argv , proc_created );
     puts("Kill the father pls\n");
