@@ -24,14 +24,13 @@ static char * descriptions[] = { "te muestra opciones de ayuda\n", //help
 "Finaliza el proceso actual\n", //exit
 "Cambia el estado de un proceso entre bloqueado y listo dado su ID\n", //block
 "Cambia la prioridad del proceso (parametros: PID y new_prio)\n", //nice
-"Realiza un testeo de los semaforos\n",  //test
 "Muestra el estado de los pipes\n", //pipe
 "Consulta el estado de los semaforos\n", //semstate
 NULL };
 
 
-static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, printTemp, divError, codeError, inforeg, printmem, mem, kill,ps, exit, block, nice, test, pipe , sem_state ,NULL};
-static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "exit", "block", "nice", "semtest", "pipe", "semstate" ,NULL};
+static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, printTemp, divError, codeError, inforeg, printmem, mem, kill, ps, exit, block, nice, pipe, sem_state ,NULL};
+static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "exit", "block", "nice", "pipe", "semstate" ,NULL};
 
 static command_t processes[MAX_PROCESSES];
 static char * process_descriptions[] = {
@@ -40,23 +39,19 @@ static char * process_descriptions[] = {
  "Imprime stdin a pantalla\n", //cat 
 "Cuenta cantidad de lineas de stdin\n", //wc
 "Filtra vocales de stdin\n",//filter
+"Realiza un testeo de los semaforos\n",  //test_synchro
+"Testeo de memoria", //memtest
 NULL};  
-static void (*process_functions[])(int, char **) = {loop, sh, cat, wc, filter, NULL};
-static char * process_names[] = {"loop", "sh", "cat", "wc", "filter", NULL};
+static void (*process_functions[])(int, char **) = {loop, sh, cat, wc, filter, semtest, memtest, NULL};
+static char * process_names[] = {"loop", "sh", "cat", "wc", "filter", "semtest", "memtest", NULL};
 
 
 
 static uint64_t regs[16];
 static char * regNames[] = {"RAX","RBX","RCX","RDX","RSI","RDI","RBP","RSP","R8","R9","R10","R11","R12","R13","R14","R15"};
 
-void test( int argc , char **argv){
-	puts("Test sin sincronizacion\n");
-	test_no_sync();
-	newline();
-	puts("Test con sincronizacion\n");
-	test_sync();
-	newline();
-}
+
+
 static void setupCalls(){
 	for(int i=0; names[i] != NULL; i++){
 		commands[i].name = names[i];

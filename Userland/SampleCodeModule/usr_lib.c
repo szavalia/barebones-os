@@ -60,7 +60,22 @@ void filter(int argc, char ** argv){
 	scanf_for_cat(usr_command, BUFFER_SIZE, 2); 
 	newline();
 	callExit();
+}
 
+void memtest(int argc, char **argv){
+	test_mm();
+	puts("TERMINO EL TEST\n");
+	callExit();
+}
+
+void semtest( int argc , char **argv){
+	puts("Test sin sincronizacion\n");
+	test_no_sync();
+	newline();
+	puts("Test con sincronizacion\n");
+	test_sync();
+	newline();
+	callExit();
 }
 
 

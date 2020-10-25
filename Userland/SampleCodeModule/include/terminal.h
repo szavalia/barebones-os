@@ -26,7 +26,7 @@
     void help(int argc, char ** argv);
 
     void sh(int argc, char ** argv); //lanza la terminal
-    void test(int argc, char **argv);
+    
     void ps(int argc, char ** argv);
 
     void nice(int argc, char ** argv);

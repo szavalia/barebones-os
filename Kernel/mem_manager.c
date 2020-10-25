@@ -43,6 +43,11 @@ static Node * getAuxNode(){
 //inicializo mi lista
 static void init_mem(size_t first_block_size){
     Node * block_to_add = getAuxNode();
+    if(block_to_add == NULL){ //no debería pasar nunca
+        printS("MAXIMO NUMERO DE NODOS!\n");
+        return;
+    }
+
     block_to_add->size=first_block_size;
     block_to_add->address = (void *) HEAP_INIT_ADDRESS; //después del espacio que le asigno a las estructuras auxiliares
     block_to_add->next = NULL;
@@ -99,12 +104,17 @@ void * ltmalloc(size_t size ){
     else{ //lo agrego al final de mi heap(y de la lista)
          
         Node * block_to_add= getAuxNode();
+        if(block_to_add == NULL){ 
+            printS("MAXIMO NUMERO DE NODOS!\n");
+            return NULL;
+        }
         block_to_add->size = size;
         void * newAddress = (void *) (mem_list.last->address + mem_list.last->size);
         block_to_add->address = newAddress;
         block_to_add->next = NULL;
+
         mem_list.last->next = block_to_add;
-        mem_list.last = block_to_add; //acá estaba &block_to_add
+        mem_list.last = block_to_add; 
         return newAddress; 
     }
     return NULL;
@@ -114,17 +124,21 @@ void * ltmalloc(size_t size ){
 void ltmfree(void * pointer){
     Node * previous;
     Node * mem_iterator = mem_list.first;
-
+  
     while(mem_iterator->address < pointer && mem_iterator != NULL){ //busco el nodo que me sirve
         previous = mem_iterator;
         mem_iterator = mem_iterator->next;
     } 
-    if(mem_iterator == NULL){//no lo encontré, no está en la lísta
+    if(mem_iterator == NULL){//no lo encontré, no era un puntero válido
         return;
     }
     else{ //mem_iterator quedó parado en el nodo que quiero liberar
         
         Node * block_to_add=getAuxNode(); //quiero hacer una copia para insertar en free_list 
+        if(block_to_add == NULL){ 
+            printS("MAXIMO NUMERO DE NODOS!\n");
+            return;
+        }
         block_to_add->size = mem_iterator->size;
         block_to_add->address = mem_iterator->address;
 
@@ -144,8 +158,11 @@ void ltmfree(void * pointer){
                 previous = free_iterator;
                 free_iterator = free_iterator->next;
             }
-            block_to_add->next = free_iterator;
-            previous->next = block_to_add;
+        
+            block_to_add->next = free_iterator; // si es el primero, el proximo soy yo?
+            if( free_iterator != previous) {
+                previous->next = block_to_add;
+            }
         }
     }
 
