@@ -12,7 +12,7 @@ void * mozo;
 void * S[N]; 
   
 void printEating(){
-    puts("| ");
+   puts("| ");
     for( int i = 0; i < philo_count ; i++){
         if ( state[i] == EATING){
             puts("E ");
@@ -24,8 +24,7 @@ void printEating(){
     //puts("    Philosopher: ");
     //printDec(phnum + 1) ;
     //puts(" is eating a new plate\n");
-
-}/*
+}
 void eat( int phnum){
     state[phnum] = EATING;
     /*puts("Philosopher ");
@@ -63,9 +62,9 @@ void askFork(int phnum){
         fork_state[LEFT_FORK] = 1;
         fork_state[RIGHT_FORK] = 1;
     }
-    sem_post(mozo);
+    sem_post(mozo);*/
 }
-*/
+
 
 
 
@@ -153,7 +152,7 @@ void put_fork(int phnum)
 } 
   
 void* philosopher(int argc , char * argv[]) { 
-    int i = argc - 1;
+    int i = (int) argv[1];
     int j;
     while (1) { 
          
@@ -178,7 +177,9 @@ void* philosopher(int argc , char * argv[]) {
 
  
 void* philosopherAdded(int argc , char * argv[]) { 
-    int i = argc - 1;
+    int i = (int) argv[1];
+    puts("im the number: ");
+    printDec((long) i );
     int j;
     int phnum= i;
        
@@ -201,38 +202,45 @@ void* philosopherAdded(int argc , char * argv[]) {
 
     } 
 } 
-char * argv2[]= { "philosopher" , NULL};
-char buffer[1];
-void listen(){
+void listen(char * philo_argv[][3] , int childs[] ){
+    char buffer[1];
     do{
         scanChar(buffer);
         switch (*buffer)
         {
         case 'a':
-            addPhilo();
+            addPhilo(philo_argv);
             break;
         
         case 'r':
-            //removePhilo();
+            puts("Not implemented\n");
             break;
         }
 
 
     }while(*buffer != 'x');
+    for( int i = 0 ; i < philo_count ; i++ ){
+        puts("killing philo");
+        printDec( (long) i );
+        callKill(childs[i]);
+    }
     callExit();
 
 }
 
-void addPhilo(){
-     callLaunch ( philosopherAdded, ++philo_count , argv2, NULL );
+void addPhilo(char * philo_argv[][3]){
+      callLaunch ( philosopherAdded, 3 , philo_argv[philo_count++], NULL );
       puts("Philosopher "); 
       printDec(philo_count);
       puts(" is thinking\n");
 }
 
 
-int philosopher_problem( int argc , char * argv[]) { 
-    
+int philosopher_problem( int argc , char * argv[]) {
+    int proc_created[N];
+    char proc_name[] = "philosopher";
+    char ampersand[] = "&"; 
+    char * philo_argv[N][3]; 
    // int numbers[N];
     int i; 
     //pthread_t thread_id[N]; 
@@ -249,22 +257,23 @@ int philosopher_problem( int argc , char * argv[]) {
         phil[i] = i;
         state[i] = THINKING;
         fork_state[i] = 1;
+        philo_argv[i][0] = proc_name;
+        philo_argv[i][1] = (char *) i;
+        philo_argv[i][2] = ampersand;
     }
+
+    puts("ENTRANDO AL FOR\n");
     
     for (i = 0; i < philo_count; i++) { 
         
         // create philosopher processes
-        callLaunch ( philosopher, i + 1 , argv2, NULL ); 
+        callLaunch ( philosopher, 3 , philo_argv[i] , &(proc_created[i]) ); 
 
         puts("Philosopher "); 
         printDec(i+1);
         puts(" is thinking\n");
     }
-    while ( philo_count < N ){
-        for( i = 0 ; i < 50; i++){renounceCPU();};
-       addPhilo();
-    }
-    //addPhilo();
+    listen(philo_argv , proc_created );
     puts("Kill the father pls\n");
     while(1){};
 } 

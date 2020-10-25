@@ -39,7 +39,7 @@ static char * process_descriptions[] = {
  "Imprime stdin a pantalla\n", //cat 
 "Cuenta cantidad de lineas de stdin\n", //wc
 "Filtra vocales de stdin\n",//filter
-"El problema de los filosofos", //philo
+"El problema de los filosofos\n", //philo
 "Realiza un testeo de los semaforos\n",  //semtest
 "Testeo de memoria\n", //memtest
 NULL};  
@@ -170,6 +170,14 @@ void divError(int argc, char ** argv){
 	int aux = 2/0;
 }
 
+int isBuiltIn(char *name){
+	for(int i=0 ; commands[i].name != NULL; i++){
+		if(strequals(commands[i].name, name)){
+			return 1;
+		}
+	}
+	return 0;
+}
 
 int processInput(char ** argv_destination, int i){
 	char * token;
@@ -198,20 +206,19 @@ void parse_command(){
 	int pipeID;
 
 	if(argc2 != 0){
-		int id[2];
-		pipeOpen(id);
-		
-		int launchedPid2 = search_for_run(argv2, argc2, usr_command);
-		change_input(id[0], launchedPid2); 
-		int launchedPid1 = search_for_run(argv1, argc1, usr_command);
-		change_output(id[1], launchedPid1);
-		
-		if(launchedPid1 < 0 || launchedPid2 < 0){
-			puts("No se puede pipear una built in\n");
+		int id[2], builtIn;
+		if(isBuiltIn(*argv1) || isBuiltIn(*argv2)){
+			puts("No se puede pipear funciones built in\n");
 			return;
 		}
-		
-		
+
+		pipeOpen(id);
+		int launchedPid2 = search_for_run(argv2, argc2, usr_command);
+		change_input(id[0], launchedPid2); 
+
+		int launchedPid1 = search_for_run(argv1, argc1, usr_command);		
+		change_output(id[1], launchedPid1);
+				
 	}
 	else{
 		search_for_run(argv1, argc1, usr_command);
