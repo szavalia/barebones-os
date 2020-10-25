@@ -49,8 +49,10 @@ int dequeue(queueADT head){
         return -1;
     }
     int value = head->first->value;
+    Node * aux = head->first;
     head->size-=1;
     head->first = head->first->next;
+    ltmfree(aux);
     return value;
 }
 
