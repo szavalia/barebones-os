@@ -120,9 +120,7 @@ semaphore_t * sem_init( int value ){
     mutexes[aux_index].value = 1;
     mutexes[aux_index].flag = MUT_OPENED;
     mutexes[aux_index].queue = create_queue();
-    printS(" ");
-    printHex(&(semaphores[aux_index]));
-    printS(" ");
+    
     return &(semaphores[aux_index]);
 }
 
@@ -194,7 +192,7 @@ void sem_state(){
             newline();
             if ( peek(semaphores[i].queue) >= 0 ){
                 printS("Con los siguientes procesos en cola del sem:");
-                peekAll(semaphores[i].queue, vector);
+                peekAll(semaphores[i].queue);
                 /*j=0;
                 while((*vector)[j] != -1){
                     printDec((long)(*vector)[j++]);
@@ -204,7 +202,7 @@ void sem_state(){
             }
             if ( peek(semaphores[i].mutex->queue) >= 0 ){
                 printS("Con los siguientes procesos en cola del mutex:");
-                peekAll(semaphores[i].mutex->queue, vector);
+                peekAll(semaphores[i].mutex->queue);
                 /*j=0;
                 while((*vector)[j] != -1){
                     printDec((long)(*vector)[j++]);

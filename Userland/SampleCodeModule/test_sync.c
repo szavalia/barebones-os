@@ -21,11 +21,11 @@ void dec();
 uint64_t my_create_process(void *name, int value){
   if ( value == 1){
     char * argv[2] = { name , NULL };
-    callLaunch(inc , 1 , argv );
+    callLaunch(inc , 1 , argv, NULL );
   }
   if ( value == 2){
     char * argv[2] = { name , NULL };
-    callLaunch(dec , 1 , argv );
+    callLaunch(dec , 1 , argv, NULL );
   }
   return 0;
 }

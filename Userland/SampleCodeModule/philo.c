@@ -224,7 +224,7 @@ void listen(){
 }
 
 void addPhilo(){
-     callLaunch ( philosopherAdded, ++philo_count , argv2 );
+     callLaunch ( philosopherAdded, ++philo_count , argv2, NULL );
       puts("Philosopher "); 
       printDec(philo_count);
       puts(" is thinking\n");
@@ -254,7 +254,7 @@ int philosopher_problem( int argc , char * argv[]) {
     for (i = 0; i < philo_count; i++) { 
         
         // create philosopher processes
-        callLaunch ( philosopher, i + 1 , argv2 ); 
+        callLaunch ( philosopher, i + 1 , argv2, NULL ); 
 
         puts("Philosopher "); 
         printDec(i+1);

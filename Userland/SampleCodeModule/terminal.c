@@ -41,7 +41,7 @@ static char * process_descriptions[] = {
 "Filtra vocales de stdin\n",//filter
 "El problema de los filosofos", //philo
 "Realiza un testeo de los semaforos\n",  //semtest
-"Testeo de memoria", //memtest
+"Testeo de memoria\n", //memtest
 NULL};  
 static void (*process_functions[])(int, char **) = {loop, sh, cat, wc, filter, philosopher_problem, semtest, memtest, NULL};
 static char * process_names[] = {"loop", "sh", "cat", "wc", "filter", "philo", "semtest", "memtest", NULL};
