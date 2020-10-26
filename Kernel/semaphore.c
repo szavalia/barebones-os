@@ -18,6 +18,8 @@ int index_mutex=MAX_SEMS; //Los primeros mutexes corresponden a semaforos
 
 
 int sem_validacion( semaphore_t * sem);
+int mutex_validacion( mutex_t * mutex);
+
 extern int atomix_add(int value , void * place );
 extern int xchange( int value , void * place);
 extern void next_round();
@@ -177,11 +179,9 @@ void sem_close(semaphore_t *sem){
 //-------------------------//
 
 void sem_state(){
-    int **vector;
     printFullLine();
     printS("Estado de los semaforos\n");
     printFullLine();
-    //int j;
     for( int i= 0 ; i < MAX_SEMS; i++){
         if( semaphores[i].flag == SEM_OPENED){
             printS("Semaforo nro: ");
@@ -193,22 +193,10 @@ void sem_state(){
             if ( peek(semaphores[i].queue) >= 0 ){
                 printS("Con los siguientes procesos en cola del sem:");
                 peekAll(semaphores[i].queue);
-                /*j=0;
-                while((*vector)[j] != -1){
-                    printDec((long)(*vector)[j++]);
-                    printS(" ");
-                }
-                ltmfree(*vector);*/
             }
             if ( peek(semaphores[i].mutex->queue) >= 0 ){
                 printS("Con los siguientes procesos en cola del mutex:");
                 peekAll(semaphores[i].mutex->queue);
-                /*j=0;
-                while((*vector)[j] != -1){
-                    printDec((long)(*vector)[j++]);
-                    printS(" ");
-                }
-                ltmfree(*vector);*/
             }
             printFullLine();
         }else if( i < index_sem){
@@ -246,8 +234,6 @@ int mutex_validacion( mutex_t * mutex){
 
 int sem_validacion( semaphore_t * sem){
     int error=0;
-    void * sem1 = &semaphores[1];
-    void * sem2 = &semaphores[2];
     void * semInit = sem;
     void * semMax = &(semaphores[MAX_SEMS-1]);
     if ( (sem - semaphores) < 0 ){
@@ -255,9 +241,9 @@ int sem_validacion( semaphore_t * sem){
         error= -2;
     }else if ( (semInit - semMax) > 0 ){
         printS("pointer too big: ");
-        printHex(semInit);
+        printHex((uint64_t)semInit);
         printS(" max :");
-        printHex(semMax);
+        printHex((uint64_t)semMax);
         error=-2;
     } else if ( ((long)sem - (long)semaphores) % sizeof(semaphore_t) != 0 ){
             printDec(sizeof(semaphore_t));

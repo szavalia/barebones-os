@@ -37,14 +37,16 @@ void sys_pipe_write(uint64_t regs[]);
 void sys_pipe_read(uint64_t regs[]);
 void sys_pipe_open(uint64_t regs[]);
 void sys_pipe_close(uint64_t regs[]);
-void sys_pipe_state(uint64_t regs[]);
+void sys_pipe_states(uint64_t regs[]);
 
-void sys_sem_init(uint64_t * stack_pointer);
-void sys_sem_wait(uint64_t * stack_pointer);
-void sys_sem_post(uint64_t * stack_pointer);
+void sys_sem_init(uint64_t regs[]);
+void sys_sem_close(uint64_t regs[]);
+void sys_sem_wait(uint64_t regs[]);
+void sys_sem_post(uint64_t regs[]);
+void sys_sem_state(uint64_t regs[]);
 
-void sys_change_input(uint64_t * stack_pointer);
-void sys_change_output(uint64_t * stack_pointer);
+void sys_change_input(uint64_t regs[]);
+void sys_change_output(uint64_t regs[]);
 
 
 extern uint_least64_t cpuTemperature();

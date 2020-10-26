@@ -11,6 +11,7 @@ static void zero_division( uint64_t rip);
 static void invalid_opcode( uint64_t rip);
 
 extern uint64_t getRIP();
+void recover();
 
 void exceptionDispatcher(int exception , uint64_t rip) {
 	if (exception == ZERO_EXCEPTION_ID)

@@ -29,7 +29,6 @@ static Node * node_vec = (void *) MEM_INIT_ADDRESS; //vector de nodos auxiliares
 static int node_index = 0; //lugar disponible en node_vec
 
 static int mem_initialized = FALSE;
-static unsigned int mem_available = TOTAL_MEM_AVAILABLE;
 static MemList mem_list;
 static FreeList free_list;
 static int free_initialized = FALSE;
@@ -66,7 +65,7 @@ void * ltmalloc(size_t size ){
     --> si no encuentro uno en el que entre, chequeo que tenga lugar y le agrego uno a medida, marcándolo ocupado
         --> Si no hay lugar, devuelvo NULL
     */
-    if(size <= 0){
+    if(size <= 0 || size > TOTAL_MEM_AVAILABLE){
         return NULL;
     }
     //TODO: mitosis cuando encuentro un bloque que me sirva, quiero agarrar el tamaño justo y guardar lo que me sobra en free_list

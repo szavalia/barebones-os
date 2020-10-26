@@ -14,7 +14,6 @@
 #define BASE_PRIORITY 1
 #define MAX_PRIORITY 4
 #define STACK_ALIGN(number)  number & -32 
-#define NULL 0 
 #define NOT_CREATED 0
 #define READY 1
 #define BLOCKED 2

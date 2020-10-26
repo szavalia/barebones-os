@@ -131,7 +131,7 @@ void sys_sem_state(uint64_t regs[]){
     return;
 }
 void sys_sem_close(uint64_t regs[]){
-    sem_close(regs[R13]);
+    sem_close((semaphore_t *)regs[R13]);
     return;
 }
 void sys_write(uint64_t  regs[] ){
@@ -249,7 +249,7 @@ void sys_launch(uint64_t  regs[]){
     int argc = (int) regs[R15];
     char ** argv = (char**) regs[RBX];
     int * pid_destination = (int *) regs[R10];
-    launchProcess(process, argc, argv, pid_destination, regs);
+    launchProcess(process, argc, argv, pid_destination, (uint64_t) regs);
 }
 
 void sys_pid(uint64_t  regs[]){

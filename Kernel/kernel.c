@@ -30,7 +30,6 @@ typedef int (*EntryPoint)();
 
 char * name_inactivity = "Procrastinator";
 extern void saveInitRegs( uint64_t rsp);
-static flag = 0;
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
 {
@@ -88,13 +87,13 @@ void * initializeKernelBinary()
 	printS("  bss: 0x");
 	printHex((uint64_t)&bss);
 	newline();
-	stackBase = getStackBase();
+	stackBase = (uint64_t) getStackBase();
 	printS("  Stack base: 0x");
 	printHex(stackBase);
 	newline();
 	printS("[Done]");
 	newline();
-	return stackBase;
+	return (void *) stackBase; //FIXME: revisar estos dos casteos, suenan medio al pedo
 }
 
 void bokitaPrint();
@@ -136,7 +135,7 @@ int main()
 	char * argv[2];
 	argv[0] = name_inactivity;
 	argv[1] = NULL;
-	launchProcess( sampleCodeModuleAddress , 1 , argv ,NULL, NULL);
+	launchProcess( sampleCodeModuleAddress , 1 , argv ,NULL, (uint64_t) NULL);
 	//printHex(((EntryPoint)sampleCodeModuleAddress)()); //acá llamo a main de userland
 	newline();
 	newline();
