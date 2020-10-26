@@ -206,7 +206,7 @@ void printMem(){
     uint64_t * mem = HEAP_INIT_ADDRESS;
     long i;
     for ( i = 0 ; i < (pow2(MAX_BLOCK_POWER)/8) ; i++){
-        printHex(&(mem[i]));
+        printHex((uint64_t)&(mem[i]));
         printS(": ");
         printHex((uint64_t) mem[i]);
         newline();
