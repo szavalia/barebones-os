@@ -2,7 +2,7 @@
 #include "test_mm.h"
 
 #define MAX_BLOCKS 128
-#define MAX_MEMORY 1024 * 1024 //Should be around 80% of memory managed by the MM
+#define MAX_MEMORY 1024 * 1024 * 120 //Should be around 80% of memory managed by the MM
 #define NULL (void *) 0
 
 void test_mm(){
@@ -26,7 +26,7 @@ void test_mm(){
       
       if(mm_rqs[rq].address == NULL){//TODO: check if NULL
         puts("DEVUELVE NULL EN ");
-        printDec(rq);
+        printDec((uint64_t)rq);
         newline();
       }
       total += mm_rqs[rq].size;
@@ -36,10 +36,10 @@ void test_mm(){
     // Set
     uint32_t i;
     for (i = 0; i < rq; i++){
-      printDec(i);
+      printDec((uint64_t)i);
       putChar(' ');
       if (mm_rqs[i].address != NULL){
-        printHex(mm_rqs[i].address);
+        printHex((uint64_t)mm_rqs[i].address);
         putChar('\n');
         memset(mm_rqs[i].address, i, mm_rqs[i].size); // TODO: Port this call as required
       }              
@@ -51,7 +51,7 @@ void test_mm(){
       printDec(i);
       putChar(' ');
       if (mm_rqs[i].address != NULL){
-        printHex(mm_rqs[i].address);
+        printHex((uint64_t)mm_rqs[i].address);
         putChar('\n');
         if(!memcheck(mm_rqs[i].address, i, mm_rqs[i].size)){
           puts("ERROR!\n"); // TODO: Port this call as required
@@ -63,10 +63,10 @@ void test_mm(){
 
     // Free
     for (i = 0; i < rq; i++){
-      printDec(i);
+      printDec((uint64_t)i);
       putChar(' ');
       if (mm_rqs[i].address != NULL){
-        printHex(mm_rqs[i].address);
+        printHex((uint64_t)mm_rqs[i].address);
         putChar('\n');
         ltmfree(mm_rqs[i].address);  // TODO: Port this call as required
       }

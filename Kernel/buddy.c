@@ -188,17 +188,21 @@ void ltmfree(void * pointer){
             return;
         }
 
-        if(!levels[level].array[index].occupied){
+        if(!levels[level].array[index].occupied){ //me fijo si nmi padre va a estar fragmentado
             if(levels[level].array[get_buddy(index)].occupied){
                 return; //el ocupado es el buddy!
             }
         }
         else{
             levels[level].array[index].occupied = FALSE;
-            if(levels[level].array[get_buddy(index)].occupied){
+            if(levels[level].array[get_buddy(index)].occupied){ //mi buddy es el que va a estar ocupado
                 return;
+            }else{
+                if ( !im_left( index ) ){ //si ambos estamos desocupados y soy derecho
+                    address -= pow2(level+MIN_BLOCK_POWER); //tengo que alinear el address para liberar al padre
+                } 
             }           
-        }        
+        }       
     }
 }
 
