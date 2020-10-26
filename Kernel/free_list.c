@@ -77,12 +77,12 @@ void * ltmalloc(size_t size ){
         while(current->size < size && current->next != NULL){
             previous = current;
             current = current->next;
-        }
-        if(current->size >= size ){ //si es == NULL llegue al final y no hay ningun bloque que me sirva, sigo de largo
+        }//si es == NULL llegue al final y no hay ningun bloque que me sirva, sigo de largo
+        if(current->size >= size && current->size < 2*size){ //Pongo un límite en lo que me puedo pasar de mambo
             if( current == free_list.first ){ //agarré el primero de la lista
                 if(current->next==NULL){ //sólo había un nodo
                     free_list.first = NULL;
-                    free_initialized=FALSE; //TODO: considerar que si hago esto mil veces voy a usar muchos nodos auxiliares
+                    free_initialized=FALSE; 
                 }
                 else{//hay otros 
                     free_list.first=current->next;
