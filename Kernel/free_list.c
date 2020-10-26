@@ -1,5 +1,6 @@
+#ifndef BUDDY
+
 #include "mem_manager.h"
-#include "video_driver.h"
 #define FALSE 0
 #define TRUE 1
 #define MAX_AUX_NODES ((0x100000 / sizeof(Node))+1)
@@ -168,7 +169,7 @@ void ltmfree(void * pointer){
 
 }
 
-void printMemList(){
+void printMem(){
     if(!mem_initialized){
         printS("No asignaste memoria dinamica!\n");
     }
@@ -186,3 +187,5 @@ void printMemList(){
         }
     }
 }
+
+#endif
