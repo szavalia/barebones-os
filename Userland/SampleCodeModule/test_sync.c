@@ -2,7 +2,7 @@
 
 #define INC_VALUE 1
 #define DEC_VALUE -1
-#define OP_TIMES 10000
+#define OP_TIMES 100
 #define TOTAL_PAIR_PROCESSES 5
 #define SEM_ID sem_pointer
 
@@ -13,18 +13,19 @@ int64_t value;
 uint64_t N;
 char name_inc[] = "semSUM";
 char name_dec[] = "semDEC";
-
+char ampersand[] = "&";
 void inc();
 void dec();
 
 uint64_t my_create_process(void *name, int value){
+  int pid;
   if ( value == 1){
-    char * argv[2] = { name , NULL };
-    callLaunch(inc , 1 , argv, NULL );
+    char * argv[3] = { name , ampersand , NULL };
+    callLaunch(inc , 2 , argv, &pid );
   }
   if ( value == 2){
-    char * argv[2] = { name , NULL };
-    callLaunch(dec , 1 , argv, NULL );
+    char * argv[3] = { name , ampersand , NULL };
+    callLaunch(dec , 2 , argv, &pid );
   }
   return 0;
 }
@@ -105,11 +106,13 @@ void test_setup( int flag){
   sem_pointer= 0;
   finishing_sem=0;
   my_sem_open(&finishing_sem , 0);
+  puts("Finishing sem: ");
   printHex((uint64_t)finishing_sem);
   newline();
   if ( flag == 1){
   sem = 1; //flag de sem
   my_sem_open(&sem_pointer , 1);
+  puts("Sem pointer: ");
   printHex((uint64_t)sem_pointer); 
   newline();
   puts("CREATING PROCESSES...(WITH SEM)\n");
@@ -123,7 +126,7 @@ void test_setup( int flag){
 
 void launch_processes(){
   for(int i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-    my_create_process(name_inc, 1);
+    my_create_process(name_inc, 1 );
     my_create_process(name_dec, 2);
   }
 }

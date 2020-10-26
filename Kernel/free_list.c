@@ -62,7 +62,6 @@ void * ltmalloc(size_t size ){
     if(size <= 0 || size > TOTAL_MEM_AVAILABLE){
         return NULL;
     }
-    //TODO: mitosis cuando encuentro un bloque que me sirva, quiero agarrar el tamaño justo y guardar lo que me sobra en free_list
     
     if(free_initialized){
         Node * current = free_list.first;
@@ -72,7 +71,7 @@ void * ltmalloc(size_t size ){
             previous = current;
             current = current->next;
         }//si es == NULL llegue al final y no hay ningun bloque que me sirva, sigo de largo
-        if(current->size >= size && current->size < 2*size){ //Pongo un límite en lo que me puedo pasar de mambo
+        if(current->size >= size){ //Pongo un límite en lo que me puedo pasar de mambo
             if( current == free_list.first ){ //agarré el primero de la lista
                 if(current->next==NULL){ //sólo había un nodo
                     free_list.first = NULL;
