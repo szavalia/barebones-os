@@ -232,7 +232,7 @@ void sys_free(uint64_t  regs[]){
 }
 
 void sys_mem(uint64_t  regs[]){
-    printMemList();
+    printMem();
 }
 
 void sys_ps(uint64_t  regs[]){
