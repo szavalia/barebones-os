@@ -11,7 +11,7 @@ void * ltmalloc(int size){
 	}
 	
 	void * location;
-	callMalloc(size, &location); //le tengo que pasar un int * asi que lo desreferencio ???
+	callMalloc(size, &location);
 	return location;
 }
 

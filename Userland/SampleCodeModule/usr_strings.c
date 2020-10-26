@@ -1,8 +1,6 @@
 #include "usr_strings.h"
 #include "usr_lib.h"
 #define BUFFER_SIZE 1024
-//static char * charBuffer;
-//static int buffer_initialized=0; 
 extern void codeERROR();
 
 #define A 0x61
@@ -19,13 +17,6 @@ static char * strtokPointer = NULL;
 static int strtokPosition = 0;
 static int strLength = 0 ;
 
-/*
-static void initializeCharBuffer(){
-	charBuffer=ltmalloc(NUM_BUFFER_SIZE);
-}
-*/
-
-//FIXME: scanf con código repetido
 void scanf(char * buffer, int size){
     int  current = 0;
 	char character;
