@@ -123,13 +123,12 @@ int scanf_for_cat(char * buffer, int size, int mode){
         }        
     }
 	putChar(3);
-	//putChar(' ');
 	buffer[current]='\0';
 	if(mode == 1){
 		return count;
 	}
 	else
-		return;
+		return -1;
 }
 
 void scanf_for_calculator(char * buffer, int size){

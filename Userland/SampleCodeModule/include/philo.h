@@ -11,4 +11,4 @@
 
 #define LEFT_FORK (phnum + 1) % philo_count
 #define RIGHT_FORK (phnum ) % philo_count
-int philosopher_problem( int argc , char * argv[]);
+void philosopher_problem( int argc , char * argv[]);

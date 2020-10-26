@@ -94,9 +94,9 @@ void printmem(int argc, char ** argv){
         return;
     }
     char * hexDir = argv[1];
-	int dir = hexadecimalToDecimal( hexDir); 
-	uint8_t bytes[32];
-	getMem((uint8_t *)dir, bytes); //FIXME: casteos raros
+	uint64_t dir = hexadecimalToDecimal( hexDir); 
+	char bytes[32];
+	getMem((char *)dir, bytes); //FIXME: casteos raros
 	putChar('\n');
 	for(int i = 0; i < 32; i++){
 		printHex((long) dir+i );
@@ -166,8 +166,10 @@ void help(int argc, char ** argv){
 	return;
 }
 
+extern void noWarningsDivError();
+
 void divError(int argc, char ** argv){
-	int aux = 2/0;
+	noWarningsDivError();
 }
 
 int isBuiltIn(char *name){
@@ -189,44 +191,6 @@ int processInput(char ** argv_destination, int i){
 	return i-1; // No quiero que cuente el token que es pipe o NULL
 }
 
-void parse_command(){ 
-	char * usr_command;
-	usr_command = ltmalloc(COMMAND_BUFFER_SIZE);
-	puts("$ ");
-	show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE);
-	newline();
-
-	char *argv1[MAX_ARGS];
-	*argv1 = strtok(usr_command, ' ');
-
-	int argc1 = processInput(argv1, 1);
-
-	char *argv2[MAX_ARGS];
-	int argc2 = processInput(argv2, 0);
-	int pipeID;
-
-	if(argc2 != 0){
-		int id[2], builtIn;
-		if(isBuiltIn(*argv1) || isBuiltIn(*argv2)){
-			puts("No se puede pipear funciones built in\n");
-			return;
-		}
-
-		pipeOpen(id);
-		int launchedPid2 = search_for_run(argv2, argc2, usr_command);
-		change_input(id[0], launchedPid2); 
-
-		int launchedPid1 = search_for_run(argv1, argc1, usr_command);		
-		change_output(id[1], launchedPid1);
-				
-	}
-	else{
-		search_for_run(argv1, argc1, usr_command);
-	}
-
-
-}
-
 int search_for_run(char * argv[], int argc, char * usr_command){
 	for(int j=0; names[j] != NULL; j++){
 		if(strequals(*argv, commands[j].name)){
@@ -245,6 +209,44 @@ int search_for_run(char * argv[], int argc, char * usr_command){
 	}
 	puts("No existe tal funcion\n");
 	ltmfree(usr_command);
+	return -1;
+}
+
+void parse_command(){ 
+	char * usr_command;
+	usr_command = ltmalloc(COMMAND_BUFFER_SIZE);
+	puts("$ ");
+	show_processed_scanf(usr_command, COMMAND_BUFFER_SIZE);
+	newline();
+
+	char *argv1[MAX_ARGS];
+	*argv1 = strtok(usr_command, ' ');
+
+	int argc1 = processInput(argv1, 1);
+
+	char *argv2[MAX_ARGS];
+	int argc2 = processInput(argv2, 0);
+
+	if(argc2 != 0){
+		int id[2];
+		if(isBuiltIn(*argv1) || isBuiltIn(*argv2)){
+			puts("No se puede pipear tal funcion\n");
+			return;
+		}
+
+		pipeOpen(id);
+		int launchedPid2 = search_for_run(argv2, argc2, usr_command);
+		change_input(id[0], launchedPid2); 
+
+		int launchedPid1 = search_for_run(argv1, argc1, usr_command);		
+		change_output(id[1], launchedPid1);
+				
+	}
+	else{
+		search_for_run(argv1, argc1, usr_command);
+	}
+
+
 }
 
 void sh(int argc, char ** argv){ 

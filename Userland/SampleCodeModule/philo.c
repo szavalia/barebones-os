@@ -73,8 +73,8 @@ void put_fork(int phnum)
     sem_post(mozo); 
 } 
   
-void* philosopher(int argc , char * argv[]) { 
-    int i = (int) argv[1];
+void philosopher(int argc , char * argv[]) { 
+    uint64_t i = (uint64_t) argv[1];
     int j;
     while (1) { 
          
@@ -89,8 +89,8 @@ void* philosopher(int argc , char * argv[]) {
 } 
 
  
-void* philosopherAdded(int argc , char * argv[]) { 
-    int i = (int) argv[1];
+void philosopherAdded(int argc , char * argv[]) { 
+    uint64_t i = (uint64_t) argv[1];
     int j;
     int phnum= i;
           testfork(LEFT); 
@@ -129,7 +129,7 @@ void listen(char * philo_argv[][3] , int children[] ){
     puts("\n");
     for( int i = 0 ; i < philo_count ; i++ ){
         puts("killing philo\n");
-        printDec( (long) i );
+        printDec((uint64_t) i );
         callKill(children[i]);
     }
     callExit();
@@ -146,7 +146,7 @@ void removePhilo( int children[]){
     callKill(children[philo_count]);
 }
 
-int philosopher_problem( int argc , char * argv[]) {
+void philosopher_problem( int argc , char ** argv) {
     int proc_created[N];
     char proc_name[] = "philosopher";
     char ampersand[] = "&"; 
@@ -154,19 +154,19 @@ int philosopher_problem( int argc , char * argv[]) {
     int i; 
     // initialize the semaphores 
     sem_init(&mozo, 1); 
-    printHex(mozo);
+    printHex((uint64_t)mozo);
     newline();
     for (i = 0; i < N; i++) {
        // numbers[i] = i+1;
         sem_init(&(S[i]), 0);
         puts(" my sem : ");
-        printHex(S[i]);
+        printHex((uint64_t)S[i]);
         newline();
         phil[i] = i;
         state[i] = THINKING;
         fork_state[i] = 1;
         philo_argv[i][0] = proc_name;
-        philo_argv[i][1] = (char *) i;
+        philo_argv[i][1] = (char *) ((uint64_t) i);
         philo_argv[i][2] = ampersand;
     }
 

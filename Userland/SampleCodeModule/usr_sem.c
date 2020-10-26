@@ -16,6 +16,6 @@ void sem_state(){
 	callSemState();
 }
 
-void sem_close(){
-	callSemClose();
+void sem_close(void * sem){
+	callSemClose(sem);
 }

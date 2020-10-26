@@ -1,9 +1,8 @@
 #include "test_sync.h"
 
-#define NULL 0
-#define INC_VALUE 2
+#define INC_VALUE 1
 #define DEC_VALUE -1
-#define OP_TIMES 500
+#define OP_TIMES 10000
 #define TOTAL_PAIR_PROCESSES 5
 #define SEM_ID sem_pointer
 
@@ -71,7 +70,7 @@ void inc(){
   }
   
   puts("Final value: ");
-  printDec(global);
+  printDec((uint64_t)global);
   newline();
   puts("Adios SUM\n");
   
@@ -92,7 +91,7 @@ void dec(){
 
   
   puts("Final value: ");
-  printDec(global);
+  printDec((uint64_t)global);
   newline();
   puts("Adios DEC\n");
   sem_post(finishing_sem);
@@ -106,12 +105,12 @@ void test_setup( int flag){
   sem_pointer= 0;
   finishing_sem=0;
   my_sem_open(&finishing_sem , 0);
-  printHex(finishing_sem);
+  printHex((uint64_t)finishing_sem);
   newline();
   if ( flag == 1){
   sem = 1; //flag de sem
   my_sem_open(&sem_pointer , 1);
-  printHex(sem_pointer); 
+  printHex((uint64_t)sem_pointer); 
   newline();
   puts("CREATING PROCESSES...(WITH SEM)\n");
   }else{
@@ -141,9 +140,9 @@ void check_result(){
   int correct_result;
   correct_result = OP_TIMES * TOTAL_PAIR_PROCESSES * (DEC_VALUE + INC_VALUE);
   puts("El resultado tenia que ser: ");
-  printDec(correct_result);
+  printDec((uint64_t)correct_result);
   puts(" Y mi resultado dio: ");
-  printDec(global);
+  printDec((uint64_t)global);
   newline();
   if ( correct_result == global ){
     puts("COMO DICE SUSANA: CORRECTO!\n");

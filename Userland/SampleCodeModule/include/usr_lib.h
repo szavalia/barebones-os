@@ -18,7 +18,7 @@
    //TP Arqui
    extern void getContext(int * context);
    extern void changeContext();
-   extern void getMem(uint8_t * dir, uint8_t* bytes);
+   extern void getMem(char * dir, char * bytes);
    extern void getTime(int * destination);
    extern void getCPUInfo(char * vendor, char * brand);
    extern void getReg(uint64_t * regs);

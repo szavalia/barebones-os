@@ -1,3 +1,4 @@
+GLOBAL noWarningsDivError
 GLOBAL put
 GLOBAL scanChar
 GLOBAL getTime
@@ -36,6 +37,13 @@ GLOBAL callSemClose
 ;Acá vamos a poner los llamados al SO para interactuar con el hardware
 section .text
 
+;division por cero
+noWarningsDivError:
+    mov edx, 0
+    mov eax, 2
+    mov ecx, 0
+    div ecx 
+    ret
 
 ;invalid opcode
 codeError: 
