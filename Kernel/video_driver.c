@@ -187,10 +187,10 @@ int getContext(){
 }
 
 char * getPixelDataByPosition(int x, int y){
-    return (char *) (screen_info->framebuffer + (x+y*WIDTH) * 3);
+    return ((char *) ((uint64_t) (screen_info->framebuffer + (x+y*WIDTH) * 3)));
 }
 void writePixel(int y, int x, int colour[]){ //colour[3] = B - G - R
-    char * pos = getPixelDataByPosition(y,x); //TODO: invertí el nombre de las variables, chequear que se vaya el warning
+    char * pos = getPixelDataByPosition(y,x); 
     //char * pos = screen_info -> framebuffer + (5*3);
     for(int i=0; i<3;i++){
         pos[i] = colour[i];
@@ -199,8 +199,8 @@ void writePixel(int y, int x, int colour[]){ //colour[3] = B - G - R
 
 void copyPixelBelow(){
     for ( int i = 0 ; i < 3 ; i++){
-        ((char *) screen_info->framebuffer)[i] = ((char *) screen_info->framebuffer + WIDTH*3*(LINE_SPACING))[i];
-    } //FIXME: casteos raros tiran warning
+        ((char *) ((uint64_t)screen_info->framebuffer))[i] = ((char *)((uint64_t)screen_info->framebuffer + WIDTH*3*(LINE_SPACING)))[i];
+    } 
 }
 
 void writePixelWhite(int x, int y){ //colour[3] = B - G - R
@@ -267,7 +267,7 @@ void printChar(char c){
         }
     }
     else {
-        render((char *) font8x8_basic[c]); //FIXME: casteo raro
+        render(font8x8_basic[(int) c]); 
         screen_info->framebuffer += CHAR_SIZE * 3;
     } 
     if( side == 0 && (SCREEN_POSITION %(WIDTH*3) >= HALF*3) && c != '\n' && c != '\b')
