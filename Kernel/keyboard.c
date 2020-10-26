@@ -75,7 +75,6 @@ void keyboard_handler(){
             ctrl = 0;
             keyPress = 3;
             pipeWrite(pipeID[1], &keyPress, 1);
-            return; //FIXME: este return no esta al pedo??
         }
         
         else if(keyPress != 0){ //para que no imprima las keys no mappeadas

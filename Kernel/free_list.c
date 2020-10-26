@@ -59,12 +59,6 @@ static void init_mem(size_t first_block_size){
 
 //genero un puntero a una zona de memoria con size lugar disponible
 void * ltmalloc(size_t size ){
-    /*
-    Si la lista está vacía, lo creo a medida y lo marco ocupado
-    Si la lista NO está vacía, busco el primer bloque en el que entre y se lo doy, marcándolo ocupado
-    --> si no encuentro uno en el que entre, chequeo que tenga lugar y le agrego uno a medida, marcándolo ocupado
-        --> Si no hay lugar, devuelvo NULL
-    */
     if(size <= 0 || size > TOTAL_MEM_AVAILABLE){
         return NULL;
     }

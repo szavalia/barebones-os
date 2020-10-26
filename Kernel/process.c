@@ -110,7 +110,7 @@ void processDump(){
     printFullLine();
 }
 
-uint64_t getBasePointer( void * start){ //TODO: chequear este casteo
+uint64_t getBasePointer( void * start){ 
     uint64_t stack = STACK_ALIGN( (uint64_t) start); // 32 kb de stack --> alineado mas atras pierdo hasta 7 bytes, lo que lo compenso agregando 1 cuando pido memoria 
     stack+= STACK_SIZE; // llevo el pointer al final, la cantidad de stack seguro es de 32kb;
     return stack;

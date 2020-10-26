@@ -17,8 +17,7 @@ GLOBAL _irq60Handler
 
 GLOBAL _exception0Handler
 GLOBAL _exception6Handler
-GLOBAL getRIP ;FIXME: CACAC0DE
-GLOBAL saveInitRegs ;FIXME: CACAC0DE	
+GLOBAL saveInitRegs 
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
@@ -99,10 +98,6 @@ SECTION .text
 	pop rbx
 %endmacro
 %macro irqHandlerMaster 1
-	;push rax 
-	;mov  rax ,[rsp+8] ; preservo el RIP
-	;mov [ripaux], rax ; guardo el RIP en una var auxiliar
-	;pop rax
 
 	pushState
 	mov rdi, %1 ; pasaje de parametro
@@ -131,10 +126,6 @@ SECTION .text
 	jmp _hlt ; espero al timer tick	
 
 %endmacro
-
-getRIP:	
-	mov rax, ripaux
-	ret
 	
 _hlt:
 	sti
@@ -256,6 +247,4 @@ saveInitRegs:
 
 
 SECTION .bss
-	aux resq 1
-	ripaux resb 8
 	initRegs resb 48

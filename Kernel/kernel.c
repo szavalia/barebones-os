@@ -49,7 +49,7 @@ void * getStackBase()
 void * initializeKernelBinary()
 {
 	splitScreen();
-	char vendor[13], brand[49]; //FIXME: magic numbers raros
+	char vendor[13], brand[49]; 
 	printS("[x64BareBones]");
 	newline();
 	cpuVendor(vendor);
@@ -93,7 +93,7 @@ void * initializeKernelBinary()
 	newline();
 	printS("[Done]");
 	newline();
-	return (void *) stackBase; //FIXME: revisar estos dos casteos, suenan medio al pedo
+	return (void *) stackBase; 
 }
 
 void bokitaPrint();
@@ -136,7 +136,6 @@ int main()
 	argv[0] = name_inactivity;
 	argv[1] = NULL;
 	launchProcess( sampleCodeModuleAddress , 1 , argv ,NULL, (uint64_t) NULL);
-	//printHex(((EntryPoint)sampleCodeModuleAddress)()); //acá llamo a main de userland
 	newline();
 	newline();
 	printS(" Sample data module at 0x");

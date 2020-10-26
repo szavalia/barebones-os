@@ -24,10 +24,6 @@ void queue( queueADT head , int value ){
     if ( value < 0 ){
         return;
     }
-    //printS("queuing: ");
-   // printDec(value);
-  //  printS(" ");
-    //peekAll();
     Node *newNode = (Node *) ltmalloc(sizeof(Node));
     newNode->value = value;
     newNode->next = NULL;
