@@ -32,6 +32,7 @@ static int mem_initialized = FALSE;
 static MemList mem_list;
 static FreeList free_list;
 static int free_initialized = FALSE;
+static long allocated_memory=0;
 
 static Node * getAuxNode(){
     if(node_index == MAX_AUX_NODES){
@@ -51,6 +52,8 @@ static void init_mem(size_t first_block_size){
     block_to_add->size=first_block_size;
     block_to_add->address = (void *) HEAP_INIT_ADDRESS; //después del espacio que le asigno a las estructuras auxiliares
     block_to_add->next = NULL;
+
+    allocated_memory+=first_block_size;
     
     mem_list.first = block_to_add;
     mem_list.last = mem_list.first;
@@ -82,6 +85,9 @@ void * ltmalloc(size_t size ){
                 }
             }
             previous->next = current->next;
+
+            allocated_memory+=current->size;
+            
             return current->address;
         }      
         
@@ -90,6 +96,7 @@ void * ltmalloc(size_t size ){
 
     if(!mem_initialized){
         init_mem(size);
+
         return mem_list.first->address;
     }
 
@@ -108,6 +115,9 @@ void * ltmalloc(size_t size ){
 
         mem_list.last->next = block_to_add;
         mem_list.last = block_to_add; 
+
+        allocated_memory+=size;
+
         return newAddress; 
     }
     return NULL;
@@ -125,59 +135,58 @@ void ltmfree(void * pointer){
     if(mem_iterator == NULL){//no lo encontré, no era un puntero válido
         return;
     }
-    else{ //mem_iterator quedó parado en el nodo que quiero liberar
+     //mem_iterator quedó parado en el nodo que quiero liberar
         
-        Node * block_to_add=getAuxNode(); //quiero hacer una copia para insertar en free_list 
-        if(block_to_add == NULL){ 
-            printS("MAXIMO NUMERO DE NODOS!\n");
-            return;
-        }
-        block_to_add->size = mem_iterator->size;
-        block_to_add->address = mem_iterator->address;
+    Node * block_to_add=getAuxNode(); //quiero hacer una copia para insertar en free_list 
+    if(block_to_add == NULL){ 
+        printS("MAXIMO NUMERO DE NODOS!\n");
+        return;
+    }
+    block_to_add->size = mem_iterator->size;
+    block_to_add->address = mem_iterator->address;
 
-        //lo que me queda por setear es el next
+    allocated_memory-=block_to_add->size;
 
-        if(!free_initialized){ //no había liberado nada antes           
-            free_list.first = block_to_add;
-            block_to_add->next = NULL;
-            free_initialized = TRUE;
-        }
-        else{
-            Node * free_iterator;
-            free_iterator = free_list.first; 
+    //lo que me queda por setear es el next
+
+    if(!free_initialized){ //no había liberado nada antes           
+        free_list.first = block_to_add;
+        block_to_add->next = NULL;
+        free_initialized = TRUE;
+    }
+    else{
+        Node * free_iterator;
+        free_iterator = free_list.first; 
+        previous = free_iterator;
+        //quiero insertar el it y que free_list quede de menor a mayor segun size
+        while(free_iterator->size < block_to_add->size && free_iterator != NULL){ //busco la posicion en free_list
             previous = free_iterator;
-            //quiero insertar el it y que free_list quede de menor a mayor segun size
-            while(free_iterator->size < block_to_add->size && free_iterator != NULL){ //busco la posicion en free_list
-                previous = free_iterator;
-                free_iterator = free_iterator->next;
-            }
-        
-            block_to_add->next = free_iterator; // si es el primero, el proximo soy yo?
-            if( free_iterator != previous) {
-                previous->next = block_to_add;
-            }
+            free_iterator = free_iterator->next;
+        }
+    
+        block_to_add->next = free_iterator; // si es el primero, el proximo soy yo?
+        if( free_iterator != previous) {
+            previous->next = block_to_add;
         }
     }
 
 }
 
 void printMem(){
-    if(!mem_initialized){
-        printS("No asignaste memoria dinamica!\n");
-    }
-    else{
-        Node * iterator = mem_list.first;
-        while(iterator->next != NULL){        
-            for(uint8_t i = 0; i < iterator->size; i++){
-                printS("0x");
-                printHex( (uint64_t) iterator->address+i);
-                printS(": ");
-                printHex( memContent((uint8_t *)iterator->address+i) );
-                newline();
-            }
-            iterator = iterator->next;
-        }
-    }
+    printS("Memoria total: ");
+    printDec(TOTAL_MEM_AVAILABLE / 1024);
+    printS(" kilobytes.");
+    newline();
+
+    printS("Memoria asignada: ");
+    printDec(allocated_memory / 1024);
+    printS(" kilobytes.");
+    newline();
+
+    printS("Memoria libre: ");
+    printDec((TOTAL_MEM_AVAILABLE-allocated_memory) / 1024);
+    printS(" kilobytes.");
+    newline();
 }
 
 #endif

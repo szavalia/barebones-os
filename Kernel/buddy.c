@@ -27,6 +27,9 @@ typedef struct Level{
 
 static Level levels[MAX_LEVEL_COUNT]; // Hasta 1GB de blocks 
 static int mem_initialized = 0;
+uint64_t total_mem;
+uint64_t free_mem;
+
 void initialize();
 int pow2(int exp);
 void create_nodes();
@@ -40,13 +43,26 @@ int is_power_of_2(int index);
 int log2( int num );
 int check_space_recursive(int level, int index);
 int get_index_by_level( uint64_t address , int level  );
+
 void initialize(){
     create_nodes();
+    total_mem=pow2(MAX_BLOCK_POWER);
+    free_mem=total_mem;
     mem_initialized = 1;
 }
 
 int pow2(int exp){
     return (1 << exp);
+}
+void mem_used( int level  ){
+    free_mem -= pow2(level + MIN_BLOCK_POWER);
+}
+void mem_freed( int level , int flag){
+    //0-> todavia no
+    //1->soy 
+    if ( flag == 1){
+        free_mem+=pow2(level + MIN_BLOCK_POWER);
+    }
 }
 
 void create_nodes(){
@@ -160,6 +176,7 @@ void * ltmalloc(size_t size ){
     int level = get_level(size);
     for(int i=0; i < levels[level].cant_blocks; i++){ //busco un bloque disponible en su nivel
         if(!levels[level].array[i].occupied && check_space(level , i)){
+            mem_used(level);
             return HEAP_INIT_ADDRESS + i * pow2(level + MIN_BLOCK_POWER);
         } 
     }
@@ -176,7 +193,7 @@ void ltmfree(void * pointer){
         return;
     }    
 
-    int index;
+    int index , flag = 0;
     for( int level = 0 ; level < MAX_LEVEL_COUNT ; level++){ //navego por mis niveles
         if ( address % pow2(level + MIN_BLOCK_POWER) != 0 ){ //hasta que no esté alineado
             return; //ya no voy a encontrar mi bloque       
@@ -184,16 +201,20 @@ void ltmfree(void * pointer){
         index = get_index_by_level(address, level);
 
         if(level == MAX_LEVEL){ //estoy en el nivel maximo: no hay buddy
+            flag += 1;
+            mem_freed(level, flag);
             levels[level].array[index].occupied = FALSE;
             return;
         }
 
-        if(!levels[level].array[index].occupied){ //me fijo si nmi padre va a estar fragmentado
+        if(!levels[level].array[index].occupied){ //me fijo si mi padre va a estar fragmentado
             if(levels[level].array[get_buddy(index)].occupied){
                 return; //el ocupado es el buddy!
             }
         }
         else{
+            flag +=1;
+            mem_freed(level, flag );
             levels[level].array[index].occupied = FALSE;
             if(levels[level].array[get_buddy(index)].occupied){ //mi buddy es el que va a estar ocupado
                 return;
@@ -207,14 +228,20 @@ void ltmfree(void * pointer){
 }
 
 void printMem(){
-    uint64_t * mem = HEAP_INIT_ADDRESS;
-    long i;
-    for ( i = 0 ; i < (pow2(MAX_BLOCK_POWER)/8) ; i++){
-        printHex((uint64_t)&(mem[i]));
-        printS(": ");
-        printHex((uint64_t) mem[i]);
-        newline();
-    }
+    printS("La memoria total son: ");
+    printDec(total_mem / 1024);
+    printS(" kilobytes");
+    newline();
+
+    printS("La memoria libre son: ");
+    printDec(free_mem / 1024);
+    printS(" kilobytes");
+    newline();
+
+    printS("La memoria asignada son: ");
+    printDec((total_mem - free_mem) / 1024);
+    printS(" kilobytes");
+    newline();
 }
 
 
