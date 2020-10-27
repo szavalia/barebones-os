@@ -1,30 +1,35 @@
 #include "test_prio.h"
+#include "usr_lib.h"
 
 #define MINOR_WAIT 1000000                               // TODO: To prevent a process from flooding the screen
 #define WAIT      10000000                              // TODO: Long enough to see theese processes beeing run at least twice
 
 uint64_t my_getpid(){
-  
+  int * pid;
+  getPID(pid);
+  return *pid;
 }
 
 uint64_t my_create_process2(char * name){
-  return 0;
+  int * pid;
+  callLaunch(name, 0, NULL, pid);
+  return *pid;
 }
 
 uint64_t my_nice(uint64_t pid, uint64_t newPrio){
-  return 0;
+  callNice(pid, newPrio);
 }
 
 uint64_t my_kill(uint64_t pid){
-  return 0;
+  callKill(pid);
 }
 
 uint64_t my_block(uint64_t pid){
-  return 0;
+  blockProcess(pid);
 }
 
 uint64_t my_unblock(uint64_t pid){
-  return 0;
+  blockProcess(pid);
 }
 
 void bussy_wait(uint64_t n){
