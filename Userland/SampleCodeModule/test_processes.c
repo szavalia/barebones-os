@@ -1,17 +1,17 @@
-#include "test_util.h"
-#include "usr_lib.h"
+#include "test_processes.h"
 
-   #define NULL (void *) 0 
+#define NULL (void *) 0 
 
+char *argv[] = { "endless_loop" , "&" , NULL};
 //TO BE INCLUDED
 void endless_loopproc(){
   while(1);
 }
 
-uint32_t my_create_processproc(char * name){
-  int * pid;
-  callLaunch(name,0,NULL, pid);
-  return *pid;
+uint32_t my_create_processproc(){
+  int pid;
+  callLaunch(endless_loopproc, 2, argv, &pid);
+  return pid;
 }
 
 uint32_t my_killproc(uint32_t pid){
@@ -48,7 +48,7 @@ void test_processes(){
 
     // Create MAX_PROCESSES processes
     for(rq = 0; rq < MAX_PROCESSES; rq++){
-      p_rqs[rq].pid = my_create_processproc("endless_loop");  // TODO: Port this call as required
+      p_rqs[rq].pid = my_create_processproc();  // TODO: Port this call as required
 
       if (p_rqs[rq].pid == -1){                           // TODO: Port this as required
         puts("Error creating process\n");              
@@ -98,7 +98,13 @@ void test_processes(){
           }
           p_rqs[rq].state = RUNNING; 
         }
-    } 
+    }
+    putChar('.'); 
   }
+}
+
+void proctest(int argc, char **argv){
+  test_processes();
+  callExit();
 }
 

@@ -42,7 +42,7 @@ static char * process_descriptions[] = {
 "Realiza un testeo de los semaforos\n",  //semtest
 "Testeo de memoria\n", //memtest
 "Testeo de prioridades\n", //priotest
-"testeo de procesos\n", //proctest
+"Testeo de procesos\n", //proctest
 NULL};  
 static void (*process_functions[])(int, char **) = {loop, sh, cat, wc, filter, philosopher_problem, semtest, memtest, priotest, proctest, NULL};
 static char * process_names[] = {"loop", "sh", "cat", "wc", "filter", "philo", "semtest", "memtest", "priotest", "proctest", NULL};

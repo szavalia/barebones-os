@@ -24,7 +24,6 @@
    
 
    //Processes and scheduling
-   #define MAX_PROCESSES 5
    void loop(int argc, char **argv);
    void exit(int argc, char **argv);
 
