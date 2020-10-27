@@ -1,6 +1,8 @@
-#include "usr_strings.h"
-#include "usr_sem.h"
+#ifndef _TEST_SYNC_H_
+#define _TEST_SYNC_H_
+
 #include "usr_lib.h"
 
-void test_sync();
-void test_no_sync();
+void semtest(int argc, char **argv);
+
+#endif

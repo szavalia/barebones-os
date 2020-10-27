@@ -4,9 +4,7 @@
    #include "usr_strings.h"
    #include "usr_math.h"
    #include "usr_sem.h"
-   
-   #include "test_mm.h"
-   #include "test_sync.h"
+
 
    #define NULL (void *) 0 
    #define TRUE 1
@@ -62,13 +60,12 @@
    extern void change_input(int id, int pid);
    extern void change_output(int id, int pid);
 
+
+   //Aplicaciones de User Space
    void cat(int argc, char ** argv);
    void wc(int argc, char ** argv);
    void filter(int argc, char ** argv);
 
-   //Testing
-   void memtest(int argc, char **argv);
-   void semtest(int argc, char **argv);
 #endif
 
 

@@ -1,9 +1,7 @@
 
 #include "test_mm.h"
 
-#define MAX_BLOCKS 128
-#define MAX_MEMORY 1024 * 1024 * 120 //Should be around 80% of memory managed by the MM
-#define NULL (void *) 0
+extern void * memset(void * destination, int32_t c, uint64_t length);
 
 void test_mm(){
   mm_rq mm_rqs[MAX_BLOCKS];
@@ -76,6 +74,11 @@ void test_mm(){
   } 
 }
 
+void memtest(int argc, char **argv){
+	test_mm();
+	puts("TERMINO EL TEST\n");
+	callExit();
+}
 
 
 

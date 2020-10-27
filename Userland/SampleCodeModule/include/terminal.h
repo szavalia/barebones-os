@@ -2,9 +2,13 @@
 #define _TERMINAL_H_ 
     #include <stdint.h>
     #include "usr_lib.h"
-    #include "usr_strings.h"
-    #include "usr_math.h"
+
     #include "philo.h"
+    
+    #include "test_prio.h"
+    #include "test_mm.h"
+    #include "test_sync.h"
+    #include "test_processes.h"
 
     #define NULL (void *) 0 
     #define BUFFER_SIZE 1024

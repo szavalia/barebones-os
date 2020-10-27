@@ -173,3 +173,13 @@ void test_no_sync(){
   my_sem_close(sem_pointer);
   
 }
+
+void semtest( int argc , char **argv){
+	puts("Test sin sincronizacion\n");
+	test_no_sync();
+	newline();
+	puts("Test con sincronizacion\n");
+	test_sync();
+	newline();
+	callExit();
+}
