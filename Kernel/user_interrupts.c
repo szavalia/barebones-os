@@ -155,7 +155,7 @@ void sys_read(uint64_t  regs[]){
     if(fg && readID == STDIN)
         pipeRead(readID, c, 1);
     else if(!fg && readID == STDIN)
-        return; //no te toca leer, bloqueate
+        return; 
     else if(!fg && readID != STDIN)
         pipeRead(readID, c, 1);
     else if(fg && readID != STDIN)

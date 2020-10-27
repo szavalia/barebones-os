@@ -244,6 +244,8 @@ void exitProcess(){
 }
 
 void processKill( int pid){
+    if(pid == 0)
+        return;
     
     if(foreground_proc == pid){
         foreground_proc = -1;
