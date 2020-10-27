@@ -194,9 +194,15 @@ void sem_state(){
                 printS("Con los siguientes procesos en cola del sem:");
                 peekAll(semaphores[i].queue);
             }
+            else{
+                printS("No tiene a nadie bloqueado\n");
+            }
             if ( peek(semaphores[i].mutex->queue) >= 0 ){
                 printS("Con los siguientes procesos en cola del mutex:");
                 peekAll(semaphores[i].mutex->queue);
+            }
+            else{
+                printS("No tiene a nadie bloqueado\n");
             }
             printFullLine();
         }else if( i < index_sem){

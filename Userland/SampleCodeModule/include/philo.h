@@ -1,6 +1,7 @@
-#include "usr_sem.h"
+#ifndef _PHILO_H_
+#define _PHILO_H_
+
 #include "usr_lib.h"
-#include "usr_strings.h"
 #define N 20
 #define THINKING 2 
 #define HUNGRY 1 
@@ -12,3 +13,5 @@
 #define LEFT_FORK (phnum + 1) % philo_count
 #define RIGHT_FORK (phnum ) % philo_count
 void philosopher_problem( int argc , char * argv[]);
+
+#endif
