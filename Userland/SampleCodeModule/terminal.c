@@ -31,7 +31,7 @@ NULL };
 static void (*functions[])(int, char **) = {help, printTime, printCPUInfo, printTemp, divError, codeError, inforeg, printmem, mem, kill, ps, exit, block, nice, pipe, sem_state ,NULL};
 static char * names[] = {"help","time","cpuinfo","cputemp","div","op","inforeg","printmem","mem","kill","ps", "exit", "block", "nice", "pipe", "semstate" ,NULL};
 
-static command_t processes[MAX_PROCESSES];
+static command_t processes[MAX_COMMANDS];
 static char * process_descriptions[] = {
 "Imprime el PID actual junto con un saludo\n",//loop
  "lanza la terminal\n",//sh

@@ -4,31 +4,27 @@
 #define MINOR_WAIT 1000000                               // TODO: To prevent a process from flooding the screen
 #define WAIT      10000000                              // TODO: Long enough to see theese processes beeing run at least twice
 
+char *argv[] = { "endless_loop" , "&" , NULL};
+
 uint64_t my_getpid(){
-  int * pid;
-  getPID(pid);
-  return *pid;
+  int pid;
+  getPID(&pid);
+  return pid;
 }
 
-uint64_t my_create_process2(char * name){
-  int * pid;
-  callLaunch(name, 0, NULL, pid);
-  return *pid;
-}
-
-uint64_t my_nice(uint64_t pid, uint64_t newPrio){
+void my_nice(uint64_t pid, uint64_t newPrio){
   callNice(pid, newPrio);
 }
 
-uint64_t my_kill(uint64_t pid){
+void my_kill(uint64_t pid){
   callKill(pid);
 }
 
-uint64_t my_block(uint64_t pid){
+void my_block(uint64_t pid){
   blockProcess(pid);
 }
 
-uint64_t my_unblock(uint64_t pid){
+void my_unblock(uint64_t pid){
   blockProcess(pid);
 }
 
@@ -46,6 +42,12 @@ void endless_loop(){
   }
 }
 
+uint32_t my_create_process2(){
+  int pid;
+  callLaunch(endless_loop, 2, argv, &pid);
+  return pid;
+}
+
 #define TOTAL_PROCESSES 3
 
 void test_prio(){
@@ -53,7 +55,7 @@ void test_prio(){
   uint64_t i;
 
   for(i = 0; i < TOTAL_PROCESSES; i++)
-    pids[i] = my_create_process2("endless_loop");
+    pids[i] = my_create_process2();
 
   bussy_wait(WAIT);
   puts("\nCHANGING PRIORITIES...\n");
@@ -61,13 +63,13 @@ void test_prio(){
   for(i = 0; i < TOTAL_PROCESSES; i++){
     switch (i % 3){
       case 0:
-        my_nice(pids[i], 0); //lowest priority 
+        my_nice(pids[i], 1); //lowest priority 
         break;
       case 1:
-        my_nice(pids[i], 1); //medium priority
+        my_nice(pids[i], 2); //medium priority
         break;
       case 2:
-        my_nice(pids[i], 2); //highest priority
+        my_nice(pids[i], 3); //highest priority
         break;
    
     }
@@ -83,13 +85,13 @@ void test_prio(){
   for(i = 0; i < TOTAL_PROCESSES; i++){
     switch (i % 3){
       case 0:
-        my_nice(pids[i], 1); //medium priority 
+        my_nice(pids[i], 2); //medium priority 
         break;
       case 1:
-        my_nice(pids[i], 1); //medium priority
+        my_nice(pids[i], 2); //medium priority
         break;
       case 2:
-        my_nice(pids[i], 1); //medium priority
+        my_nice(pids[i], 2); //medium priority
         break;
     }
   }

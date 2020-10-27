@@ -67,6 +67,7 @@ void freeQueue(queueADT head){
     if( aux2 != NULL){
         ltmfree(aux2);
     }
+    head->size = 0;
     ltmfree(head);
 }
 
@@ -80,8 +81,6 @@ int peek( queueADT head){
 
 void peekAll( queueADT head ){
     Node * aux = head->first;
-    printDec((long)head->size);
-    printS(" ");
     int i;
     for ( i = 0; aux != NULL ; i++){
         printDec((long)aux->value);

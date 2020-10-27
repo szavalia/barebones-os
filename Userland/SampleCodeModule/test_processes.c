@@ -2,7 +2,7 @@
 
 #define NULL (void *) 0 
 
-char *argv[] = { "endless_loop" , "&" , NULL};
+char *argvproc[] = { "endless_loop" , "&" , NULL};
 //TO BE INCLUDED
 void endless_loopproc(){
   while(1);
@@ -10,7 +10,7 @@ void endless_loopproc(){
 
 uint32_t my_create_processproc(){
   int pid;
-  callLaunch(endless_loopproc, 2, argv, &pid);
+  callLaunch(endless_loopproc, 2, argvproc, &pid);
   return pid;
 }
 

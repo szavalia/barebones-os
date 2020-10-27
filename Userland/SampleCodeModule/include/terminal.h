@@ -16,7 +16,7 @@
     #define MAX_ARGS 5
     #define TRUE 1
     #define FALSE 0
-    #define MAX_COMMANDS 20
+    #define MAX_COMMANDS 30
     
     void printTime(int argc, char ** argv);
 
